@@ -509,66 +509,6 @@
           "ssoEntry": "Sign in with enterprise SSO"
         }
       },
-      "ja": {
-        "provenance": {
-          "hash": "sha256:09eb0a32f8f6b7a83bbc2a03db44550888d0f542091cd9a862a3b74a78568561",
-          "locator": "[pinned 75baac1ee] accountDeletion.status.* + login.{title,subtitle,phonePlaceholder,emailPlaceholder,continue,consentStatement,globalRegion,ssoEntry,socialButton,social.*,localMode*}",
-          "source": "_pinned/apps/desktop/src/renderer/i18n/locales/ja/common.json"
-        },
-        "value": {
-          "completedCopy": "Cindy のログインアカウントを削除しました。",
-          "completedTitle": "アカウントを削除しました",
-          "consentStatement": "<terms>利用規約</terms>と<privacy>プライバシーポリシー</privacy>を読み、同意します",
-          "dismissButton": "確認",
-          "emailPlaceholder": "メールアドレスを入力",
-          "globalRegion": "Global",
-          "identifierContinue": "続行",
-          "identifierPlaceholder": "電話番号を入力",
-          "identifierSubtitle": "安全なログイン方法を選択してください",
-          "identifierTitle": "Cindy へようこそ",
-          "localModeDescription": "Cindy アカウントは不要です。データはこのデバイスに保存され、クラウドモデル、デバイス間アクセス、マーケットサービスは利用できません。",
-          "localModeEntry": "ログインをスキップ",
-          "pendingCopy": "{{date}} に完全削除される予定です。それまでにログインすると削除を取り消せます。",
-          "pendingTitle": "アカウントは削除待ちです",
-          "processingCopy": "待機期間が終了し、Cindy のログインアカウントを削除しています。",
-          "processingTitle": "アカウントを削除しています",
-          "socialApple": "Apple",
-          "socialButton": "{{provider}} で続行",
-          "socialGoogle": "Google",
-          "socialWechat": "WeChat",
-          "ssoEntry": "企業 SSO でサインイン"
-        }
-      },
-      "ko": {
-        "provenance": {
-          "hash": "sha256:adaedcd4ec436e7ec739157df5cc6834b5a8571b28d5b351739c62393233d994",
-          "locator": "[pinned 75baac1ee] accountDeletion.status.* + login.{title,subtitle,phonePlaceholder,emailPlaceholder,continue,consentStatement,globalRegion,ssoEntry,socialButton,social.*,localMode*}",
-          "source": "_pinned/apps/desktop/src/renderer/i18n/locales/ko/common.json"
-        },
-        "value": {
-          "completedCopy": "Cindy 로그인 계정이 삭제되었습니다.",
-          "completedTitle": "계정 삭제 완료",
-          "consentStatement": "<terms>서비스 이용약관</terms> 및 <privacy>개인정보 처리방침</privacy>을 읽고 동의합니다",
-          "dismissButton": "확인",
-          "emailPlaceholder": "이메일 입력",
-          "globalRegion": "Global",
-          "identifierContinue": "계속",
-          "identifierPlaceholder": "휴대폰 번호 입력",
-          "identifierSubtitle": "안전한 로그인 방법을 선택하세요",
-          "identifierTitle": "Cindy에 오신 것을 환영합니다",
-          "localModeDescription": "Cindy 계정이 필요하지 않습니다. 데이터는 이 기기에 저장되며 클라우드 모델, 기기 간 연결 및 마켓 서비스는 사용할 수 없습니다.",
-          "localModeEntry": "로그인 건너뛰기",
-          "pendingCopy": "{{date}}에 영구 삭제될 예정입니다. 그 전에 로그인하면 삭제를 취소할 수 있습니다.",
-          "pendingTitle": "계정 삭제 대기 중",
-          "processingCopy": "대기 기간이 끝나 Cindy 로그인 계정을 삭제하고 있습니다.",
-          "processingTitle": "계정 삭제 진행 중",
-          "socialApple": "Apple",
-          "socialButton": "{{provider}}(으)로 계속",
-          "socialGoogle": "Google",
-          "socialWechat": "WeChat",
-          "ssoEntry": "기업 SSO로 로그인"
-        }
-      },
       "zh-CN": {
         "provenance": {
           "hash": "sha256:546572b84575c601ec1a68d7f3b8393b05e7eaef7367734da53cf0f3a5aea76c",
@@ -1859,56 +1799,6 @@
           "socialGoogle": "Continue with Google",
           "socialWechat": "Continue with WeChat",
           "ssoEntry": "Sign in with enterprise SSO"
-        }
-      },
-      "ja": {
-        "provenance": {
-          "hash": "sha256:73a91860d8fe8bcfdd012cb3a8620129f35ac11ec4dd65fb84b66723832c5cd2",
-          "locator": "[pinned 75baac1ee] accountDeletion* + title/phonePlaceholder/emailPlaceholder/continue/consentStatement/ssoEntry/social(apple|google|wechat)",
-          "source": "_pinned/apps/mobile/src/auth/loginMessages.ts"
-        },
-        "value": {
-          "completedCopy": "Cindy ログインアカウントは削除されました。",
-          "completedTitle": "アカウントを削除しました",
-          "consentStatement": "<terms>利用規約</terms>と<privacy>プライバシーポリシー</privacy>を読み、同意します",
-          "dismissButton": "了解しました",
-          "emailPlaceholder": "メールアドレスを入力",
-          "identifierContinue": "続行",
-          "identifierPlaceholder": "携帯電話番号",
-          "identifierTitle": "Cindy にログイン",
-          "pendingCopy": "{date} に完全に削除される予定です。今すぐ再ログインすると削除を取り消せます。",
-          "pendingTitle": "アカウントは削除待機中です",
-          "processingCopy": "Cindy ログインアカウントを削除しています。処理が完了すると完全に削除されます。",
-          "processingTitle": "アカウントを削除処理中です",
-          "socialApple": "Apple で続行",
-          "socialGoogle": "Google で続行",
-          "socialWechat": "WeChat で続行",
-          "ssoEntry": "エンタープライズ SSO でログイン"
-        }
-      },
-      "ko": {
-        "provenance": {
-          "hash": "sha256:73a91860d8fe8bcfdd012cb3a8620129f35ac11ec4dd65fb84b66723832c5cd2",
-          "locator": "[pinned 75baac1ee] accountDeletion* + title/phonePlaceholder/emailPlaceholder/continue/consentStatement/ssoEntry/social(apple|google|wechat)",
-          "source": "_pinned/apps/mobile/src/auth/loginMessages.ts"
-        },
-        "value": {
-          "completedCopy": "Cindy 로그인 계정이 삭제되었습니다.",
-          "completedTitle": "계정이 삭제되었습니다",
-          "consentStatement": "<terms>서비스 이용약관</terms> 및 <privacy>개인정보 처리방침</privacy>을 읽고 동의합니다",
-          "dismissButton": "확인",
-          "emailPlaceholder": "이메일 주소 입력",
-          "identifierContinue": "계속",
-          "identifierPlaceholder": "휴대전화 번호",
-          "identifierTitle": "Cindy 로그인",
-          "pendingCopy": "{date}에 영구 삭제될 예정입니다. 지금 다시 로그인하면 삭제를 취소할 수 있습니다.",
-          "pendingTitle": "계정이 삭제 대기 중입니다",
-          "processingCopy": "Cindy 로그인 계정을 삭제하고 있습니다. 처리가 완료되면 영구적으로 삭제됩니다.",
-          "processingTitle": "계정을 삭제하는 중입니다",
-          "socialApple": "Apple로 계속",
-          "socialGoogle": "Google로 계속",
-          "socialWechat": "WeChat으로 계속",
-          "ssoEntry": "기업 SSO로 로그인"
         }
       },
       "zh-CN": {

@@ -8,13 +8,11 @@ const ROOT = path.resolve(fileURLToPath(new URL("../..", import.meta.url)));
 const CANONICAL_DOCS = [
 	"docs/dev-rules/environment-setup.md",
 	"docs/dev-rules/desktop-development.md",
-	"docs/dev-rules/mobile-development.md",
 ];
 const CONTRIBUTING_DOCS = ["CONTRIBUTING.md", "CONTRIBUTING.en.md"];
 const CHECKED_DOCS = [...CONTRIBUTING_DOCS, ...CANONICAL_DOCS];
 const WORKSPACES = new Map([
 	["desktop", "apps/desktop/package.json"],
-	["mobile", "apps/mobile/package.json"],
 ]);
 const PNPM_BUILTINS = new Set(["install", "--version"]);
 
@@ -194,11 +192,6 @@ test("login-all-hifi embeds generated truth as a script-safe static literal", ()
 
 test("current locale-aware QA artifacts cover every supported locale", () => {
 	const supportedLocales = readSupportedLocales("apps/desktop/src/shared/locale.ts");
-	assert.deepEqual(
-		readSupportedLocales("apps/mobile/src/i18n/locale.ts"),
-		supportedLocales,
-		"Desktop and Mobile must expose the same concrete locale set",
-	);
 	const expectedSet = [...supportedLocales].sort();
 	const currentLoginDemos = [
 		{
@@ -207,11 +200,11 @@ test("current locale-aware QA artifacts cover every supported locale", () => {
 		},
 		{
 			dir: "docs/design-previews/login-all-hifi",
-			copyPaths: [["desk", "copy"], ["mobile", "copy"]],
+			copyPaths: [["desk", "copy"]],
 		},
 		{
 			dir: "docs/design-previews/login-deletion-bubble",
-			copyPaths: [["desktop", "copy"], ["mobile", "copy"]],
+			copyPaths: [["desktop", "copy"]],
 		},
 	];
 

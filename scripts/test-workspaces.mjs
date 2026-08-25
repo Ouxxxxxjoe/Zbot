@@ -21,7 +21,7 @@ const IGNORED_PARTS = new Set([
 	".git",
 	".cache",
 ]);
-const NESTED_NON_WORKSPACES = ["apps/desktop/cindy-updater", "tools"];
+const NESTED_NON_WORKSPACES = ["apps/desktop/zbot-updater", "tools"];
 const VALID_STATUSES = new Set([
 	"required",
 	"notApplicable",

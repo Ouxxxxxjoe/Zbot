@@ -280,12 +280,12 @@ describe("createIOSSimulatorSimctlLifecycle", () => {
     });
 
     await lifecycle.createExact({
-      name: "Cindy iPhone",
+      name: "Zbot iPhone",
       deviceTypeIdentifier:
         "com.apple.CoreSimulator.SimDeviceType.iPhone-17-Pro",
       runtimeIdentifier: "com.apple.CoreSimulator.SimRuntime.iOS-26-4",
     });
-    await lifecycle.renameExact?.(UDID, "Cindy iPhone");
+    await lifecycle.renameExact?.(UDID, "Zbot iPhone");
     await lifecycle.shutdownExact(UDID);
     await lifecycle.deleteExact(UDID);
 
@@ -304,7 +304,7 @@ describe("createIOSSimulatorSimctlLifecycle", () => {
       "simctl",
       "rename",
       UDID,
-      "Cindy iPhone",
+      "Zbot iPhone",
     ]);
     expect(run).toHaveBeenCalledWith("/usr/bin/xcrun", [
       "simctl",
@@ -341,7 +341,7 @@ describe("createIOSSimulatorSimctlLifecycle", () => {
             stdout: devicesJson([
               {
                 udid: preexistingUdid,
-                name: "Cindy iPhone",
+                name: "Zbot iPhone",
               },
               { udid: UDID, name: markerName },
             ]),
@@ -362,7 +362,7 @@ describe("createIOSSimulatorSimctlLifecycle", () => {
 
     const creating = lifecycle.createExact(
       {
-        name: "Cindy iPhone",
+        name: "Zbot iPhone",
         deviceTypeIdentifier: DEVICE_TYPE,
         runtimeIdentifier: RUNTIME,
       },
@@ -423,7 +423,7 @@ describe("createIOSSimulatorSimctlLifecycle", () => {
 
     const creating = lifecycle.createExact(
       {
-        name: "Cindy iPhone",
+        name: "Zbot iPhone",
         deviceTypeIdentifier: DEVICE_TYPE,
         runtimeIdentifier: RUNTIME,
       },
@@ -465,7 +465,7 @@ describe("createIOSSimulatorSimctlLifecycle", () => {
                 udid: otherProfileUdid,
                 name: "__CindyPending__profilebeta__33333333-4444-4555-8666-777777777777",
               },
-              { udid: ordinaryUdid, name: "Cindy iPhone" },
+              { udid: ordinaryUdid, name: "Zbot iPhone" },
             ]),
             stderr: "",
             exitCode: 0,
@@ -514,7 +514,7 @@ describe("createIOSSimulatorSimctlLifecycle", () => {
         udid: otherProfileUdid,
         name: "__CindyPending__profilebeta__33333333-4444-4555-8666-777777777777",
       },
-      { udid: ordinaryUdid, name: "Cindy iPhone" },
+      { udid: ordinaryUdid, name: "Zbot iPhone" },
     ];
     const run = vi.fn<IOSSimulatorCommandRunner["run"]>(
       async (_command, args) => {
@@ -679,11 +679,11 @@ describe("createIOSSimulatorSimctlLifecycle", () => {
     expect(listCount).toBe(2);
 
     const created = await lifecycle.createExact({
-      name: "Cindy iPhone",
+      name: "Zbot iPhone",
       deviceTypeIdentifier: DEVICE_TYPE,
       runtimeIdentifier: RUNTIME,
     });
-    await lifecycle.renameExact?.(created.udid, "Cindy iPhone");
+    await lifecycle.renameExact?.(created.udid, "Zbot iPhone");
 
     expect(evidence.cleared).toEqual([]);
   });
@@ -713,7 +713,7 @@ describe("createIOSSimulatorSimctlLifecycle", () => {
 
     const creating = lifecycle.createExact(
       {
-        name: "Cindy iPhone",
+        name: "Zbot iPhone",
         deviceTypeIdentifier:
           "com.apple.CoreSimulator.SimDeviceType.iPhone-17-Pro",
         runtimeIdentifier: "com.apple.CoreSimulator.SimRuntime.iOS-26-4",
@@ -769,7 +769,7 @@ describe("createIOSSimulatorSimctlLifecycle", () => {
 
     const creating = lifecycle.createExact(
       {
-        name: "Cindy iPhone",
+        name: "Zbot iPhone",
         deviceTypeIdentifier:
           "com.apple.CoreSimulator.SimDeviceType.iPhone-17-Pro",
         runtimeIdentifier: "com.apple.CoreSimulator.SimRuntime.iOS-26-4",
@@ -814,7 +814,7 @@ describe("createIOSSimulatorSimctlLifecycle", () => {
 
     await expect(
       lifecycle.createExact({
-        name: "Cindy iPhone",
+        name: "Zbot iPhone",
         deviceTypeIdentifier:
           "com.apple.CoreSimulator.SimDeviceType.iPhone-17-Pro",
         runtimeIdentifier: "com.apple.CoreSimulator.SimRuntime.iOS-26-4",
@@ -1102,7 +1102,7 @@ describe("createIOSSimulatorSimctlLifecycle", () => {
     // device must still leave startup-recovery evidence behind.
     await expect(
       lifecycle.createExact({
-        name: "Cindy iPhone",
+        name: "Zbot iPhone",
         deviceTypeIdentifier: DEVICE_TYPE,
         runtimeIdentifier: RUNTIME,
       }),
@@ -1132,7 +1132,7 @@ describe("createIOSSimulatorSimctlLifecycle", () => {
 
     await expect(
       lifecycle.createExact({
-        name: "Cindy iPhone",
+        name: "Zbot iPhone",
         deviceTypeIdentifier: DEVICE_TYPE,
         runtimeIdentifier: RUNTIME,
       }),
@@ -1171,7 +1171,7 @@ describe("createIOSSimulatorSimctlLifecycle", () => {
 
     await expect(
       lifecycle.createExact({
-        name: "Cindy iPhone",
+        name: "Zbot iPhone",
         deviceTypeIdentifier: DEVICE_TYPE,
         runtimeIdentifier: RUNTIME,
       }),
@@ -1214,7 +1214,7 @@ describe("createIOSSimulatorSimctlLifecycle", () => {
 
     await expect(
       lifecycle.createExact({
-        name: "Cindy iPhone",
+        name: "Zbot iPhone",
         deviceTypeIdentifier: DEVICE_TYPE,
         runtimeIdentifier: RUNTIME,
       }),
@@ -1243,7 +1243,7 @@ describe("createIOSSimulatorSimctlLifecycle", () => {
     });
 
     const created = await lifecycle.createExact({
-      name: "Cindy iPhone",
+      name: "Zbot iPhone",
       deviceTypeIdentifier: DEVICE_TYPE,
       runtimeIdentifier: RUNTIME,
     });
@@ -1251,7 +1251,7 @@ describe("createIOSSimulatorSimctlLifecycle", () => {
     // still required here.
     expect(evidence.cleared).toEqual([]);
 
-    await lifecycle.renameExact?.(created.udid, "Cindy iPhone");
+    await lifecycle.renameExact?.(created.udid, "Zbot iPhone");
     expect(evidence.cleared).toEqual([1]);
   });
 
@@ -1277,7 +1277,7 @@ describe("createIOSSimulatorSimctlLifecycle", () => {
     });
 
     const first = await lifecycle.createExact({
-      name: "Cindy iPhone",
+      name: "Zbot iPhone",
       deviceTypeIdentifier: DEVICE_TYPE,
       runtimeIdentifier: RUNTIME,
     });
@@ -1294,7 +1294,7 @@ describe("createIOSSimulatorSimctlLifecycle", () => {
     expect(evidence.armed).toBe(2);
     expect(evidence.cleared).toEqual([]);
 
-    await lifecycle.renameExact?.(first.udid, "Cindy iPhone");
+    await lifecycle.renameExact?.(first.udid, "Zbot iPhone");
     expect(evidence.cleared).toEqual([2]);
   });
 });

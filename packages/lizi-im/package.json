@@ -15,8 +15,8 @@
     "lint": "eslint src/"
   },
   "author": {
-    "name": "XD Inc.",
-    "email": "feedback@cindy.app"
+    "name": "Zbot Team",
+    "email": "feedback@zbot.local"
   },
   "license": "Apache-2.0",
   "dependencies": {

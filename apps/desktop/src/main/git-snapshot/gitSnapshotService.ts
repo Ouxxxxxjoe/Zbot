@@ -20,7 +20,7 @@ import {
   type SnapshotSkippedFile,
 } from './snapshotFileFilter';
 import {
-  buildCindyCommitMessage,
+  buildZbotCommitMessage,
   buildCommitMessage,
   parseSnapshotCommit,
   type SnapshotKind,
@@ -385,9 +385,9 @@ const SHADOW_LISTABLE_KINDS: ReadonlySet<SnapshotKind> = new Set([
 
 /** Fixed identity for shadow savepoint commits so plumbing never depends on user git config. */
 const SHADOW_IDENTITY_ENV: Record<string, string> = {
-  GIT_AUTHOR_NAME: 'Cindy',
+  GIT_AUTHOR_NAME: 'Zbot',
   GIT_AUTHOR_EMAIL: 'savepoint@cindy.local',
-  GIT_COMMITTER_NAME: 'Cindy',
+  GIT_COMMITTER_NAME: 'Zbot',
   GIT_COMMITTER_EMAIL: 'savepoint@cindy.local',
 };
 
@@ -548,7 +548,7 @@ export async function createShadowSavepoint(
       getHead(repoPath).catch(() => undefined),
       readSavepointTip(repoPath, input.sessionId),
     ]);
-    const message = buildCindyCommitMessage(label, {
+    const message = buildZbotCommitMessage(label, {
       ...input.meta,
       sessionId: input.sessionId,
       ...(branch ? { branch } : {}),
@@ -623,7 +623,7 @@ export async function createShadowMarker(
     getCurrentBranch(repoPath).catch(() => undefined),
     getHead(repoPath).catch(() => undefined),
   ]);
-  const message = buildCindyCommitMessage(input.label, {
+  const message = buildZbotCommitMessage(input.label, {
     ...input.meta,
     sessionId: input.sessionId,
     ...(branch ? { branch } : {}),
@@ -693,7 +693,7 @@ export async function listShadowSavepoints(
     const [commit, parentsRaw, time, ...bodyParts] = trimmed.split(FIELD_SEP);
     if (!commit || !time) continue;
     const parsed = parseSnapshotCommit(bodyParts.join(FIELD_SEP));
-    if (!parsed || parsed.source !== 'cindy' || !SHADOW_LISTABLE_KINDS.has(parsed.kind)) continue;
+    if (!parsed || parsed.source !== 'zbot' || !SHADOW_LISTABLE_KINDS.has(parsed.kind)) continue;
     if (parsed.sessionId !== sessionId) continue;
     const parents = parentsRaw.trim() ? parentsRaw.trim().split(/\s+/) : [];
     entries.push({
@@ -703,7 +703,7 @@ export async function listShadowSavepoints(
       sessionId: parsed.sessionId,
       time: time.trim(),
       parentCount: parents.length,
-      source: 'cindy',
+      source: 'zbot',
       ...(parsed.anchor ? { anchor: parsed.anchor } : {}),
       ...(parsed.branch ? { branch: parsed.branch } : {}),
       ...(parsed.baselineCommit ? { baselineCommit: parsed.baselineCommit } : {}),

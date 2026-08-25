@@ -36,7 +36,7 @@ describe('SentInlineAtomBody', () => {
             kind: 'project',
             start: agentStart,
             end: agentStart + '@src/App.tsx'.length,
-            href: 'cindy://project/src',
+            href: 'zbot://project/src',
             name: 'src',
             workingDir: '/tmp/src',
           },

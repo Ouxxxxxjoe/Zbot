@@ -2,15 +2,15 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 export function printHelp(log = console.log) {
-  log('\n  Cindy 客户端仓常用指令（按场景分组，说明在上、指令在下，可直接复制）');
+  log('\n  Zbot 客户端仓常用指令（按场景分组，说明在上、指令在下，可直接复制）');
 
   log('\n  桌面端启动:');
-  log('    # 推荐：先清理已有 Cindy dev 进程，再启动远程 API 模式');
-  log('    # Cindy（Global，默认），读取仓内 config/endpoint.global.json');
+  log('    # 推荐：先清理已有 Zbot dev 进程，再启动远程 API 模式');
+  log('    # Zbot 简体中文版（cn，默认），读取仓内 config/endpoint.json');
   log('    pnpm restart:desktop:remote');
   log('    # 中国大陆版，读取仓内 config/endpoint.json');
   log('    pnpm restart:desktop:remote --region=cn');
-  log('    # Cindy，读取 Global 线上 CDN 端点清单');
+  log('    # Zbot，读取线上 CDN 端点清单');
   log('    pnpm restart:desktop:remote --endpoints-cdn');
   log('    # Human 可直接启动；不会先清旧进程，Agent 不要使用');
   log('    pnpm dev:desktop:remote');
@@ -41,29 +41,6 @@ export function printHelp(log = console.log) {
   log('    pnpm update:pi 0.83.0');
   log('    # 发布到 CDN 不在本仓：见同级 cindy-binary-release 工程（pnpm release:<kind>）');
 
-  log('\n  Mobile 本地开发:');
-  log('    # Cindy（Global，默认）：生成 iOS 工程、打开 Xcode 并启动 Metro');
-  log('    pnpm mobile:xcode');
-  log('    # 中国大陆版：生成 iOS 工程、打开 Xcode 并启动 Metro');
-  log('    pnpm mobile:xcode --region=cn');
-  log('    # Cindy 模拟器：先 rebuild 安装，再 start 启动 Metro');
-  log('    pnpm mobile:sim:rebuild');
-  log('    pnpm mobile:sim:start');
-  log('    # 中国大陆版模拟器：先 rebuild 安装，再 start 启动 Metro');
-  log('    pnpm mobile:sim:rebuild -- --region=cn');
-  log('    pnpm mobile:sim:start -- --region=cn');
-  log('    # 查看当前 Metro 对应的 checkout / branch');
-  log('    pnpm mobile:sim:whoami');
-
-  log('\n  Mobile 构建(纯构建,无上传/发布;region 必填,无默认值):');
-  log('    # 配置:按 apps/mobile/scripts/self-host-regions.json.example 复制填写');
-  log('    # self-host-regions.json(gitignore);构建只需 authRegion / 应用身份 / 签名段');
-  log('    # iOS(需 macOS + Xcode + 本机证书/描述文件)');
-  log('    pnpm mobile:build:ios -- --region cn            # dry-run 校验 + 打印计划');
-  log('    pnpm mobile:build:ios -- --region cn --execute  # 真正构建,产出 .ipa');
-  log('    # Android(需 Android SDK + JDK 17 + keystore 口令 env)');
-  log('    pnpm mobile:build:android -- --region cn');
-  log('    pnpm mobile:build:android -- --region cn --execute');
   log('    # 常用可选参数:--out <dir> 拷产物 / --desktop-version x.y.z / --version-code <n>(仅 Android)');
 
   log('\n  开发检查:');

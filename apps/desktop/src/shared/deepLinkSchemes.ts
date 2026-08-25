@@ -22,7 +22,7 @@ export const DEEP_LINK_PRIMARY_SCHEME: string = BRAND_IDENTITY.primaryScheme;
 /** 解析 / OS 注册需要认的全部 scheme(主 + 历史),主 scheme 恒为首位。 */
 export const DEEP_LINK_SCHEMES: readonly string[] = allDeepLinkSchemes();
 
-/** 生成侧 URL 前缀:`cindy://`。 */
+/** 生成侧 URL 前缀:`zbot://`。 */
 export const DEEP_LINK_URL_PREFIX = `${DEEP_LINK_PRIMARY_SCHEME}://`;
 
 /** 解析侧要认的全部 URL 前缀(与 DEEP_LINK_SCHEMES 同序,主前缀恒为首位)。 */
@@ -58,7 +58,7 @@ export const DEEP_LINK_SCHEME_RE_GROUP = `(?:${DEEP_LINK_SCHEMES.map((scheme) =>
 ).join('|')})`;
 
 /**
- * url 若以任一深链前缀(`cindy://` / `xdt-maker://`)开头,返回命中的前缀;
+ * url 若以任一深链前缀(`zbot://` / `xdt-maker://`)开头,返回命中的前缀;
  * 否则 null。解析端一律用它取前缀长度切片,**禁止**按固定字面量长度切
  * (双 scheme 长度不同,写死长度会切错)。
  */
@@ -88,8 +88,8 @@ export function textContainsDeepLink(text: string): boolean {
 /**
  * 剥掉「任一 scheme 前缀 + 指定路径前缀」,返回剩余部分;不匹配 → null。
  * 例:stripDeepLinkPathPrefix('xdt-maker://session/abc?x=1', 'session/')
- * → 'abc?x=1';stripDeepLinkPathPrefix('cindy://project/x', 'session/') → null。
- * 注意剩余部分可能是空串(`cindy://session/`),调用方自行判空。
+ * → 'abc?x=1';stripDeepLinkPathPrefix('zbot://project/x', 'session/') → null。
+ * 注意剩余部分可能是空串(`zbot://session/`),调用方自行判空。
  */
 export function stripDeepLinkPathPrefix(url: string, pathPrefix: string): string | null {
   const schemePrefix = matchDeepLinkPrefix(url);

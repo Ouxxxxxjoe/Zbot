@@ -1,8 +1,8 @@
 /**
- * deepLink (renderer) — cindy:// (+ 历史 xdt-maker://) URL 拼装 helper
+ * deepLink (renderer) — zbot:// (+ 历史 xdt-maker://) URL 拼装 helper
  *
  * scheme 单点在 shared/deepLinkSchemes.ts(事实源 @cindy/maker-shared 的
- * brand-identity):**生成一律主 scheme cindy://,解析主 + 历史 scheme 都认**
+ * brand-identity):**生成一律主 scheme zbot://,解析主 + 历史 scheme 都认**
  * (存量消息里复制的 xdt-maker:// 老链接不能死)。
  * 解析在 main 端做（src/main/deepLink.ts），renderer 只需要"复制深度链接"
  * 时把 sessionId / workingDir 拼成可粘贴的字符串。两端实现是 pure function、
@@ -15,7 +15,7 @@ import {
   stripDeepLinkPathPrefix,
 } from '../../shared/deepLinkSchemes';
 
-/** 生成侧前缀(cindy://)。解析侧不要 startsWith 它——用 stripDeepLinkPathPrefix。 */
+/** 生成侧前缀(zbot://)。解析侧不要 startsWith 它——用 stripDeepLinkPathPrefix。 */
 const URL_PREFIX = DEEP_LINK_URL_PREFIX;
 const SESSION_PREFIX = `${URL_PREFIX}session/`;
 

@@ -28,12 +28,12 @@ describe("native sidecar artifact layout", () => {
   it("resolves the packaged executable from the nested Host helper", () => {
     expect(
       iosSimulatorPackagedHelperExecutablePath(
-        "/Applications/Cindy.app/Contents/Resources",
+        "/Applications/Zbot.app/Contents/Resources",
       ),
     ).toBe(
       path.join(
-        "/Applications/Cindy.app/Contents/Helpers",
-        "Cindy iOS Simulator Helper.app",
+        "/Applications/Zbot.app/Contents/Helpers",
+        "Zbot iOS Simulator Helper.app",
         "Contents",
         "MacOS",
         "ios-simulator-sidecar",

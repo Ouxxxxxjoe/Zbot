@@ -702,7 +702,7 @@ export class GhostCindySlot {
         });
         return {
           ok: false,
-          message: 'Cindy AI 搜索失败，请稍后再试',
+          message: 'Zbot AI 搜索失败，请稍后再试',
           errorCode: 'INTERNAL',
         };
       }
@@ -1432,7 +1432,7 @@ export class GhostCindySlot {
       ) {
         return {
           ok: false,
-          message: 'Cindy AI 搜索只允许由当前插件真实在途的工具调用触发',
+          message: 'Zbot AI 搜索只允许由当前插件真实在途的工具调用触发',
           errorCode: 'PERMISSION_DENIED',
         };
       }

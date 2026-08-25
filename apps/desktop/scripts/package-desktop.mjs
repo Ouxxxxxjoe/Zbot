@@ -266,7 +266,7 @@ async function finishWindows({ artifactDir, baseName, appName, versionless, allo
   }
 
   // 签名已全部在 forge make 阶段完成,这里不再后置补签:
-  //   - 包内 exe(Cindy/cindy-updater/loudness/node-pty/adb/rg)由
+  //   - 包内 exe(zagent/zbot-updater/loudness/node-pty/adb/rg)由
   //     forge.config.ts 的 postPackage signPackagedExes 签;
   //   - 安装器 Setup.exe + 卸载器 Uninstall <App>.exe 由 NSIS maker 的
   //     win.sign(customSign)签(Issue #998)。
@@ -452,7 +452,7 @@ async function finishDarwin({
     const dmgPath = path.join(artifactDir, `${baseName}-${arch}.dmg`);
     console.log('==> Creating DMG...');
     // DMG 卷名 = 安装窗口标题,走 '<appName> Installer'(cn/global
-    // 'Cindy Installer' / dev 'CindyDev Installer');版本号不进卷名,
+    // 'Zbot Installer' / dev 'ZbotDev Installer');版本号不进卷名,
     // 安装包文件名里已有。
     createMacDMG(appPath, dmgPath, `${appName} Installer`, identity);
     files.push(fileEntry('installer', dmgPath));
@@ -564,7 +564,7 @@ async function main() {
   }
 
   console.log('='.repeat(60));
-  console.log(`==> Package Cindy desktop`);
+  console.log(`==> Package Zbot desktop`);
   console.log(`    platform: ${archs.map((a) => `${platform}-${a}`).join(' + ')}`);
   console.log(`    region:   ${region}`);
   console.log(`    version:  ${versionless ? `(版本无关,占位 ${version},不参与热更新)` : version}`);
@@ -595,7 +595,7 @@ async function main() {
   // 版本号临时写入 package.json(asar 内 app.getVersion() 的来源),退出自动恢复。
   writePackageVersion(version);
 
-  // 产物基名按区域派生(cn/global 'Cindy' / dev 'CindyDev',out 目录 / exe /
+  // 产物基名按区域派生(cn/global 'zagent' / dev 'zagentDev',out 目录 / exe /
   // .app 同名;forge.config 的 packagerConfig.name 同源)。
   const appName = packagedAppName(region);
   const baseName = artifactBaseName({ version, versionless });

@@ -3448,7 +3448,7 @@ function getMediaPreferenceConfig(
     )
     .map((model) => {
       const provider = providers.get('xd');
-      const providerName = provider?.name ?? 'Cindy AI';
+      const providerName = provider?.name ?? 'Zbot AI';
       const modelName = model.name ?? model.id;
       return {
         id: encodeMediaPreference('xd', model.id),
@@ -4561,7 +4561,7 @@ function getGhostOauthAccountManager(): GhostOauthAccountManager {
         apiPost: (path, body) => {
           requireAppCapability(
             'canUseCindyOAuthBroker',
-            'Cindy OAuth broker requires a Cindy account.',
+            'Zbot OAuth broker requires a Zbot account.',
           );
           return serverApiFetch(path, {
             method: 'POST',
@@ -7158,7 +7158,7 @@ export function registerGhostIpc(): void {
     assertTrustedAppRendererEvent(event);
     const win = BrowserWindow.fromWebContents(event.sender);
     const opts = {
-      filters: [{ name: 'Cindy Ghost', extensions: ['cindy'] }],
+      filters: [{ name: 'Zbot Ghost', extensions: ['cindy'] }],
       properties: ['openFile' as const],
     };
     const picked = win ? await dialog.showOpenDialog(win, opts) : await dialog.showOpenDialog(opts);

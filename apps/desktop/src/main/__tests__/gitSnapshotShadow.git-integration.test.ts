@@ -151,7 +151,7 @@ describe('createShadowSavepoint', () => {
     expect(await gitStdout(['show', `${commit}:untracked.txt`])).toBe('untracked\n');
     const parsed = parseSnapshotCommit(await commitMessage(commit));
     expect(parsed).toMatchObject({
-      source: 'cindy',
+      source: 'zbot',
       sessionId: SESSION,
       kind: 'turn-start',
       anchor: 'm1',
@@ -424,14 +424,14 @@ describe('listShadowSavepoints', () => {
     expect(entries.map((entry) => entry.commit)).not.toContain(legacyMarker);
     expect(entries[0]).toMatchObject({
       kind: 'after-edit',
-      source: 'cindy',
+      source: 'zbot',
       sessionId: SESSION,
       anchor: 'm1',
       baselineCommit: first.commit,
       parentCount: 1,
     });
     expect(entries[0]?.baseHead).toBeTruthy();
-    expect(entries[1]).toMatchObject({ kind: 'turn-start', source: 'cindy', parentCount: 0 });
+    expect(entries[1]).toMatchObject({ kind: 'turn-start', source: 'zbot', parentCount: 0 });
   }, REAL_GIT_TEST_TIMEOUT_MS);
 
   it('filters non-listable kinds such as rollback markers', async () => {

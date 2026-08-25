@@ -56,9 +56,9 @@ describe('auth loopback callback page', () => {
       variant: 'success',
       title: '登录成功',
       body: '你可以关闭此页面，回到 Cindy 继续。',
-      action: { href: 'cindy://focus/desktop-login', label: '回到 Cindy' },
+      action: { href: 'zbot://focus/desktop-login', label: '回到 Cindy' },
     });
-    expect(html).toContain('<a class="cta" href="cindy://focus/desktop-login">回到 Cindy</a>');
+    expect(html).toContain('<a class="cta" href="zbot://focus/desktop-login">回到 Cindy</a>');
   });
 
   it('shows the raw error code on the error page and escapes injected markup', () => {

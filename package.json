@@ -1,19 +1,19 @@
 {
-  "name": "cindy",
+  "name": "zbot",
   "private": true,
-  "description": "Cindy open-source client monorepo — desktop, mobile, and shared packages",
+  "description": "Zbot enterprise AI work client monorepo — desktop and shared packages (fork of Cindy, 简体中文版)",
   "license": "Apache-2.0",
   "author": {
-    "name": "XD Inc.",
-    "email": "feedback@cindy.app"
+    "name": "Zbot Team",
+    "email": "feedback@zbot.local"
   },
-  "homepage": "https://cindy.app",
+  "homepage": "https://zbot.local",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/makecindy/cindy.git"
+    "url": "git+https://github.com/zbot/zbot.git"
   },
   "bugs": {
-    "url": "https://github.com/makecindy/cindy/issues"
+    "url": "https://github.com/zbot/zbot/issues"
   },
   "engines": {
     "node": ">=22.12",
@@ -59,25 +59,12 @@
       "builder-util-runtime": "^9.7.0"
     },
     "patchedDependencies": {
-      "harmonyos-sans-sc-webfont-splitted": "dependency-patches/harmonyos-sans-sc-webfont-splitted.patch",
-      "react-native@0.85.3": "dependency-patches/react-native@0.85.3.patch",
-      "react-native-uitextview@2.2.0": "dependency-patches/react-native-uitextview@2.2.0.patch",
-      "react-native-webview@13.16.1": "dependency-patches/react-native-webview@13.16.1.patch",
-      "expo-paste-input@0.2.2": "dependency-patches/expo-paste-input@0.2.2.patch"
+      "harmonyos-sans-sc-webfont-splitted": "dependency-patches/harmonyos-sans-sc-webfont-splitted.patch"
     },
     "allowUnusedPatches": true
   },
   "scripts": {
     "h": "node scripts/help.mjs",
-    "mobile:xcode": "node apps/mobile/scripts/open-ios-xcode.mjs",
-    "mobile:sim:rebuild": "node scripts/ensure-deps.mjs --workspace-only && node apps/mobile/scripts/sim-rebuild.mjs",
-    "mobile:sim:start": "node scripts/ensure-deps.mjs --workspace-only && node apps/mobile/scripts/sim-start.mjs",
-    "mobile:sim:whoami": "node scripts/ensure-deps.mjs --workspace-only && node apps/mobile/scripts/sim-whoami.mjs",
-    "sync:mobile-rich-content-assets": "node apps/mobile/scripts/sync-rich-content-assets.mjs",
-    "mobile:release:check": "node apps/mobile/scripts/release-with-env.mjs check",
-    "mobile:release:prod": "node apps/mobile/scripts/release-with-env.mjs prod",
-    "mobile:build:ios": "node apps/mobile/scripts/build-ios.mjs",
-    "mobile:build:android": "node apps/mobile/scripts/build-android.mjs",
     "ensure-deps": "node scripts/ensure-deps.mjs",
     "sync:browser-runtime": "node scripts/browser-runtime/sync.mjs",
     "repo:worktrees": "node scripts/repo-worktrees.mjs",

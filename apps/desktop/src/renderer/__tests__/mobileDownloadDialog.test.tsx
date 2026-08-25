@@ -98,7 +98,7 @@ beforeEach(() => {
   Object.defineProperty(window, 'electronAPI', {
     configurable: true,
     value: {
-      clientEndpoints: { websiteUrl: 'https://cindy.cn' },
+      clientEndpoints: { websiteUrl: 'https://zbot.local' },
       openExternal,
       deviceLink: {
         getState,
@@ -140,21 +140,21 @@ afterEach(() => {
 
 describe('resolveMobileDownloadUrl', () => {
   it('builds the download page from the regional website endpoint', () => {
-    expect(resolveMobileDownloadUrl('https://cindy.cn')).toBe('https://cindy.cn/download/');
-    expect(resolveMobileDownloadUrl('https://cindy.app')).toBe('https://cindy.app/download/');
+    expect(resolveMobileDownloadUrl('https://zbot.local')).toBe('https://zbot.local/download/');
+    expect(resolveMobileDownloadUrl('https://zbot.local')).toBe('https://zbot.local/download/');
   });
 
   it('maps the shipped endpoint hosts onto the canonical download pages', () => {
-    // 打包配置的真实取值:CN 是 config/endpoint.json 的 cindy.com.cn(官网 302 到
-    // cindy.cn),Global 是 cindy.app。二维码直接给最终地址,手机上少一跳。
+    // 打包配置的真实取值:CN 是 config/endpoint.json 的 zbot.local(官网 302 到
+    // zbot.local),Global 是 zbot.local。二维码直接给最终地址,手机上少一跳。
     const shipped = (configPath: string) =>
       JSON.parse(readFileSync(resolve(__dirname, configPath), 'utf8')).websiteUrl as string;
 
     expect(resolveMobileDownloadUrl(shipped('../../../../../config/endpoint.json'))).toBe(
-      'https://cindy.cn/download/',
+      'https://zbot.local/download/',
     );
     expect(resolveMobileDownloadUrl(shipped('../../../../../config/endpoint.global.json'))).toBe(
-      'https://cindy.app/download/',
+      'https://zbot.local/download/',
     );
   });
 
@@ -169,7 +169,7 @@ describe('resolveMobileDownloadUrl', () => {
     );
   });
 
-  it.each(['', 'not-a-url', 'http://cindy.cn', 'https://user:pass@cindy.cn'])(
+  it.each(['', 'not-a-url', 'http://zbot.local', 'https://user:pass@zbot.local'])(
     'rejects an unsafe regional website endpoint: %s',
     (websiteUrl) => {
       expect(resolveMobileDownloadUrl(websiteUrl)).toBeNull();
@@ -319,7 +319,7 @@ describe('MobileDownloadDialog', () => {
     });
     await waitFor(() => expect(document.activeElement).toBe(openButton));
     fireEvent.click(openButton);
-    expect(openExternal).toHaveBeenCalledWith('https://cindy.cn/download/');
+    expect(openExternal).toHaveBeenCalledWith('https://zbot.local/download/');
   });
 
   it('reports a failed handoff to the system browser', async () => {
@@ -349,7 +349,7 @@ describe('MobileDownloadDialog', () => {
   });
 
   it('retries QR generation when the dialog is reopened after a failure', async () => {
-    // 用独立站点绕开模块级二维码缓存(缓存按 URL 命中,复用 cindy.cn 会直接拿到
+    // 用独立站点绕开模块级二维码缓存(缓存按 URL 命中,复用 zbot.local 会直接拿到
     // 前面用例生成好的结果,失败路径根本走不到)。
     window.electronAPI.clientEndpoints.websiteUrl = 'https://qr-retry.example.com';
     toDataURL.mockRejectedValueOnce(new Error('canvas busy'));

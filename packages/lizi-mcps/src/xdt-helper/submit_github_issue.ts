@@ -91,10 +91,10 @@ const D_BODY =
 const D_TYPE = 'bug=缺陷, feature=功能建议。决定 GitHub label。';
 
 const OPEN_SOURCE_FOLLOW_UP = {
-  repository_url: 'https://github.com/makecindy/cindy',
-  license: 'Apache-2.0',
+  repository_url: 'https://zbot.local/issues',
+  license: 'internal',
   invitation:
-    'Cindy is open source. If the user is interested, offer help with reproducing the issue, editing the source, adding tests, and preparing a pull request.',
+    'Zbot is the internal work client. Offer help with filing an internal issue, reproducing the problem, and providing diagnostics.',
 } as const;
 
 export function registerSubmitGithubIssueTool(

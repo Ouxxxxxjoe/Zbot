@@ -46,7 +46,7 @@ const helperStagingRoot = path.join(
   "ios-simulator",
   "helper",
 );
-const helperBundleName = "Cindy iOS Simulator Helper.app";
+const helperBundleName = "Zbot iOS Simulator Helper.app";
 const executableName = "ios-simulator-sidecar";
 const helperBuildResult = path.join(
   helperStagingRoot,
@@ -194,7 +194,7 @@ function normalizedBundleVersion(value) {
 }
 
 function requireBundleIdentifier(value) {
-  const candidate = value?.trim() || "com.xd.cindy.ios-simulator-helper";
+  const candidate = value?.trim() || "com.zhida.agent.ios-simulator-helper";
   if (!/^[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+$/.test(candidate)) {
     throw new Error(
       "[ios-simulator-sidecar] build failed: helper bundle identifier is invalid",
@@ -217,7 +217,7 @@ function helperInfoPlist() {
   <key>CFBundleDevelopmentRegion</key>
   <string>en</string>
   <key>CFBundleDisplayName</key>
-  <string>Cindy iOS Simulator Helper</string>
+  <string>Zbot iOS Simulator Helper</string>
   <key>CFBundleExecutable</key>
   <string>${executableName}</string>
   <key>CFBundleIdentifier</key>
@@ -225,7 +225,7 @@ function helperInfoPlist() {
   <key>CFBundleInfoDictionaryVersion</key>
   <string>6.0</string>
   <key>CFBundleName</key>
-  <string>Cindy iOS Simulator Helper</string>
+  <string>Zbot iOS Simulator Helper</string>
   <key>CFBundlePackageType</key>
   <string>APPL</string>
   <key>CFBundleShortVersionString</key>

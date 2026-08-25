@@ -1328,7 +1328,7 @@ describe('CodexAgent capability routing', () => {
     await resumeHandle.close();
   });
 
-  it('keeps the plugin enabled when Cindy Computer Use is unavailable but hides its incompatible Skill', async () => {
+  it('keeps the plugin enabled when Zbot Computer Use is unavailable but hides its incompatible Skill', async () => {
     const compatibilityOnlyRouting = {
       overrides: [capabilityRouting.overrides[1]],
     } as const;
@@ -1494,7 +1494,7 @@ describe('CodexAgent capability routing', () => {
       model: 'gpt-5.4',
       workingDir: '/repo',
     })).rejects.toThrow(
-      'Cannot start Codex safely because Cindy could not inspect restricted Codex Skills: skills/list unavailable',
+      'Cannot start Codex safely because Zbot could not inspect restricted Codex Skills: skills/list unavailable',
     );
   });
 

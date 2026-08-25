@@ -49,7 +49,7 @@ export function withModelsSyncOverallDeadline<T>(
   let timeout: ReturnType<typeof setTimeout> | null = null;
   const deadline = new Promise<never>((_, reject) => {
     timeout = setTimeout(
-      () => reject(new Error(`Cindy AI model list refresh timed out after ${timeoutMs}ms`)),
+      () => reject(new Error(`Zbot AI model list refresh timed out after ${timeoutMs}ms`)),
       timeoutMs,
     );
     timeout.unref?.();

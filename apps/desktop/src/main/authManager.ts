@@ -198,7 +198,7 @@ export interface User {
 
 /**
  * Main-process-only auth user. Keep the raw membership display name separate
- * from `User.name`, whose UI fallback may be an email address or "Cindy".
+ * from `User.name`, whose UI fallback may be an email address or "Zbot".
  */
 interface CurrentUser extends User {
   membershipDisplayName: string;
@@ -829,7 +829,7 @@ function getRefreshErrorCode(result: { data: unknown }): string | undefined {
 function mapMembershipToAuthUser(membership: AuthMembership, passportId?: string): CurrentUser {
   return {
     id: membership.id,
-    name: membership.displayName || membership.email || 'Cindy',
+    name: membership.displayName || membership.email || 'Zbot',
     membershipDisplayName: membership.displayName,
     // auth-server 自助头像(PATCH /api/me/profile);null = 未设置(UI 首字母兜底)。
     // 产品资料头像回落已随 /api/user/me 退役(2026-07)。
@@ -1319,7 +1319,7 @@ async function openLoopbackBrowserAuthorization(
       if (timeout !== null) clearTimeout(timeout);
       if (server.listening) {
         // The browser may keep the callback connection alive briefly after
-        // rendering "return to Cindy". Closing belongs to cleanup; do not hold
+        // rendering "return to Zbot". Closing belongs to cleanup; do not hold
         // authorization-code exchange or cancellation behind its callback.
         server.close();
       }
@@ -2069,7 +2069,7 @@ export function getCurrentUserId(): string | null {
 
 /**
  * Public issue attribution may only use the raw auth membership display name.
- * UI fallbacks (`email` / "Cindy") are intentionally excluded for privacy.
+ * UI fallbacks (`email` / "Zbot") are intentionally excluded for privacy.
  */
 export function getCurrentMembershipDisplayName(): string | undefined {
   const displayName = currentUser?.membershipDisplayName.trim();

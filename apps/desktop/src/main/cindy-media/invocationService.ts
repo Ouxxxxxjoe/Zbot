@@ -257,20 +257,20 @@ function resolveConnection(providerId: string): MediaConnection {
   const baseUrl = effectiveXdGatewayBaseUrl().trim();
   const apiKey = getProviderSecretStore().get('xd')?.trim() ?? '';
   if (!baseUrl || !apiKey) {
-    throw new MediaInvocationError('CONNECTION_UNAVAILABLE', 'Cindy AI 连接尚未就绪，请先完成登录');
+    throw new MediaInvocationError('CONNECTION_UNAVAILABLE', 'Zbot AI 连接尚未就绪，请先完成登录');
   }
   let parsed: URL;
   try {
     parsed = new URL(baseUrl);
   } catch {
-    throw new MediaInvocationError('CONNECTION_INVALID', 'Cindy AI endpoint 不合法');
+    throw new MediaInvocationError('CONNECTION_INVALID', 'Zbot AI endpoint 不合法');
   }
   if (
     (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') ||
     parsed.username ||
     parsed.password
   ) {
-    throw new MediaInvocationError('CONNECTION_INVALID', 'Cindy AI endpoint 不合法');
+    throw new MediaInvocationError('CONNECTION_INVALID', 'Zbot AI endpoint 不合法');
   }
   return { baseUrl, apiKey };
 }

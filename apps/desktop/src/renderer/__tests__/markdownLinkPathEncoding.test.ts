@@ -93,7 +93,7 @@ describe('Markdown local link path encoding', () => {
     for (const md of [
       '[外链](https://example.com/a.png)',
       '[邮件](mailto:a@b.com)',
-      '[深链](cindy://session/00000000-0000-0000-0000-000000000000)',
+      '[深链](zbot://session/00000000-0000-0000-0000-000000000000)',
     ]) {
       expect(renderLink(md).raw).toBeUndefined();
     }

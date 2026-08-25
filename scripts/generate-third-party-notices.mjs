@@ -29,11 +29,10 @@ import parseSpdxExpression from "spdx-expression-parse";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(__dirname, "..");
 const DESKTOP_DIR = path.join(REPO_ROOT, "apps", "desktop");
-const MOBILE_DIR = path.join(REPO_ROOT, "apps", "mobile");
 const NOTICES_DIR = path.join(REPO_ROOT, "docs", "legal", "notices");
 const SBOM_DIR = path.join(NOTICES_DIR, "sbom");
 const CARGO_MANIFESTS = [
-  path.join(DESKTOP_DIR, "cindy-updater", "src-tauri", "Cargo.toml"),
+  path.join(DESKTOP_DIR, "zbot-updater", "src-tauri", "Cargo.toml"),
   path.join(
     DESKTOP_DIR,
     "native",
@@ -75,7 +74,7 @@ const PACKAGE_POLICIES = {
 const FORBIDDEN_PACKAGE_POLICIES = {
   "@codesandbox/nodebox": {
     license: "LicenseRef-Sustainable-Use-1.0",
-    reason: "仅允许内部业务使用或非商业用途,不允许 Cindy 商业版本对外分发。",
+    reason: "仅允许内部业务使用或非商业用途,不允许 Zbot 商业版本对外分发。",
   },
 };
 
@@ -117,7 +116,6 @@ function readJson(p) {
 /**
  * 建立仓库内 package name -> 源码目录映射。
  *
- * 除 pnpm workspace 包外,apps/mobile/modules 下还有通过 file: 引用的本地包。
  * pnpm 在部分平台会把 file: 包复制到 node_modules 而非创建指向源码的 symlink,
  * 因此不能只靠真实路径是否位于 node_modules 来判断它是不是内部包。
  */
@@ -857,501 +855,7 @@ function buildWindowsEntries() {
   ];
 }
 
-function buildMobileEntries(apacheText, platform) {
-  const entries = [
-    ...buildProviderBrandingEntries(),
-    bundledComponent({
-      name: "JetBrains Mono fonts",
-      version: "bundled",
-      license: "OFL-1.1",
-      url: "https://github.com/JetBrains/JetBrainsMono",
-      licenseText: readBundledLicense(
-        "apps/mobile/assets/fonts/JetBrainsMono-OFL.txt",
-      ),
-    }),
-  ];
-  if (platform === "ios") {
-    entries.push(
-      bundledComponent({
-        name: "TapTapSDK/Core",
-        version: "4.10.5",
-        license: "MIT",
-        url: "https://github.com/taptap/tapsdk-frameworks/tree/4.10.5",
-        licenseText: MIT_TEXT("Copyright (c) TapTap"),
-      }),
-    );
-  } else {
-    entries.push(
-      bundledComponent({
-        name: "com.taptap.sdk:tap-core and declared TapTap modules",
-        version: "4.10.5",
-        license: "Apache-2.0",
-        url: "https://github.com/taptap/TapSDK-Android",
-        licenseText: apacheText,
-      }),
-    );
-  }
-  return entries;
-}
 
-// ---------------------------------------------------------------------------
-// 输出
-// ---------------------------------------------------------------------------
-
-function buildOutput({
-  packages,
-  manualEntries,
-  productName,
-  description,
-  coverageNotes = [],
-}) {
-  const lines = [];
-  const push = (s = "") => lines.push(s);
-
-  push("=".repeat(78));
-  push("THIRD-PARTY SOFTWARE NOTICES AND INFORMATION");
-  push(productName);
-  push("=".repeat(78));
-  push();
-  for (const line of description) push(line);
-  push();
-  push("本文件由 scripts/generate-third-party-notices.mjs 自动生成,请勿手改;");
-  push("依赖变更后运行 `pnpm licenses:generate` 重新生成。");
-  push();
-  push("我们感谢所有开源作者与维护者。");
-  push("We are grateful to all open source authors and maintainers.");
-  push();
-  if (coverageNotes.length) {
-    push("-".repeat(78));
-    push("SCOPE NOTES:");
-    for (const note of coverageNotes) push(`  - ${note}`);
-    push();
-  }
-  push(
-    "受限或专有第三方组件不列入开源包数量,另见配套的 THIRD-PARTY-RESTRICTED.txt。",
-  );
-  push(
-    "Restricted or proprietary components are disclosed in the companion file.",
-  );
-  push();
-
-  // —— Section 1: 非 npm 组件 ——
-  push("=".repeat(78));
-  push("SECTION 1: Non-npm components");
-  push("=".repeat(78));
-  for (const e of manualEntries) {
-    const versionSuffix = `(${e.version})`;
-    const heading = e.name.endsWith(versionSuffix)
-      ? e.name
-      : `${e.name} ${e.version}`;
-    push();
-    push("-".repeat(78));
-    push(heading);
-    push(`License: ${e.license}`);
-    if (e.url) push(`Source: ${e.url}`);
-    push("-".repeat(78));
-    push(e.licenseText);
-  }
-  push();
-
-  let section = 2;
-  for (const ecosystem of ["npm", "cargo"]) {
-    const selected = packages.filter(
-      (component) => component.ecosystem === ecosystem,
-    );
-    if (!selected.length) continue;
-    push("=".repeat(78));
-    push(
-      `SECTION ${section}: ${ecosystem} packages (${selected.length} packages)`,
-    );
-    push("=".repeat(78));
-    push();
-    for (const p of selected) {
-      push(
-        `- ${p.name}@${p.version} — ${p.license}${p.url ? ` — ${p.url}` : ""}`,
-      );
-    }
-    push();
-    section += 1;
-  }
-
-  // —— 许可证文本(按相同文本归组去重) ——
-  push("=".repeat(78));
-  push(`SECTION ${section}: Package license texts`);
-  push("=".repeat(78));
-  push();
-  push("下面每段许可证文本前列出适用的包。无独立 LICENSE 文件的包以其");
-  push("包元数据声明的 SPDX 标识为准(见前述 package sections)。");
-  push();
-
-  const textGroups = new Map(); // text -> [pkg labels]
-  const noTextPkgs = [];
-  for (const p of packages) {
-    if (p.licenseText) {
-      const arr = textGroups.get(p.licenseText) || [];
-      arr.push(`${p.ecosystem}:${p.name}@${p.version}`);
-      textGroups.set(p.licenseText, arr);
-    } else {
-      noTextPkgs.push(`${p.ecosystem}:${p.name}@${p.version} (${p.license})`);
-    }
-    if (p.noticeText) {
-      const key = `NOTICE for ${p.ecosystem}:${p.name}@${p.version}:\n\n${p.noticeText}`;
-      if (!textGroups.has(key))
-        textGroups.set(key, [`${p.ecosystem}:${p.name}@${p.version} (NOTICE)`]);
-    }
-  }
-
-  let idx = 0;
-  for (const [text, pkgs] of textGroups) {
-    idx += 1;
-    push("-".repeat(78));
-    push(`[${idx}] Applies to: ${pkgs.join(", ")}`);
-    push("-".repeat(78));
-    push(text);
-    push();
-  }
-
-  if (noTextPkgs.length) {
-    push("-".repeat(78));
-    push(
-      "Packages without a standalone license file (license per package.json):",
-    );
-    push("-".repeat(78));
-    for (const p of noTextPkgs) push(`- ${p}`);
-    push();
-  }
-
-  return `${lines.join("\n").trimEnd()}\n`;
-}
-
-function componentKey(component) {
-  return `${component.ecosystem}:${component.name}@${component.version}`;
-}
-
-function mergeComponents(...groups) {
-  const result = new Map();
-  for (const group of groups) {
-    for (const component of group)
-      result.set(componentKey(component), component);
-  }
-  return [...result.values()].sort(
-    (a, b) =>
-      a.ecosystem.localeCompare(b.ecosystem) ||
-      a.name.localeCompare(b.name) ||
-      a.version.localeCompare(b.version),
-  );
-}
-
-function buildRestrictedOutput(
-  components,
-  productName = "Cindy project distributions",
-) {
-  const lines = [
-    "=".repeat(78),
-    "RESTRICTED AND PROPRIETARY THIRD-PARTY COMPONENTS",
-    productName,
-    "=".repeat(78),
-    "",
-    "本文件单列不是开放源代码许可的第三方组件;它们不计入开源包数量。",
-    "This file separately discloses components not distributed under open-source licenses.",
-    "",
-  ];
-  if (components.length === 0) {
-    lines.push(
-      "No restricted or proprietary components are declared for this artifact.",
-      "",
-    );
-  }
-  for (const component of components) {
-    lines.push("-".repeat(78));
-    lines.push(`${component.name}@${component.version}`);
-    lines.push(`Category: ${component.category}`);
-    lines.push(`License: ${component.license}`);
-    if (component.url) lines.push(`Source: ${component.url}`);
-    if (component.note) lines.push(`Compliance note: ${component.note}`);
-    if (component.licenseText) {
-      lines.push("-".repeat(78));
-      lines.push(component.licenseText);
-    }
-    lines.push("");
-  }
-  return `${lines.join("\n").trimEnd()}\n`;
-}
-
-function purlFor(component) {
-  if (component.ecosystem === "cargo") {
-    return `pkg:cargo/${encodeURIComponent(component.name)}@${encodeURIComponent(component.version)}`;
-  }
-  if (component.ecosystem === "npm") {
-    const name = component.name.startsWith("@")
-      ? component.name.replaceAll("@", "%40")
-      : encodeURIComponent(component.name);
-    return `pkg:npm/${name}@${encodeURIComponent(component.version)}`;
-  }
-  return null;
-}
-
-function stableCreationTime() {
-  try {
-    const value = execFileSync(
-      "git",
-      [
-        "log",
-        "-1",
-        "--format=%cI",
-        "--",
-        "pnpm-lock.yaml",
-        ...CARGO_MANIFESTS.map((manifest) =>
-          path.relative(REPO_ROOT, manifest),
-        ),
-      ],
-      { cwd: REPO_ROOT, encoding: "utf8" },
-    ).trim();
-    if (value) return new Date(value).toISOString().replace(".000Z", "Z");
-  } catch {
-    // 仅非 git 源码包会走固定 fallback,避免生成结果随机器时间漂移。
-  }
-  return "1970-01-01T00:00:00Z";
-}
-
-function buildSpdxDocument(artifact, components) {
-  const sorted = mergeComponents(components);
-  const digest = createHash("sha256")
-    .update(sorted.map(componentKey).join("\n"))
-    .digest("hex");
-  const packages = sorted.map((component) => {
-    const id = `SPDXRef-Package-${createHash("sha256").update(componentKey(component)).digest("hex").slice(0, 16)}`;
-    const purl = purlFor(component);
-    return {
-      name: component.name,
-      SPDXID: id,
-      versionInfo: component.version,
-      downloadLocation: /^https?:\/\//.test(component.url || "")
-        ? component.url
-        : "NOASSERTION",
-      filesAnalyzed: false,
-      licenseConcluded: component.license,
-      licenseDeclared: component.license,
-      copyrightText: "NOASSERTION",
-      ...(purl
-        ? {
-            externalRefs: [
-              {
-                referenceCategory: "PACKAGE-MANAGER",
-                referenceType: "purl",
-                referenceLocator: purl,
-              },
-            ],
-          }
-        : {}),
-    };
-  });
-  // licenseId -> (componentKey -> licenseText)。必须按组件分别留存,不能先到先得:
-  // SPDX 的 hasExtractedLicensingInfos 对一个 licenseId 只存一份 extractedText,
-  // 而同一个 LicenseRef 会被多个组件共用(desktop-linux 的 x64/arm64 两份 libvips
-  // 预编译包就是如此)。只留其中一份,另一个组件就会引用到不属于它的说明和版本表。
-  const licenseRefs = new Map();
-  for (const component of sorted) {
-    for (const match of component.license.matchAll(
-      /LicenseRef-[A-Za-z0-9.-]+/g,
-    )) {
-      if (!licenseRefs.has(match[0])) licenseRefs.set(match[0], new Map());
-      licenseRefs
-        .get(match[0])
-        .set(
-          componentKey(component),
-          component.licenseText || "No standalone license text available.",
-        );
-    }
-  }
-  return {
-    spdxVersion: "SPDX-2.3",
-    dataLicense: "CC0-1.0",
-    SPDXID: "SPDXRef-DOCUMENT",
-    name: `cindy-${artifact}`,
-    documentNamespace: `https://cindy.app/spdx/${artifact}/${digest}`,
-    creationInfo: {
-      created: stableCreationTime(),
-      creators: ["Tool: scripts/generate-third-party-notices.mjs"],
-    },
-    packages,
-    relationships: packages.map((pkg) => ({
-      spdxElementId: "SPDXRef-DOCUMENT",
-      relationshipType: "DESCRIBES",
-      relatedSpdxElement: pkg.SPDXID,
-    })),
-    ...(licenseRefs.size
-      ? {
-          hasExtractedLicensingInfos: [...licenseRefs].map(
-            ([licenseId, textsByComponent]) => ({
-              licenseId,
-              // 独占该 licenseId 的组件保持原样输出(不给 win/macos 等单组件产物
-              // 引入无谓的格式变化);多组件共用时按组件加标题分段,让每个 package
-              // 条目都能在文本里找到属于自己的那段。
-              extractedText:
-                textsByComponent.size === 1
-                  ? [...textsByComponent.values()][0]
-                  : [...textsByComponent]
-                      .map(([key, text]) => `### ${key}\n\n${text}`)
-                      .join(`\n\n${"-".repeat(72)}\n\n`),
-            }),
-          ),
-        }
-      : {}),
-  };
-}
-
-function auditArtifact(label, closure, manualEntries) {
-  const components = [...closure.packages, ...manualEntries];
-  const invalid = components.filter((component) =>
-    /^(UNKNOWN|UNLICENSED|SEE LICENSE|NOASSERTION)$/i.test(component.license),
-  );
-  const strongCopyleft = components.filter(
-    (component) =>
-      /(?:^|[^L])GPL|AGPL|SSPL/i.test(component.license) &&
-      !/LicenseRef-/.test(component.license),
-  );
-  const malformed = components.filter((component) => {
-    try {
-      parseSpdxExpression(component.license);
-      return false;
-    } catch {
-      return true;
-    }
-  });
-  if (invalid.length || strongCopyleft.length || malformed.length) {
-    const lines = [`license audit failed for ${label}`];
-    for (const component of invalid)
-      lines.push(
-        `  invalid: ${componentKey(component)} (${component.license})`,
-      );
-    for (const component of strongCopyleft)
-      lines.push(
-        `  strong copyleft: ${componentKey(component)} (${component.license})`,
-      );
-    for (const component of malformed)
-      lines.push(
-        `  malformed SPDX: ${componentKey(component)} (${component.license})`,
-      );
-    throw new Error(lines.join("\n"));
-  }
-  console.log(
-    `${label}: ${closure.packages.length} package dependencies + ${manualEntries.length} non-npm components`,
-  );
-}
-
-function assertNativeDeclarations() {
-  const iosWechat = fs.readFileSync(
-    path.join(
-      MOBILE_DIR,
-      "modules",
-      "xdt-wechat-login",
-      "ios",
-      "XdtWechatLogin.podspec",
-    ),
-    "utf8",
-  );
-  const androidWechat = fs.readFileSync(
-    path.join(
-      MOBILE_DIR,
-      "modules",
-      "xdt-wechat-login",
-      "android",
-      "build.gradle",
-    ),
-    "utf8",
-  );
-  const iosTap = fs.readFileSync(
-    path.join(MOBILE_DIR, "modules", "xdt-tapdb", "ios", "XdtTapdb.podspec"),
-    "utf8",
-  );
-  const androidTap = fs.readFileSync(
-    path.join(MOBILE_DIR, "modules", "xdt-tapdb", "android", "build.gradle"),
-    "utf8",
-  );
-  if (!/WechatOpenSDK', '2\.0\.5'/.test(iosWechat))
-    throw new Error("WechatOpenSDK iOS version changed; update notice policy");
-  if (!/com\.tencent\.mm\.opensdk:wechat-sdk-android:6\.8\.38/.test(androidWechat))
-    throw new Error("WeChat OpenSDK Android version changed; update notice policy");
-  if (!/TapTapSDK\/Core', '4\.10\.5'/.test(iosTap))
-    throw new Error("TapTapSDK iOS version changed; update notice policy");
-  if (!/com\.taptap\.sdk:tap-core:4\.10\.5/.test(androidTap))
-    throw new Error("TapTapSDK Android version changed; update notice policy");
-}
-
-/**
- * Project-owned Expo modules are part of the Apache-2.0 source tree. Keep
- * their CocoaPods metadata aligned with the repository license so native
- * tooling cannot silently publish them as UNLICENSED/private pods.
- */
-function assertProjectPodspecLicenses() {
-  const podspecs = [
-    "xdt-wechat-login/ios/XdtWechatLogin.podspec",
-    "xdt-tapdb/ios/XdtTapdb.podspec",
-    "xdt-mobile-realtime-audio/ios/XdtMobileRealtimeAudio.podspec",
-    "xdt-ios-app-distribution/ios/XdtIosAppDistribution.podspec",
-  ];
-  for (const relativePath of podspecs) {
-    const file = path.join(MOBILE_DIR, "modules", relativePath);
-    const text = fs.readFileSync(file, "utf8");
-    if (!/s\.license\s*=\s*\{[^}]*:type\s*=>\s*['\"]Apache-2\.0['\"]/s.test(text)) {
-      throw new Error(`project podspec must declare Apache-2.0: ${relativePath}`);
-    }
-    if (/UNLICENSED/i.test(text)) {
-      throw new Error(`project podspec must not declare UNLICENSED: ${relativePath}`);
-    }
-    if (!/https:\/\/github\.com\/makecindy\/cindy\.git/.test(text)) {
-      throw new Error(`project podspec must point to the public source repository: ${relativePath}`);
-    }
-  }
-}
-
-function assertTrackedBinariesRegistered() {
-  const binaryExtensions = new Set([
-    ".exe",
-    ".dll",
-    ".dylib",
-    ".so",
-    ".aar",
-    ".jar",
-    ".wasm",
-    ".ttf",
-    ".otf",
-    ".woff",
-    ".woff2",
-  ]);
-  // cindy-updater.exe 不在列:它已不入仓(Windows 打包时现场 cargo build 生成,
-  // 见 .gitignore)。若有人绕过 ignore 把它提交回来,这里会主动拦下要求登记。
-  const registeredPrefixes = [
-    "apps/android-platform-tools-bin/",
-    "apps/desktop/native/sqlite-vec/",
-    "apps/mobile/assets/fonts/JetBrainsMono-",
-  ];
-  const files = execFileSync("git", ["ls-files", "-z"], {
-    cwd: REPO_ROOT,
-    encoding: "utf8",
-    maxBuffer: 32 * 1024 * 1024,
-  })
-    .split("\0")
-    .filter(Boolean);
-  const unregistered = files.filter(
-    (file) =>
-      binaryExtensions.has(path.extname(file).toLowerCase()) &&
-      !registeredPrefixes.some((prefix) => file.startsWith(prefix)),
-  );
-  if (unregistered.length) {
-    throw new Error(
-      `tracked binary assets need license registration:\n${unregistered.join("\n")}`,
-    );
-  }
-}
-
-// ---------------------------------------------------------------------------
-// main
-// ---------------------------------------------------------------------------
-
-assertNativeDeclarations();
-assertProjectPodspecLicenses();
 assertTrackedBinariesRegistered();
 for (const manifest of CARGO_MANIFESTS) {
   if (!fs.existsSync(path.join(path.dirname(manifest), "Cargo.lock"))) {
@@ -1379,16 +883,6 @@ const desktopLinuxNpm = mergeClosures(
   collectClosure([DESKTOP_DIR], { os: "linux", cpu: "x64", libc: "glibc" }),
   collectClosure([DESKTOP_DIR], { os: "linux", cpu: "arm64", libc: "glibc" }),
 );
-// 移动端产物的 target 是「app 实际分发到的设备」，不是仓库支持的构建架构：
-// 移动端 JS 依赖里的平台可选包（lightningcss / @parcel/watcher / @rollup 等预编译
-// 二进制）属于开发机上的构建期工具链，不进 iOS bundle 或 APK/AAB。npm 生态里纯 JS
-// 包不声明 os/cpu，matchesPackageConstraint() 对未声明的约束一律放行，所以按设备
-// target 过滤只会摘掉这些原生变体，包自身（含其许可义务）仍然照常声明。
-const mobileIosNpm = collectClosure([MOBILE_DIR], { os: "ios", cpu: "arm64" });
-const mobileAndroidNpm = collectClosure([MOBILE_DIR], {
-  os: "android",
-  cpu: "arm64",
-});
 const cargoClosure = mergeClosures(
   ...CARGO_MANIFESTS.map((manifest) => collectCargoClosure(manifest)),
 );
@@ -1408,7 +902,7 @@ const artifactDefinitions = {
       ...buildDesktopCommonEntries(apacheText, "@img/sharp-win32-x64"),
       ...buildWindowsEntries(),
     ],
-    productName: "Cindy desktop application — Windows x64",
+    productName: "Zbot desktop application — Windows x64",
     description: ["Windows x64 桌面安装包的第三方开源组件声明。"],
     notes: [
       "包含 Rust/Tauri updater、Windows 功能键监听器的运行时 crate 闭包和随包 Android Platform-Tools。",
@@ -1423,7 +917,7 @@ const artifactDefinitions = {
       ]),
       ...buildMacEntries(),
     ],
-    productName: "Cindy desktop application — macOS x64/arm64",
+    productName: "Zbot desktop application — macOS x64/arm64",
     description: [
       "macOS Intel 与 Apple Silicon 桌面安装包的第三方开源组件声明。",
     ],
@@ -1437,34 +931,14 @@ const artifactDefinitions = {
       "@img/sharp-libvips-linux-x64",
       "@img/sharp-libvips-linux-arm64",
     ]),
-    productName: "Cindy desktop application — Linux x64/arm64 glibc",
+    productName: "Zbot desktop application — Linux x64/arm64 glibc",
     description: ["Linux x64 与 arm64 glibc 桌面安装包的第三方开源组件声明。"],
     notes: [
       "合并 x64 与 arm64 原生可选包;不包含运行时按需下载的 Android Platform-Tools。",
     ],
   },
-  "mobile-ios": {
-    closure: mobileIosNpm,
-    manual: buildMobileEntries(apacheText, "ios"),
-    productName: "Cindy mobile application — iOS",
-    description: ["iOS JS 生产依赖及仓库显式声明的原生 SDK/字体组件。"],
-    notes: [
-      "Expo managed 工程的完整 Pod 闭包在构建时生成;本文件不声称替代具体构建产物的 Podfile.lock 审计。",
-      "不含只在开发机构建期使用、不随 app 分发的平台可选原生包(其 JS 包自身仍已声明)。",
-    ],
-  },
-  "mobile-android": {
-    closure: mobileAndroidNpm,
-    manual: buildMobileEntries(apacheText, "android"),
-    productName: "Cindy mobile application — Android",
-    description: ["Android JS 生产依赖及仓库显式声明的原生 SDK/字体组件。"],
-    notes: [
-      "Expo managed 工程的完整 Gradle 闭包在构建时生成;本文件不声称替代具体 APK/AAB 的依赖报告。",
-      "不含只在开发机构建期使用、不随 app 分发的平台可选原生包(其 JS 包自身仍已声明)。",
-    ],
-  },
-};
 
+};
 for (const [name, artifact] of Object.entries(artifactDefinitions)) {
   auditArtifact(name, artifact.closure, artifact.manual);
 }
@@ -1488,26 +962,6 @@ const restrictedManualEntries = [
     category: "proprietary",
     url: "https://www.anthropic.com/legal/commercial-terms",
     artifacts: ["desktop-win", "desktop-macos", "desktop-linux"],
-  },
-  {
-    ecosystem: "bundled",
-    name: "WeChat OpenSDK for iOS",
-    version: "2.0.5",
-    license: "NOASSERTION",
-    category: "restricted-review-required",
-    url: "https://developers.weixin.qq.com/doc/oplatform/Mobile_App/Access_Guide/iOS.html",
-    note: "上游 CocoaPod 声明为 Copyright 且未提供标准开源许可证；按 docs/legal/wechat-open-sdk-compliance.md 完成条款、隐私披露和用户同意复核。官方合规指南：https://developers.weixin.qq.com/doc/oplatform/Mobile_App/agreement/sdk.html",
-    artifacts: ["mobile-ios"],
-  },
-  {
-    ecosystem: "bundled",
-    name: "WeChat OpenSDK for Android",
-    version: "6.8.38",
-    license: "NOASSERTION",
-    category: "restricted-review-required",
-    url: "https://developers.weixin.qq.com/doc/oplatform/Mobile_App/Access_Guide/Android.html",
-    note: "上游 Maven SDK 未提供标准开源许可证；按 docs/legal/wechat-open-sdk-compliance.md 完成条款、隐私披露和用户同意复核。官方合规指南：https://developers.weixin.qq.com/doc/oplatform/Mobile_App/agreement/sdk.html",
-    artifacts: ["mobile-android"],
   },
 ];
 
@@ -1579,7 +1033,7 @@ outputs.push(
     buildOutput({
       packages: projectClosure.packages,
       manualEntries: projectManual,
-      productName: "Cindy project aggregate",
+      productName: "Zbot project aggregate",
       description: ["全工程各已定义分发产物的第三方开源组件聚合声明。"],
       coverageNotes: [
         "各产物精确范围见 docs/legal/notices/*.txt;受限组件见独立清单。",
@@ -1591,7 +1045,7 @@ outputs.push(
     buildOutput({
       packages: desktopCombined.packages,
       manualEntries: desktopManual,
-      productName: "Cindy desktop application — all supported platforms",
+      productName: "Zbot desktop application — all supported platforms",
       description: ["Windows、macOS 与 Linux 桌面产物的保守合并声明。"],
       coverageNotes: [
         "发布包可按 docs/legal/notices/desktop-<platform>.txt 使用平台精确版本。",
@@ -1606,7 +1060,7 @@ outputs.push(
     path.join(DESKTOP_DIR, "resources", "THIRD-PARTY-RESTRICTED.txt"),
     buildRestrictedOutput(
       desktopRestricted,
-      "Cindy desktop application — all supported platforms",
+      "Zbot desktop application — all supported platforms",
     ),
   ],
 );

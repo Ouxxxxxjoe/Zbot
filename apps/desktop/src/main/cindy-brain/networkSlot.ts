@@ -1249,7 +1249,7 @@ export class GhostNetworkSlot {
             if (!stillCurrent) {
               return {
                 ok: false,
-                message: 'Cindy 企业账号已切换，本次请求已取消，请重试',
+                message: 'Zbot 企业账号已切换，本次请求已取消，请重试',
               };
             }
           }
@@ -1675,7 +1675,7 @@ export class GhostNetworkSlot {
     if (secret.source === 'oidc-token') {
       const manager = this.deps.connectionTokens;
       if (!manager) {
-        return { error: 'Cindy 企业身份通道未就绪，请升级应用或反馈' };
+        return { error: 'Zbot 企业身份通道未就绪，请升级应用或反馈' };
       }
       let resolution: {
         membershipId: string;
@@ -1686,7 +1686,7 @@ export class GhostNetworkSlot {
         resolution = manager.resolve(ghostId);
       } catch {
         this.deps.log?.warn('ghost Connection audience resolver unavailable', { ghostId });
-        return { error: 'Cindy 企业身份暂时不可用，请稍后重试或反馈' };
+        return { error: 'Zbot 企业身份暂时不可用，请稍后重试或反馈' };
       }
       if (!resolution) {
         this.deps.log?.warn('ghost Connection audience resolution returned no result', {

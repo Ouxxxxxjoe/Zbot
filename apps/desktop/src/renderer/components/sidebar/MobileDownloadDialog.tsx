@@ -106,14 +106,12 @@ function parseWebsiteUrl(value: string): URL | null {
 }
 
 /**
- * 官网 CN 主站是 `cindy.cn`,打包配置里的 `cindy.com.cn` 只是会 302 过去的别名。
+ * 官网主站由 endpoint 配置的 websiteUrl 决定(占位 zbot.local)。
  * 二维码是给手机扫的,直接给最终地址少一跳,也避免手机上先闪一下跳转页。
  */
 const WEBSITE_HOST_ALIASES: Record<string, string> = {
-  'cindy.com.cn': 'cindy.cn',
-  'www.cindy.com.cn': 'cindy.cn',
-  'www.cindy.cn': 'cindy.cn',
-  'www.cindy.app': 'cindy.app',
+  'zbot.local': 'zbot.local',
+  'www.zbot.local': 'zbot.local',
 };
 
 export function resolveMobileDownloadUrl(websiteUrl: string): string | null {

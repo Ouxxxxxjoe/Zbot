@@ -4241,7 +4241,7 @@ export function wireSessionToIpc(session: ReturnType<Maker['getSession']>): void
       if (event.type === 'agent_task_update') {
         onAgentTaskUpdateEvent(session.id, event.data);
         // Subagent workspace is an observer only: normalize the existing
-        // harness event into Cindy's durable record on the same FIFO as chat
+        // harness event into Zbot's durable record on the same FIFO as chat
         // messages. No launch/control path or provider payload is modified.
         const source =
           event.source === 'claude-code' || event.source === 'codex' || event.source === 'pi'
@@ -5288,7 +5288,7 @@ export function wireSessionToIpc(session: ReturnType<Maker['getSession']>): void
             }
           });
       }
-      // Pi done 事件同样携带 per-turn token/cache 明细。Pi 复用 Cindy 的 provider
+      // Pi done 事件同样携带 per-turn token/cache 明细。Pi 复用 Zbot 的 provider
       // 路由，因此计费形态必须看 session provider，而不是把它当成一个新的计费方：
       //   openai / anthropic / xai → 用户订阅，显示剩余窗口 + 本对话价值；
       //   xd / 默认网关            → 实际 gateway cost。
@@ -6026,7 +6026,7 @@ export function registerMakerIpc(maker: Maker, options: RegisterMakerIpcOptions)
       if (!isPiSubagentTerminal(run.state) && !canHostControlPiSubagentRun(run, process.pid)) {
         throwIpcError(
           'PRECONDITION_FAILED',
-          'This Subagent run belongs to another running Cindy instance. Control it from that window.',
+          'This Subagent run belongs to another running Zbot instance. Control it from that window.',
         );
       }
       return (await controlPiSubagentRuns(runRoot, run.runId, 'stop')) > 0;
@@ -6097,7 +6097,7 @@ export function registerMakerIpc(maker: Maker, options: RegisterMakerIpcOptions)
     if (!canHostControlPiSubagentRun(run, process.pid)) {
       throwIpcError(
         'PRECONDITION_FAILED',
-        'This Subagent run belongs to another running Cindy instance. Control it from that window.',
+        'This Subagent run belongs to another running Zbot instance. Control it from that window.',
       );
     }
     const controlled = await controlPiSubagentRuns(
@@ -6603,7 +6603,7 @@ export function registerMakerIpc(maker: Maker, options: RegisterMakerIpcOptions)
       invalidatePiEnvironment();
     },
   });
-  // Claude 原生 Auto 分类器不可用 → 会话仍保持 Auto，只把后续审批切到 Cindy reviewer。
+  // Claude 原生 Auto 分类器不可用 → 会话仍保持 Auto，只把后续审批切到 Zbot reviewer。
   // coordinator 内部复核 DB 仍为 auto 并按 session 去重；不改偏好、不弹提示。
   const handleClaudeAutoClassifierUnavailable = createClaudeAutoPermissionFallbackCoordinator({
     getSession: (sessionId) => maker.getSession(sessionId),
@@ -6769,7 +6769,7 @@ export function registerMakerIpc(maker: Maker, options: RegisterMakerIpcOptions)
           await desktopCodexAuthAdapter.ensureGlobalCodexAssets();
         } else {
           // Pi scans ~/.agents/skills directly. Refresh the managed projection here so a
-          // Codex-only skill added after Cindy startup is visible without using another agent
+          // Codex-only skill added after Zbot startup is visible without using another agent
           // or restarting the app first. Claude keeps the same shared-root refresh semantics.
           await desktopClaudeAuthAdapter.ensureSharedGlobalSkills();
         }
@@ -8430,7 +8430,7 @@ export function registerMakerIpc(maker: Maker, options: RegisterMakerIpcOptions)
   registerPrecreatedWorktreeDiscardHandler(makerSessionRegistry, {
     assertCaller: (event) => {
       // device-link 的真实调用身份由 invoke async context + allowlist 证明；本机直调仍
-      // 必须来自 Cindy 自有顶层 Renderer，不能把删除能力交给 WebView/Ghost。
+      // 必须来自 Zbot 自有顶层 Renderer，不能把删除能力交给 WebView/Ghost。
       if (!isDeviceLinkInvoke()) {
         assertTrustedAppRendererEvent(event as Parameters<typeof assertTrustedAppRendererEvent>[0]);
       }
@@ -14421,7 +14421,7 @@ export function registerMakerIpc(maker: Maker, options: RegisterMakerIpcOptions)
       agentKind: 'pi',
       workingDir: meta.workDir,
       model: meta.model,
-      // providerId=null 是显式的 Cindy 默认路由；undefined 才允许 Pi 按同名模型
+      // providerId=null 是显式的 Zbot 默认路由；undefined 才允许 Pi 按同名模型
       // 反查原生 BYOM。会话树懒恢复必须原样保留 DB 的三态契约。
       providerId: row.providerId,
       resumeSessionId: meta.sdkSessionId,
@@ -14791,7 +14791,7 @@ export function registerMakerIpc(maker: Maker, options: RegisterMakerIpcOptions)
         } else {
           await maker.setAgentMemory('claude-code', settings.claudeCode);
         }
-        // Pi 的自动记忆以 Cindy Memory 为存储层，不参与“启用 Cindy 时关闭原生记忆”联动；
+        // Pi 的自动记忆以 Zbot Memory 为存储层，不参与“启用 Zbot 时关闭原生记忆”联动；
         // reset 仍要把存活 Pi runtime 的独立开关恢复成默认值。
         if (maker.listAvailableAgents().includes('pi')) {
           await maker.setAgentMemory('pi', settings.pi);
@@ -15283,7 +15283,7 @@ async function checkWorkDirExists(
       log.info('send: recreated missing dialogue workdir', { sessionId, workingDir });
       return true;
     }
-    // Cindy 托管 worktree 被外部 PR cleanup / 手动 git 命令移除时，先按 DB 中
+    // Zbot 托管 worktree 被外部 PR cleanup / 手动 git 命令移除时，先按 DB 中
     // 的精确 worktree_path 从本地或 origin tracking 分支重建。普通用户目录绝不
     // 猜测 fallback；快照冲突也保持阻断，交给恢复横幅显式处理。
     const restored = await restoreMissingManagedWorktreeForSession(sessionId, workingDir);
@@ -15367,7 +15367,7 @@ function redactEventForRenderer(event: AgentEvent): AgentEvent {
   const data = event.data as Record<string, unknown>;
   const safeData = { ...data };
   let changed = false;
-  // Main consumes this Cindy-owned durable projection marker before the event
+  // Main consumes this Zbot-owned durable projection marker before the event
   // crosses renderer/device-link boundaries. Live task-card payloads therefore
   // keep their existing wire shape and older mobile clients need no upgrade.
   if (event.type === 'agent_task_update') {

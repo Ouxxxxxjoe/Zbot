@@ -18,7 +18,7 @@
  *   node apps/desktop/scripts/generate-win-ico.mjs [master.png] [out.ico]
  *   默认：master = apps/desktop/resources/icon-master-1024.png
  *         out    = apps/desktop/resources/icon.ico
- *   使用默认 out 时还会同步生成 resources/icon.png，以及 cindy-updater 的
+ *   使用默认 out 时还会同步生成 resources/icon.png，以及 zbot-updater 的
  *   src-tauri/icons/icon.ico 与 icon.png，避免主应用和更新器图标漂移。
  */
 import fs from 'node:fs';
@@ -30,7 +30,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const resourcesDir = path.join(__dirname, '..', 'resources');
 const defaultOutPath = path.join(resourcesDir, 'icon.ico');
 const defaultPngPath = path.join(resourcesDir, 'icon.png');
-const updaterIconsDir = path.join(__dirname, '..', 'cindy-updater', 'src-tauri', 'icons');
+const updaterIconsDir = path.join(__dirname, '..', 'zbot-updater', 'src-tauri', 'icons');
 
 const masterPath = process.argv[2] ?? path.join(resourcesDir, 'icon-master-1024.png');
 const outPath = process.argv[3] ?? defaultOutPath;
@@ -101,7 +101,7 @@ async function createRoundedMaster() {
 
 /**
  * 默认生成时同步主应用 PNG 与 updater 的 PNG/ICO 资源。
- * cindy-updater 属于高风险模块，合入涉及其资源的 PR 前必须保留 owner 确认。
+ * zbot-updater 属于高风险模块，合入涉及其资源的 PR 前必须保留 owner 确认。
  */
 async function syncDefaultCompanionIcons(roundedMaster) {
   const png = await sharp(roundedMaster).resize(512, 512).png().toBuffer();

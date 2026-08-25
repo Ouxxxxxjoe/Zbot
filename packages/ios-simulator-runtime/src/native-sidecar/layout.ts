@@ -2,7 +2,7 @@ import path from "node:path";
 
 export const IOS_SIMULATOR_NATIVE_SIDECAR_EXECUTABLE = "ios-simulator-sidecar";
 export const IOS_SIMULATOR_NATIVE_HELPER_BUNDLE =
-  "Cindy iOS Simulator Helper.app";
+  "Zbot iOS Simulator Helper.app";
 
 /** Returns the source-tree binary used by Desktop development and native smoke tests. */
 export function iosSimulatorNativeDevelopmentSidecarPath(
@@ -19,7 +19,7 @@ export function iosSimulatorNativeDevelopmentSidecarPath(
 }
 
 /**
- * Returns the Host-owned nested helper executable in a packaged Cindy app.
+ * Returns the Host-owned nested helper executable in a packaged Zbot app.
  * The caller must validate that `resourceRoot` is the trusted Electron resource root.
  */
 export function iosSimulatorPackagedHelperExecutablePath(

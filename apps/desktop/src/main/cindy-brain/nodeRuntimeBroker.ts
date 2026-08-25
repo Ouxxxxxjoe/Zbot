@@ -1343,7 +1343,7 @@ export class GhostNodeRuntimeBroker {
         {
           protocolVersion: MCP_PROTOCOL_VERSION,
           capabilities: {},
-          clientInfo: { name: 'Cindy', version: '1' },
+          clientInfo: { name: 'Zbot', version: '1' },
         },
         10_000,
       ).then(() => {
@@ -1517,7 +1517,7 @@ export class GhostNodeRuntimeBroker {
       this.writeLine(entry, {
         jsonrpc: '2.0',
         id: msg.id,
-        error: { code: -32601, message: 'Cindy host does not expose reverse RPC methods' },
+        error: { code: -32601, message: 'Zbot host does not expose reverse RPC methods' },
       });
       return;
     }

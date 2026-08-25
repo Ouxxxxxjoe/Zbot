@@ -33,53 +33,9 @@ const CASES: Array<{
     done: '已完成 ✓',
     error: '执行失败',
     needsReply: '需要你回复',
-    externalDone: 'Cindy · 任务「整理报告」已完成 ✓',
-    externalError: 'Cindy · 任务「整理报告」执行失败',
-    externalNeedsReply: 'Cindy · 任务「整理报告」需要你回复',
-  },
-  {
-    locale: 'zh-TW',
-    title: '整理報告',
-    untitled: '未命名任務',
-    done: '已完成 ✓',
-    error: '執行失敗',
-    needsReply: '需要你回覆',
-    externalDone: 'Cindy · 任務「整理報告」已完成 ✓',
-    externalError: 'Cindy · 任務「整理報告」執行失敗',
-    externalNeedsReply: 'Cindy · 任務「整理報告」需要你回覆',
-  },
-  {
-    locale: 'en',
-    title: 'Report',
-    untitled: 'Untitled session',
-    done: 'Completed ✓',
-    error: 'Failed',
-    needsReply: 'Reply needed',
-    externalDone: 'Cindy · Session “Report” completed ✓',
-    externalError: 'Cindy · Session “Report” failed',
-    externalNeedsReply: 'Cindy · Session “Report” needs your reply',
-  },
-  {
-    locale: 'ja',
-    title: 'レポート',
-    untitled: '無題のセッション',
-    done: '完了しました ✓',
-    error: '実行に失敗しました',
-    needsReply: '返信が必要です',
-    externalDone: 'Cindy · セッション「レポート」が完了しました ✓',
-    externalError: 'Cindy · セッション「レポート」の実行に失敗しました',
-    externalNeedsReply: 'Cindy · セッション「レポート」への返信が必要です',
-  },
-  {
-    locale: 'ko',
-    title: '보고서',
-    untitled: '제목 없는 세션',
-    done: '완료됨 ✓',
-    error: '실행 실패',
-    needsReply: '답변이 필요합니다',
-    externalDone: 'Cindy · 세션 “보고서” 완료됨 ✓',
-    externalError: 'Cindy · 세션 “보고서” 실행 실패',
-    externalNeedsReply: 'Cindy · 세션 “보고서”에 답변이 필요합니다',
+    externalDone: 'Zbot · 任务「整理报告」已完成 ✓',
+    externalError: 'Zbot · 任务「整理报告」执行失败',
+    externalNeedsReply: 'Zbot · 任务「整理报告」需要你回复',
   },
 ];
 
@@ -98,25 +54,23 @@ describe('session notification copy', () => {
     );
   });
 
-  it('运行时切换语言后下一条通知立即跟随', () => {
-    setMainLocale('en');
-    expect(getSessionNotificationBody('needs-reply')).toBe('Reply needed');
-    setMainLocale('zh-TW');
-    expect(getSessionNotificationBody('needs-reply')).toBe('需要你回覆');
+  it('下一条通知立即跟随当前语言', () => {
+    setMainLocale('zh-CN');
+    expect(getSessionNotificationBody('needs-reply')).toBe('需要你回复');
   });
 
   it.each(['foo$&bar', 'foo$`bar', "foo$'bar", 'foo$$bar'])(
     '将包含 JavaScript replacement token 的标题 %s 原样插入三种外部通知',
     (title) => {
-      setMainLocale('en');
+      setMainLocale('zh-CN');
       expect(getSessionExternalNotificationText(title, 'done')).toBe(
-        `Cindy · Session “${title}” completed ✓`,
+        `Zbot · 任务「${title}」已完成 ✓`,
       );
       expect(getSessionExternalNotificationText(title, 'error')).toBe(
-        `Cindy · Session “${title}” failed`,
+        `Zbot · 任务「${title}」执行失败`,
       );
       expect(getSessionExternalNotificationText(title, 'needs-reply')).toBe(
-        `Cindy · Session “${title}” needs your reply`,
+        `Zbot · 任务「${title}」需要你回复`,
       );
     },
   );

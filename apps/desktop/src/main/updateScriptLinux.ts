@@ -1,7 +1,7 @@
 /**
  * updateScriptLinux — pure builder for the Linux .deb update-apply bash script.
  *
- * Linux has no cindy-updater binary. After the Electron process exits, this
+ * Linux has no zbot-updater binary. After the Electron process exits, this
  * script asks polkit (pkexec) to install the staged .deb over the existing
  * package, then relaunches the same executable path.
  *
@@ -42,7 +42,7 @@ export interface LinuxUpdateScriptParams {
   exePath: string;
   /** Update lock file the bootstrap spins on during the swap. */
   lockFilePath: string;
-  /** cindy-update.log path. */
+  /** zbot-update.log path. */
   logPath: string;
   timings?: Partial<LinuxUpdateScriptTimings>;
 }

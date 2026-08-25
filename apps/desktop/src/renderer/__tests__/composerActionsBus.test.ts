@@ -13,7 +13,7 @@ describe('composerActionsBus', () => {
     const unsubscribe = subscribeSessionLinkInsert(handler);
     const detail = {
       targetSessionId: 'session-a',
-      href: 'cindy://session/session-a?message=message-a',
+      href: 'zbot://session/session-a?message=message-a',
     };
 
     insertSessionLinkIntoComposer(detail);

@@ -71,7 +71,7 @@ describe('hydrateQueuedAgentReferences message visibility', () => {
   }
 
   function queued(capturedText = 'Composer-captured fallback'): AgentInputQueuedMessage {
-    const href = 'cindy://session/source-session?message=target-message';
+    const href = 'zbot://session/source-session?message=target-message';
     const text = `inspect ${href}`;
     const reference = {
       kind: 'message' as const,

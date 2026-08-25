@@ -21,7 +21,7 @@ const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..
 const DEFAULT_FIXTURE = path.join(os.tmpdir(), 'xdt-voice-input-benchmark', 'fixture.wav');
 const DEFAULT_REPORT_OUT = path.join(os.tmpdir(), 'xdt-voice-input-benchmark', 'last-report.json');
 const DEFAULT_PHRASE =
-  'Voice input benchmark. Today we test realtime transcription latency for Cindy.';
+  'Voice input benchmark. Today we test realtime transcription latency for Zbot.';
 const OPENAI_REALTIME_URL = 'wss://api.openai.com/v1/realtime?intent=transcription';
 const DEFAULT_MODEL = 'gpt-realtime-whisper';
 const DEFAULT_LITELLM_BASE_URL = process.env.VITE_XD_GATEWAY_BASE_URL?.trim() || '';
@@ -632,7 +632,7 @@ const path = require('node:path');
 const { app, safeStorage } = require('electron');
 // safeStorage service name remains Cindy for the shared packaged CN/Global keychain;
 // the profile path is selected explicitly so Global reads CindyGlobal storage.
-app.setName('Cindy');
+app.setName('Zbot');
 app.setPath('userData', ${JSON.stringify(userDataDir)});
 app.whenReady().then(() => {
   try {

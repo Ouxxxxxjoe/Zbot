@@ -40,7 +40,7 @@ const ARTIFACT: IOSSimulatorSidecarArtifactDescriptor = {
   version: '1.2.3',
   architecture: 'arm64',
   executablePath:
-    '/Applications/Cindy.app/Contents/Helpers/Cindy iOS Simulator Helper.app/Contents/MacOS/ios-simulator-sidecar',
+    '/Applications/Zbot.app/Contents/Helpers/Zbot iOS Simulator Helper.app/Contents/MacOS/ios-simulator-sidecar',
   trust: 'verified',
   sha256: 'a'.repeat(64),
 };
@@ -51,7 +51,7 @@ const OPTIONS: IOSSimulatorReleaseGateOptions = {
   platform: 'darwin',
   architecture: 'arm64',
   hostOsRelease: '25.3.0',
-  resourcesPath: '/Applications/Cindy.app/Contents/Resources',
+  resourcesPath: '/Applications/Zbot.app/Contents/Resources',
   version: '1.2.3',
 };
 

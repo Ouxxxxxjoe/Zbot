@@ -1,5 +1,5 @@
 /**
- * folderContextMenu — Windows 文件夹右键菜单 "通过 Cindy 打开" 自注册
+ * folderContextMenu — Windows 文件夹右键菜单 "通过 Zbot 打开" 自注册
  * ---------------------------------------------------------------------------
  * 设计目标:
  *   1. **存量用户也能用上**:不仅在 installer 跑时写一次注册表,app 启动时也尝试
@@ -11,7 +11,7 @@
  *
  * 注册表项:
  *   HKCU\Software\Classes\Directory\shell\cindy
- *     (Default) = "通过 Cindy 打开"          ; 菜单 label(BRAND_NAME 派生)
+ *     (Default) = "通过 Zbot 打开"          ; 菜单 label(BRAND_NAME 派生)
  *     Icon      = "<exe>,0"                  ; 从 exe 资源取
  *     \command
  *       (Default) = "\"<exe>\" --open-folder \"%V\""
@@ -35,7 +35,7 @@
  *   本期不做。Cursor / VS Code / Sublime Text 目前都是此行为,用户已习惯。
  *
  * dev 模式:
- *   process.execPath 指向 Electron 解释器而不是 Cindy.exe,即使写进去也无法
+ *   process.execPath 指向 Electron 解释器而不是 zagent.exe,即使写进去也无法
  *   正常启动 app。dev 模式直接跳过,只在 packaged 模式生效。
  */
 
@@ -55,7 +55,7 @@ const log = createLogger('folderContextMenu');
  *
  * 文案故意全中文 / 不做 i18n:Windows 注册表 MUIVerb 多语言切换需要 .mui 资源
  * 文件,成本高。绝大多数用户是中文环境,英文用户能看懂品牌名即可。
- * 名字用区域 exe 基名(cn/global 'Cindy' / dev 'CindyDev'):dev 包菜单项
+ * 名字用区域 exe 基名(cn/global zagent / dev zagentDev):dev 包菜单项
  * 文案与正式包可区分;与 installer.nsh customInstall 写入的文案保持一致,
  * 否则启动自愈会误判"值漂移"反复重写。
  */
@@ -63,10 +63,10 @@ const MENU_LABEL = `通过 ${brandExecutableName(CURRENT_CINDY_REGION)} 打开`;
 
 /**
  * shell 子键名(2026-07-17 品牌翻转:xdt-maker → cindy;按区域 exe 基名
- * 派生,cn/global 'Cindy'——2026-07-26 显示名统一后两区同键,双装互写已被
- * owner 接受 / dev 'CindyDev' 仍独立)。必须与老 XDMaker 安装的
+ * 派生,cn/global zagent——两区同键,双装互写已被
+ * owner 接受 / dev zagentDev 仍独立)。必须与老品牌安装的
  * `...\shell\xdt-maker` 键**并存而不复用**。Windows 注册表键名大小写不敏感,
- * 'Cindy' 与历史写入的 'cindy' 是同一个键,存量用户行为零变化;与
+ * zagent 与历史写入的 cindy 是同一个键,存量用户行为零变化;与
  * installer.nsh 的 ${PRODUCT_FILENAME} 键名同源。
  */
 const SHELL_KEY_NAME = brandExecutableName(CURRENT_CINDY_REGION);

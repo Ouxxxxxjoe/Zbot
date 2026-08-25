@@ -112,7 +112,7 @@ const logger = createLogger('mcp/cindy_ios_simulator');
 const BUILD_DIAGNOSTICS_TTL_MS = 30 * 60_000;
 const PLUGIN_ENVIRONMENT_CACHE_MS = 30_000;
 const MAX_BUILD_DIAGNOSTICS = 32;
-const MANAGED_BUILD_RESULT_BUNDLE_PATTERN = /^CindyBuild(?:-[0-9a-f-]+)?\.xcresult$/i;
+const MANAGED_BUILD_RESULT_BUNDLE_PATTERN = /^ZbotBuild(?:-[0-9a-f-]+)?\.xcresult$/i;
 const DEFAULT_DEVICE_LIVENESS_INTERVAL_MS = 1_000;
 const MAX_WDA_VIEWER_FRAMES_PER_SECOND = 20;
 const MAX_NATIVE_H264_VIEWER_FRAMES_PER_SECOND = 60;
@@ -372,7 +372,7 @@ export function createRegistryBackedIOSSimulatorActor(
   } catch (error) {
     startupError = new IOSSimulatorInstanceError(
       'DEVICE_BUSY',
-      'Cindy cannot safely manage iOS Simulator devices because the ownership registry is unavailable.',
+      'Zbot cannot safely manage iOS Simulator devices because the ownership registry is unavailable.',
       false,
     );
     logger.error('iOS Simulator ownership registry writer could not start', {
@@ -391,7 +391,7 @@ export function createRegistryBackedIOSSimulatorActor(
         // process cannot claim the same devices or overwrite recovery evidence.
         startupError = new IOSSimulatorInstanceError(
           'DEVICE_BUSY',
-          'Cindy cannot safely manage iOS Simulator devices because the ownership registry is invalid.',
+          'Zbot cannot safely manage iOS Simulator devices because the ownership registry is invalid.',
           false,
         );
         logger.error('iOS Simulator ownership registry is unavailable', {

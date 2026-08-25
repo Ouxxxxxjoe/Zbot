@@ -338,11 +338,11 @@ export function getModelAccessStatus(): ModelAccessStatus {
  */
 export async function refreshXdGatewayModels(): Promise<void> {
   if (!getAppCapabilities().canUseCindyGateway) {
-    throwIpcError('PERMISSION_DENIED', 'Cindy AI requires a Cindy account.');
+    throwIpcError('PERMISSION_DENIED', 'Zbot AI requires a Zbot account.');
   }
   const status = await ensureCredentialsReadyForModelsRefresh(getSync());
   if (status.state !== 'ok') {
-    throwIpcError('MODEL_ACCESS_FAILED', 'Cindy AI credentials are not ready.');
+    throwIpcError('MODEL_ACCESS_FAILED', 'Zbot AI credentials are not ready.');
   }
   const gen = authGeneration;
   // onStatusChange(ok) 已经 schedule；重复调用会复用同世代在途请求。若此时仍有
@@ -362,11 +362,11 @@ export async function refreshXdGatewayModels(): Promise<void> {
     case 'succeeded':
       return;
     case 'not-started':
-      throwIpcError('MODEL_ACCESS_FAILED', 'Cindy AI model list refresh did not start.');
+      throwIpcError('MODEL_ACCESS_FAILED', 'Zbot AI model list refresh did not start.');
     case 'account-changed':
-      throwIpcError('MODEL_ACCESS_FAILED', 'Cindy AI account changed during model list refresh.');
+      throwIpcError('MODEL_ACCESS_FAILED', 'Zbot AI account changed during model list refresh.');
     case 'failed':
-      throwIpcError('MODEL_ACCESS_FAILED', 'Cindy AI model list refresh failed.');
+      throwIpcError('MODEL_ACCESS_FAILED', 'Zbot AI model list refresh failed.');
   }
 }
 
@@ -439,14 +439,14 @@ export function initModelAccess(): void {
 
   ipcMain.handle('model-access:retry', async (): Promise<ModelAccessStatus> => {
     if (!getAppCapabilities().canUseCindyGateway) {
-      throwIpcError('PERMISSION_DENIED', 'Cindy AI requires a Cindy account.');
+      throwIpcError('PERMISSION_DENIED', 'Zbot AI requires a Zbot account.');
     }
     return sync.retry();
   });
 
   ipcMain.handle('model-access:rotate', async (): Promise<ModelAccessStatus> => {
     if (!getAppCapabilities().canUseCindyGateway) {
-      throwIpcError('PERMISSION_DENIED', 'Cindy AI requires a Cindy account.');
+      throwIpcError('PERMISSION_DENIED', 'Zbot AI requires a Zbot account.');
     }
     try {
       return await sync.rotate();

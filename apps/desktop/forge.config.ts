@@ -11,6 +11,7 @@ import { AutoUnpackNativesPlugin } from '@electron-forge/plugin-auto-unpack-nati
 import { FusesPlugin } from '@electron-forge/plugin-fuses';
 import { VitePlugin } from '@electron-forge/plugin-vite';
 import type { ForgeArch, ForgeConfig, ForgePlatform } from '@electron-forge/shared-types';
+import { BRAND_NAME } from '@cindy/maker-shared/branding';
 import {
   BRAND_IDENTITY,
   allDeepLinkSchemes,
@@ -25,9 +26,9 @@ import { stagePackagedThirdPartyNotices } from './forge-third-party-notices';
 const _require = createRequire(__filename);
 const DESKTOP_PACKAGE_VERSION = (_require('./package.json') as { version: string }).version;
 
-// ── 构建期身份(2026-07-17 Cindy 渠道分叉) ─────────────────────────────────────
+// ── 构建期身份(Zbot fork,2026-08 品牌切换) ─────────────────────────────────
 // 区域默认 global;中国大陆包由发布脚本显式注入 CINDY_AUTH_REGION=cn。appId 随区域
-// 派生(com.xd.cindycn / com.xd.cindy),必须与运行时 shared/brandRegion
+// 派生(com.zhida.agentcn / com.zhida.agent),必须与运行时 shared/brandRegion
 // (经 vite.main.config 的 VITE_CINDY_AUTH_REGION define 烘焙)同源——AUMID
 // 三位一体:NSIS appId = 运行时 setAppUserModelId = 快捷方式 AUMID。
 const CINDY_REGION = resolveCindyRegion(
@@ -40,14 +41,14 @@ process.env.VITE_CINDY_AUTH_REGION = CINDY_REGION;
 const CINDY_APP_ID = brandAppId(CINDY_REGION);
 const CINDY_UTI_PREFIX = brandBundleIdPrefix(CINDY_REGION);
 /**
- * 可执行文件基名,按区域派生(cn/global 同值 'Cindy',dev 'CindyDev';
- * 2026-07-26 显示名统一决策,cn/global 文件层双装隔离随之放弃,见
+ * 可执行文件基名,按区域派生(cn/global 同值 'zagent',dev 'zagentDev';
+ * 显示名统一决策,cn/global 文件层双装隔离随之放弃,见
  * brandIdentity.ts executableNameByRegion doc)。运行时 userData 目录由 main
  * 入口按同一区域切换(src/main/regionUserData.ts),两端从 brand-identity
  * 同源派生,cn/global 数据仍分库。
  */
 const CINDY_EXE = brandExecutableName(CINDY_REGION);
-/** 更新器二进制文件名(cindy-updater.exe)。 */
+/** 更新器二进制文件名(zbot-updater.exe)。 */
 const UPDATER_EXE = `${BRAND_IDENTITY.updaterName}.exe`;
 
 // discord.js is externalized from the main Vite bundle because its circular
@@ -422,7 +423,7 @@ const isDev = process.env.NODE_ENV !== 'production' && !process.argv.includes('m
 const isWin = process.platform === 'win32';
 
 /**
- * Build cindy-updater (Rust + Tauri) and copy the release binary into
+ * Build zbot-updater (Rust + Tauri) and copy the release binary into
  * resources/. Runs once per `forge package` / `make` invocation, so
  * `pnpm build` / `pnpm release:win` always ship the latest updater.
  *
@@ -430,13 +431,13 @@ const isWin = process.platform === 'win32';
  * Hard-fails if cargo is missing or the build errors — we'd rather break
  * the release than ship a stale updater.
  */
-function buildCindyUpdater(): void {
+function buildZbotUpdater(): void {
   if (process.platform !== 'win32') return;
   console.log(`[forge:prePackage] Building ${UPDATER_EXE} (Rust + Tauri)...`);
 
-  const updaterRoot = path.join(__dirname, 'cindy-updater', 'src-tauri');
+  const updaterRoot = path.join(__dirname, 'zbot-updater', 'src-tauri');
   if (!fs.existsSync(updaterRoot)) {
-    throw new Error(`[forge] cindy-updater source missing at ${updaterRoot}`);
+    throw new Error(`[forge] zbot-updater source missing at ${updaterRoot}`);
   }
 
   // winget-installed Rust may not be on PATH in this shell session, fall
@@ -509,7 +510,7 @@ function findMtExe(): string {
 }
 
 function patchUpdaterManifest(exePath: string): void {
-  const manifestPath = path.join(__dirname, 'cindy-updater', 'src-tauri', 'cindy-updater.manifest');
+  const manifestPath = path.join(__dirname, 'zbot-updater', 'src-tauri', 'zbot-updater.manifest');
   if (!fs.existsSync(manifestPath)) {
     throw new Error(`[forge] manifest missing at ${manifestPath}`);
   }
@@ -633,29 +634,29 @@ function signPackagedExes(buildPath: string): void {
 
 /**
  * macOS 打包显示名(与 win32metadata 同构):packaged 后把
- * .app 的 Info.plist 里 CFBundleDisplayName 改成 Cindy——Dock 名、Cmd+Tab、
+ * .app 的 Info.plist 里 CFBundleDisplayName 改成 Zbot——Dock 名、Cmd+Tab、
  * Finder、系统通知读的都是它(显示优先级 CFBundleDisplayName > CFBundleName)。
  *
  * ⚠️ 绝不能改 CFBundleName:Electron 启动时用主 app 的 CFBundleName 拼
  * `Frameworks/<CFBundleName> Helper.app` 查找 Helper(electron_main_delegate_mac.mm,
  * 唯一 fallback 是 'Electron Helper.app'),而 Helper 目录名跟随 packager name
- * (区域派生:cn/global 'Cindy' / dev 'CindyDev')。把 CFBundleName 改成
+ * (区域派生:cn/global 'zagent' / dev 'zagentDev')。把 CFBundleName 改成
  * 与 Helper 目录不一致的值会让包启动即 FATAL "Unable to find helper app"
  * (SIGTRAP;2026-07-21 dev region smoke 实踩)。
  * 代价:菜单栏粗体标题取自 CFBundleName 且运行时改不了,dev 构建上显示
- * CindyDev 而非 Cindy——cn/global(packager 已写 Cindy)不受影响,可接受。
+ * zagentDev 而非 Zbot——cn/global(packager 已写 Zbot)不受影响,可接受。
  *
  * 为什么在 postPackage 改而不是 packagerConfig:electron-packager 在
  * updatePlistFiles 里先合并 extendInfo、后用 appName/executableName 覆写
  * CFBundleName / CFBundleDisplayName,extendInfo 改不动这两个键;而给
- * packagerConfig.name 设 'Cindy' 会连 .app 目录名一起改,踩标识符红线。
+ * packagerConfig.name 设 'zagent' 会连 .app 目录名一起改,踩标识符红线。
  *
  * 历史沿革:本步骤诞生于身份翻转前(当时 .app/CFBundleExecutable/bundle id/
  * userData 均为 xdt-maker 系,这里是唯一的显示名来源)。2026-07-17 身份翻转后
- * cn 构建的 packager 本身就会把 CFBundleName/CFBundleDisplayName 写成 Cindy,
- * 对 cn 是冗余兜底;2026-07-26 global exe 名与 cn 统一为 'Cindy' 后 global
- * 同样只是冗余兜底;dev 构建的 packager name 仍是 'CindyDev',本步骤把
- * Dock 名、Cmd+Tab、系统通知的**显示层**拉回 Cindy(BRAND_NAME 各区共用),
+ * cn 构建的 packager 本身就会把 CFBundleName/CFBundleDisplayName 写成 Zbot,
+ * 对 cn 是冗余兜底;2026-07-26 global exe 名与 cn 统一为 'zagent' 后 global
+ * 同样只是冗余兜底;dev 构建的 packager name 仍是 'zagentDev',本步骤把
+ * Dock 名、Cmd+Tab、系统通知的**显示层**拉回 Zbot(BRAND_NAME 各区共用),
  * 对 dev 是显示名的唯一来源。正式签名/公证(外部发布流程)发生在
  * postPackage 之后,本改动会被签名一起封印,不存在破坏签名问题。
  */
@@ -671,14 +672,14 @@ function applyMacPackagedDisplayName(buildPath: string, platform: string): void 
     // 否则 Electron 找不到 Helper app(见函数头 ⚠️)。
     const key = 'CFBundleDisplayName';
     // packager 必写该键,Set 即可;Add 兜底防未来 packager 行为变化。
-    const set = spawnSync('/usr/libexec/PlistBuddy', ['-c', `Set :${key} Cindy`, plistPath]);
+    const set = spawnSync('/usr/libexec/PlistBuddy', ['-c', `Set :${key} ${BRAND_NAME}`, plistPath]);
     if (set.status !== 0) {
-      const add = spawnSync('/usr/libexec/PlistBuddy', ['-c', `Add :${key} string Cindy`, plistPath]);
+      const add = spawnSync('/usr/libexec/PlistBuddy', ['-c', `Add :${key} string ${BRAND_NAME}`, plistPath]);
       if (add.status !== 0) {
         throw new Error(`[forge:postPackage] PlistBuddy failed to set ${key} in ${plistPath}`);
       }
     }
-    console.log(`[forge:postPackage] mac display name → Cindy (${appDir}/Contents/Info.plist)`);
+    console.log(`[forge:postPackage] mac display name → ${BRAND_NAME} (${appDir}/Contents/Info.plist)`);
   }
 }
 
@@ -1216,7 +1217,7 @@ const makers: ForgeConfig['makers'] = [
       icon: path.join(__dirname, 'resources', 'icon.png'),
       // 双 scheme:cindy 主 + xdt-maker 兼容(老分享链接不死)。
       mimeType: allDeepLinkSchemes().map((s) => `x-scheme-handler/${s}`),
-      maintainer: 'Lizi <feedback@cindy.app>',
+      maintainer: 'Zbot Team <feedback@zbot.local>',
       // deb 包名规范要求小写;跟随区域 exe 名(cn/global cindy / dev cindydev)。
       name: CINDY_EXE.toLowerCase(),
       bin: CINDY_EXE,
@@ -1258,8 +1259,8 @@ if (isWin) {
         // 值按构建区域派生(shared/brandRegion 运行时同源),见文件头身份块。
         appId: CINDY_APP_ID,
         // 安装目录名跟随区域 exe 名(默认装到 …\Programs\<productName>):
-        // cn/global 'Cindy'(2026-07-26 显示名统一,双装同目录互抢已被 owner
-        // 接受)/ dev 'CindyDev'(仍与正式包隔离)。显式设值防 app-builder
+        // cn/global 'zagent'(2026-07-26 显示名统一,双装同目录互抢已被 owner
+        // 接受)/ dev 'zagentDev'(仍与正式包隔离)。显式设值防 app-builder
         // 回落 package.json productName 造成 dev 与正式包同目录。
         productName: CINDY_EXE,
         // Setup.exe 与 Uninstall <App>.exe 的 FileDescription 版本资源。
@@ -1269,9 +1270,9 @@ if (isWin) {
         // 不设时回落 package.json 的 npm 包描述,UAC 提权弹窗、文件属性、
         // 快捷方式悬停提示上就会显示那段面向开发者的文本。
         //
-        // ⚠️ 取 displayName 而非 CINDY_EXE:展示名两区(含 dev)共用 'Cindy',
-        // 而 exe 名 dev 派生为 'CindyDev'。用后者会让 dev 包的安装器显示
-        // CindyDev、装完的主 exe 却显示 Cindy(win32metadata 同样取
+        // ⚠️ 取 displayName 而非 CINDY_EXE:展示名两区(含 dev)共用 'zagent',
+        // 而 exe 名 dev 派生为 'zagentDev'。用后者会让 dev 包的安装器显示
+        // zagentDev、装完的主 exe 却显示 Zbot(win32metadata 同样取
         // displayName)——安装前后自相矛盾,正是本次要消除的那类不一致。
         // 文件名层的区分由 productName / shortcutName 承担,与展示层解耦。
         //
@@ -1285,8 +1286,8 @@ if (isWin) {
           uninstallerIcon: 'resources/icon.ico',
           createDesktopShortcut: 'always',
           createStartMenuShortcut: true,
-          // 快捷方式显示名,跟随区域 exe 名(cn/global 'Cindy'——同名 .lnk
-          // 双装互抢已被 owner 接受 / dev 'CindyDev')。installer.nsh 只清理/
+          // 快捷方式显示名,跟随区域 exe 名(cn/global 'zagent'——同名 .lnk
+          // 双装互抢已被 owner 接受 / dev 'zagentDev')。installer.nsh 只清理/
           // 重建自家 .lnk——同机可能并存老 XDMaker 安装,它的 xdt-maker.lnk /
           // XDMaker.lnk 属于老 app,绝不能删(共存红线,见 installer.nsh
           // customInit 注释)。
@@ -1320,39 +1321,39 @@ const config: ForgeConfig = {
     // 所以这里显式覆盖 loudness / node-pty 整个目录。
     asar: { unpack: '**/{@img/{sharp-libvips-*,sharp-win32-*},loudness,native/sqlite-vec,node-pty}/**' },
     // 打包名(out 目录 / mac .app 包名 / Helper 目录名 / 主 plist CFBundleName)
-    // 按区域派生:cn/global 'Cindy'(2026-07-26 显示名统一,.app 撞名双装
-    // 互覆已被 owner 接受)/ dev 'CindyDev'(显式设值防 packager 回落
+    // 按区域派生:cn/global 'zagent'(2026-07-26 显示名统一,.app 撞名双装
+    // 互覆已被 owner 接受)/ dev 'zagentDev'(显式设值防 packager 回落
     // package.json productName 让 dev 与正式包撞名)。mac 的 Dock/Cmd+Tab/
     // 通知**显示名**由 postPackage 的 applyMacPackagedDisplayName 经
-    // CFBundleDisplayName 统一拉回 Cindy(对 dev 是唯一显示名来源;
+    // CFBundleDisplayName 统一拉回 Zbot(对 dev 是唯一显示名来源;
     // CFBundleName 不可动,Electron 靠它找 Helper,见该函数注释)。
     name: CINDY_EXE,
     executableName: CINDY_EXE,
     // mac bundle id(与 Windows AUMID 同值,按区域派生;cn/global 是两个可并存
-    // 的系统身份,与 mobile 的 com.xd.cindycn / com.xd.cindy 同一套)。
+    // 的系统身份,与 mobile 的 com.zhida.agentcn / com.zhida.agent 同一套)。
     appBundleId: CINDY_APP_ID,
     // exe 资源元数据(任务管理器进程名、文件右键属性的显示层)。只影响展示,
-    // 与 exe 文件名 / AUMID / userData 等标识符解耦;显示层两区共用 Cindy
+    // 与 exe 文件名 / AUMID / userData 等标识符解耦;显示层两区共用 Zbot
     // (与 mac 显示名口径一致)。FileDescription 走 BRAND_IDENTITY.displayName,
     // 与 NSIS maker 的 extraMetadata.description 同一表达式——安装器/卸载器
     // 与主 exe 的「说明」字段必须同值,否则 dev 包会安装前后显示两个名字。
     win32metadata: {
-      CompanyName: 'XD',
-      ProductName: 'Cindy',
+      CompanyName: 'Zbot',
+      ProductName: BRAND_IDENTITY.displayName,
       FileDescription: BRAND_IDENTITY.displayName,
     },
     icon: 'resources/icon',
-    // 自定义 URL scheme: xdt-maker://session/<id> | xdt-maker://project/<encoded-workingDir>
+    // 自定义 URL scheme: zbot://session/<id> | zbot://project/<encoded-workingDir>
     // macOS: electron-packager 把这里的项写进 Info.plist 的 CFBundleURLTypes,
-    //        系统 LaunchServices 据此把 xdt-maker:// 链接路由到本 app。
+    //        系统 LaunchServices 据此把 zbot:// 链接路由到本 app。
     // Windows: 不读这个字段(走 app.setAsDefaultProtocolClient 写注册表), 见
     //          main/deepLink.ts registerDeepLinkProtocol()。
     protocols: [
-      // 双 scheme 注册:cindy:// 主 + xdt-maker:// 永久兼容(存量分享链接不死)。
-      { name: 'Cindy Deep Link', schemes: [...allDeepLinkSchemes()] },
+      // 主 scheme 注册:zbot://(如有 legacy 由 allDeepLinkSchemes 一并注册)。
+      { name: `${BRAND_NAME} Deep Link`, schemes: [...allDeepLinkSchemes()] },
     ],
-    // macOS 文件夹右键 "打开方式 → Cindy" 入口:
-    //   声明 app 能接受 public.folder, Finder 自动把 Cindy 出现在 "打开方式" 列表。
+    // macOS 文件夹右键 "打开方式 → Zbot" 入口:
+    //   声明 app 能接受 public.folder, Finder 自动把 Zbot 出现在 "打开方式" 列表。
     //   LSHandlerRank=Alternate: 不抢 Finder 默认 handler, 仅作为可选项之一。
     //   CFBundleTypeRole=Editor: 用户对该类型有 "打开+操作" 能力 (而非 Viewer 只看)。
     //   触发后 macOS 通过 app.on('open-file') 事件把目录路径推给 main 进程,
@@ -1365,19 +1366,19 @@ const config: ForgeConfig = {
       // agent 会话中访问受 TCC 保护的目录(桌面/文稿/下载)时，macOS 需要这些声明才能向
       // 用户展示授权弹窗；缺失时系统直接静默拒绝，不弹窗。
       NSDesktopFolderUsageDescription:
-        "Cindy's AI agent needs access to read and write files on your Desktop.",
+        `${BRAND_NAME}'s AI agent needs access to read and write files on your Desktop.`,
       NSDocumentsFolderUsageDescription:
-        "Cindy's AI agent needs access to read and write files in your Documents folder.",
+        `${BRAND_NAME}'s AI agent needs access to read and write files in your Documents folder.`,
       NSDownloadsFolderUsageDescription:
-        "Cindy's AI agent needs access to read and write files in your Downloads folder.",
+        `${BRAND_NAME}'s AI agent needs access to read and write files in your Downloads folder.`,
       // 智能通讯录导入: 经 osascript 向"通讯录"发 Apple Events(只读拉取)。
       // 缺这条声明 macOS 会不弹授权窗直接拒绝(-1743), 用户只看到静默失败。
       NSAppleEventsUsageDescription:
-        'Cindy uses Apple Events to read Contacts you import and to add or update Contacts you explicitly export.',
+        `${BRAND_NAME} uses Apple Events to read Contacts you import and to add or update Contacts you explicitly export.`,
       NSContactsUsageDescription:
-        'Cindy accesses Contacts only when you import them or explicitly export additions or updates.',
+        `${BRAND_NAME} accesses Contacts only when you import them or explicitly export additions or updates.`,
       NSLocalNetworkUsageDescription:
-        'Cindy uses your local network to sync end-to-end encrypted Smart Contacts directly between your online desktop devices.',
+        `${BRAND_NAME} uses your local network to sync end-to-end encrypted Smart Contacts directly between your online desktop devices.`,
       CFBundleDocumentTypes: [
         {
           CFBundleTypeName: 'Folder',
@@ -1385,14 +1386,14 @@ const config: ForgeConfig = {
           LSHandlerRank: 'Alternate',
           LSItemContentTypes: ['public.folder'],
         },
-        // Cindy 卡带 (.cindy):Finder 双击 → open-file 事件 → 装入 + 停靠
+        // Zbot 卡带 (.cindy):Finder 双击 → open-file 事件 → 装入 + 停靠
         // (卡带系统;Windows 半边走注册表自注册,见 brain/fileAssociation.ts)。
         // LSItemContentTypes 指向下方 UTExportedTypeDeclarations 声明的自有 UTI
         // (UTI 里带扩展名 + MIME 映射);CFBundleTypeExtensions 保留作旧系统
         // 兜底(LSItemContentTypes 存在时会被忽略)。Owner 表示本 app 是该类型
         // 的归属方。⚠️ 仅打包生效,mac 真机轮验证。
         {
-          CFBundleTypeName: 'Cindy Cartridge',
+          CFBundleTypeName: `${BRAND_NAME} Cartridge`,
           CFBundleTypeRole: 'Viewer',
           LSHandlerRank: 'Owner',
           LSItemContentTypes: [`${CINDY_UTI_PREFIX}.cindy`],
@@ -1407,7 +1408,7 @@ const config: ForgeConfig = {
       UTExportedTypeDeclarations: [
         {
           UTTypeIdentifier: `${CINDY_UTI_PREFIX}.cindy`,
-          UTTypeDescription: 'Cindy Cartridge',
+          UTTypeDescription: `${BRAND_NAME} Cartridge`,
           UTTypeConformsTo: ['public.data'],
           UTTypeTagSpecification: {
             'public.filename-extension': ['cindy'],
@@ -1416,7 +1417,7 @@ const config: ForgeConfig = {
         },
         {
           UTTypeIdentifier: `${CINDY_UTI_PREFIX}.cshare`,
-          UTTypeDescription: 'Cindy Session Share',
+          UTTypeDescription: `${BRAND_NAME} Session Share`,
           UTTypeConformsTo: ['public.data'],
           UTTypeTagSpecification: {
             'public.filename-extension': ['cshare'],
@@ -1431,11 +1432,11 @@ const config: ForgeConfig = {
     extendHelperInfo: {
       NSMicrophoneUsageDescription: 'This app needs access to the microphone for voice input.',
       NSDesktopFolderUsageDescription:
-        "Cindy's AI agent needs access to read and write files on your Desktop.",
+        `${BRAND_NAME}'s AI agent needs access to read and write files on your Desktop.`,
       NSDocumentsFolderUsageDescription:
-        "Cindy's AI agent needs access to read and write files in your Documents folder.",
+        `${BRAND_NAME}'s AI agent needs access to read and write files in your Documents folder.`,
       NSDownloadsFolderUsageDescription:
-        "Cindy's AI agent needs access to read and write files in your Downloads folder.",
+        `${BRAND_NAME}'s AI agent needs access to read and write files in your Downloads folder.`,
     },
     // chat-data-localization F1：drizzle SQL migration 文件需要随包发出，
     // main 通过 process.resourcesPath/drizzle 读取。dev 模式 main 走源码路径，
@@ -1470,14 +1471,14 @@ const config: ForgeConfig = {
   },
   rebuildConfig: {},
   hooks: {
-    // Builds cindy-updater.exe before electron-packager copies resources/ into
+    // Builds zbot-updater.exe before electron-packager copies resources/ into
     // the package — guarantees the shipped updater matches HEAD.
     prePackage: async (_forgeConfig, platform, arch) => {
       const targetPlatform = requestedTargetPlatform();
       const targetArch = requestedTargetArch();
       ensureMacIOSSimulatorWdaArchive(platform);
       if (targetPlatform === 'win32') {
-        buildCindyUpdater();
+        buildZbotUpdater();
       }
       stageRipgrep(targetPlatform, targetArch);
       stageAndroidPlatformTools(targetPlatform, targetArch);

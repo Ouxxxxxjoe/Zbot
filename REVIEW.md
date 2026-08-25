@@ -38,7 +38,6 @@ P1／P2。按下表转换，**不要**把仓库口径的 P2 改写成评论里�
   （`desktop db:validate`）。
 - scheduler 反向依赖、cron 三方库、scheduler renderer 色值白名单
   （`ci:scheduler-guard`）。
-- mobile 的 Issue Confirm 范围守门（`mobile test:scope`）。
 - typecheck、单测、DCO 签名、PR 正文「引用的设计规范」字段（`pr-design-basis`，
   仅在变更命中 UI 路径时校验该字段）。
 
@@ -61,10 +60,6 @@ P1／P2。按下表转换，**不要**把仓库口径的 P2 改写成评论里�
 - **数据库**：新 migration 的正确性与可回滚性、companion 脚本必须是 CommonJS
   （生产 Electron 用 `require()` 加载，ESM 语法只在用户端炸）。见
   `docs/dev-rules/database-and-migrations.md`。
-- **mobile 冷更边界**：改动是否触碰 `app.json`／`app.config.js`／`eas.json`／
-  `apps/mobile/package.json`／`plugins/`／`modules/` 等进入 runtime fingerprint 的输入。
-  命中就在评论里点名——这类 PR 需要把关人对冷更单独确认。见
-  `docs/dev-rules/mobile-development.md`。
 - **协议兼容**：本地协议 package、device-link／relay／隧道 payload、IPC allowlist
   等跨端 wire protocol 的向后兼容性。见 `docs/dev-rules/protocol-compatibility.md`。
 - **device-link 恢复动作的故障半径**：重试／超时／断链／重连路径的改动，恢复动作的

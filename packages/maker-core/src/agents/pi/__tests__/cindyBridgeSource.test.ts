@@ -967,7 +967,7 @@ describe('cindy-bridge extension source', () => {
     expect(source).toContain("const PERMISSION_AUTO_REVIEW_DENY = 'auto-review-deny'");
     expect(source).toContain('User denied this tool call via Cindy.');
     expect(source).toContain('Cindy Auto-review denied this tool call.');
-    expect(source).toContain('Cindy could not approve this tool call.');
+    expect(source).toContain('Zbot could not approve this tool call.');
   });
 
   it('normalizes bash timeout at the execute boundary without a host-side timer', () => {
@@ -1289,7 +1289,7 @@ describe('cindy-bridge extension source', () => {
     expect(reviewGate).toBeGreaterThan(-1);
     expect(ordinaryWriteHandling).toBeGreaterThan(reviewGate);
     expect(source).toContain(
-      "reason: 'Cindy Review only permits read-only access to this task and its explicit artifacts.'",
+      "reason: 'Zbot Review only permits read-only access to this task and its explicit artifacts.'",
     );
     expect(source).toContain('normalizeReviewReadInput(');
     expect(source).toContain('collectReviewPathFields(input)');

@@ -328,7 +328,7 @@ describe('commandIntentFromCommand — 本地规则解析', () => {
     expect(commandIntentFromCommand('lsof -i :3333')).toEqual({ action: 'inspectPorts', target: ':3333' });
     expect(commandIntentFromCommand('stat -f "%Sm %N" package.json')).toEqual({ action: 'inspect' });
     expect(commandIntentFromCommand('file -C -m custom.magic')).toBeUndefined();
-    expect(commandIntentFromCommand('plutil -p /Applications/Cindy.app/Contents/Info.plist'))
+    expect(commandIntentFromCommand('plutil -p /Applications/Zbot.app/Contents/Info.plist'))
       .toEqual({ action: 'inspect' });
     expect(commandIntentFromCommand('defaults read com.example.Cindy')).toEqual({ action: 'inspectEnvironment' });
     expect(commandIntentFromCommand('xcrun simctl list devices available')).toEqual({

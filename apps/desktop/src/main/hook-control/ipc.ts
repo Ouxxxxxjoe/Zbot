@@ -119,7 +119,7 @@ function hookControlAvailable(): boolean {
 
 function requireHookControl(): void {
   if (!hookControlAvailable()) {
-    throwIpcError('PERMISSION_DENIED', 'Cindy IM bots require a Cindy account.');
+    throwIpcError('PERMISSION_DENIED', 'Zbot IM bots require a Zbot account.');
   }
 }
 
@@ -515,7 +515,7 @@ function ensureInstances(): { store: SlackHookStore; manager: HookControlManager
               ok: false as const,
               error: {
                 code: 'PERMISSION_DENIED',
-                message: 'Slack Hook requires a Cindy account.',
+                message: 'Slack Hook requires a Zbot account.',
               },
             }),
     });
@@ -535,7 +535,7 @@ function translateValidation<T>(fn: () => T): T {
   }
 }
 
-/** IPC is a privilege boundary: only Cindy-owned top-level renderer frames may call it. */
+/** IPC is a privilege boundary: only Zbot-owned top-level renderer frames may call it. */
 function assertTrustedHookControlSender(event: IpcMainInvokeEvent): void {
   assertTrustedAppRendererEvent(event);
 }

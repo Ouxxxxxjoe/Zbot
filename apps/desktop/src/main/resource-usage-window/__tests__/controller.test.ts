@@ -182,7 +182,7 @@ describe('ResourceUsageWindowController', () => {
 
   it('replays the latest locale after the renderer becomes ready', () => {
     const { controller, windows } = makeHarness();
-    controller.setLocale('ja');
+    controller.setLocale('zh-CN');
     controller.prewarm();
     vi.clearAllMocks();
 
@@ -190,19 +190,19 @@ describe('ResourceUsageWindowController', () => {
 
     expect(windows[0]?.send).toHaveBeenCalledWith(
       RESOURCE_USAGE_WINDOW_LOCALE_CHANGED_CHANNEL,
-      'ja',
+      'zh-CN',
     );
   });
 
   it('applies the last locale when prewarming starts after the preference change', () => {
     const { controller, windows } = makeHarness();
-    controller.setLocale('ja');
+    controller.setLocale('zh-CN');
 
     controller.prewarm();
 
     expect(windows[0]?.send).toHaveBeenCalledWith(
       RESOURCE_USAGE_WINDOW_LOCALE_CHANGED_CHANNEL,
-      'ja',
+      'zh-CN',
     );
   });
 

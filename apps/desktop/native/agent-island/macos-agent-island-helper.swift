@@ -1437,10 +1437,10 @@ struct AgentIslandStrings: Codable, Equatable {
   let deny: String
 
   // Older main-process payloads do not contain appName; keep their idle view brand-current.
-  var displayAppName: String { appName ?? "Cindy" }
+  var displayAppName: String { appName ?? "Zbot" }
 
   static let fallback = AgentIslandStrings(
-    appName: "Cindy",
+    appName: "Zbot",
     newConversationTitle: "New Session",
     newConversationHint: "Start a new session",
     muteSound: "Mute Agent Island",

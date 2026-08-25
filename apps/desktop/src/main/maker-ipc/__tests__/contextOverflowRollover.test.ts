@@ -711,7 +711,7 @@ describe('persistedUserContentToWireMessage', () => {
   });
 
   it('projects structured references for legacy persisted messages', () => {
-    const href = 'cindy://project/%2Frepos%2Fcindy';
+    const href = 'zbot://project/%2Frepos%2Fcindy';
     const text = `请处理 ${href}`;
     expect(
       persistedUserContentToWireMessage({

@@ -14,7 +14,7 @@ import {
 } from '../ios-simulator-artifact.js';
 
 const TEAM_ID = 'ABCDE12345';
-const MAIN_BUNDLE_ID = 'com.xd.cindycn';
+const MAIN_BUNDLE_ID = 'com.zhida.agentcn';
 const HELPER_BUNDLE_ID = `${MAIN_BUNDLE_ID}.ios-simulator-helper`;
 const VERSION = '1.2.3';
 const REQUIREMENT =

@@ -127,7 +127,7 @@ describe("createIOSSimulatorMcpServer", () => {
         (tool: { name: string; description: string }) =>
           tool.name === "start_instance",
       )?.description,
-    ).toContain("Cindy's viewer");
+    ).toContain("Zbot's viewer");
     await Promise.all([client.close(), server.close()]);
   });
 

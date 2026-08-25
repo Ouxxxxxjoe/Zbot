@@ -18,6 +18,7 @@ import { useTranslation } from 'react-i18next';
 import type { AgentInputReference } from '@cindy/maker-shared/agent-input-projection';
 import { requiresFullAccessConfirmation } from '@cindy/maker-shared/permission-mode';
 import { ImageLightbox } from '@/components/chat/ImageLightbox';
+import { DEEP_LINK_URL_PREFIX } from '../../../shared/deepLinkSchemes';
 import { ImageHoverPreview } from '@/components/chat/ImageHoverPreview';
 import { formatBytes, TextLightbox } from '@/components/chat/TextLightbox';
 import { AttachmentTypeThumb } from './AttachmentTypeThumb';
@@ -2897,8 +2898,8 @@ export function ChatInput({
             relPath:
               ghost.manifest.command ??
               (hostCapability
-                ? `cindy://host-capability/${hostCapability}`
-                : `cindy://plugin/${ghost.manifest.id}`),
+                ? `${DEEP_LINK_URL_PREFIX}host-capability/${hostCapability}`
+                : `${DEEP_LINK_URL_PREFIX}plugin/${ghost.manifest.id}`),
             pluginId: ghost.manifest.id,
             ...(ghost.iconDataUrl ? { iconDataUrl: ghost.iconDataUrl } : {}),
             sourceLabel: entryKey,

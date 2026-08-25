@@ -18,7 +18,6 @@
 | [credentials-and-local-storage.md](./dev-rules/credentials-and-local-storage.md) | 本地数据安全规则 | authoritative | 凭证、用户持久数据、临时文件与测试目录 | — |
 | [media-storage-and-protocols.md](./dev-rules/media-storage-and-protocols.md) | 媒体存储规则 | authoritative | Desktop 媒体入库、协议、引用与回收 | — |
 | [database-and-migrations.md](./dev-rules/database-and-migrations.md) | 数据库规则 | authoritative | Desktop SQLite schema、migration、companion 与运行期访问 | — |
-| [mobile-development.md](./dev-rules/mobile-development.md) | Mobile 开发规则 | authoritative | Mobile 模拟器、验证与专项入口 | — |
 | [orca-team-architecture.md](./dev-rules/orca-team-architecture.md) | 契约/规范 | authoritative | `apps/desktop` 的 `maker-ipc/orca*` 服务 + `mcp-integrations` codex MCP、`packages/lizi-mcps` 的 `orca`、`packages/orca-workflow`、`packages/maker-core` 的 codex MCP context | — |
 | [maker-core-and-agent-behavior.md](./dev-rules/maker-core-and-agent-behavior.md) | maker-core 规则 | authoritative | `packages/maker-core` 的 Agent 编排、prompt 组装、translator、model 映射、缓存率/性能/准确性指标与 system prompt 门禁 | — |
 | [plugin-security-and-authoring.md](./dev-rules/plugin-security-and-authoring.md) | 插件安全规则 | authoritative | 插件（`.cindy`）运行时沙箱、直接能力声明、网络/凭证/资源交接、存量插件向下兼容与无感升级、作者契约与编写手册同步 | — |
@@ -28,7 +27,7 @@
 | [protocol-compatibility.md](./dev-rules/protocol-compatibility.md) | 跨端协议规则 | authoritative | 两仓本地协议包、device-link relay 层与 wire protocol 兼容 | — |
 | [architecture-invariants.md](./dev-rules/architecture-invariants.md) | 架构不变量 | authoritative | package 解耦、main 静态依赖、主界面布局树（`layoutTree`/`LayoutStore`/panel registry） | — |
 | [configuration-and-overrides.md](./dev-rules/configuration-and-overrides.md) | 配置契约 | authoritative | 配置可见性分层、默认值+override 分离、迁移与恢复默认语义 | — |
-| [remote-and-mobile-adaptation.md](./dev-rules/remote-and-mobile-adaptation.md) | 远程/手机版门禁 | authoritative | SSH 远程工作区、device-link allowlist、`apps/mobile` 入口与功能类 PR 三选一门禁 | — |
+| [remote-and-mobile-adaptation.md](./dev-rules/remote-and-mobile-adaptation.md) | 远程/手机版门禁 | authoritative | SSH 远程工作区、device-link allowlist 与功能类 PR 门禁 | — |
 | [development-workflow.md](./dev-rules/development-workflow.md) | 开发工作流 | authoritative | worktree dogfooding 契约、提 PR/直推 main 门禁、Review P0/P1/P2 口径 | — |
 | [plugin-setup-runtime.md](./plugin-setup-runtime.md) | 技术设计 | 参考 | `ghost_list` / `ghost_info` / `ghost_call` 插件配置前置检查、Ask-shell Setup 卡片、配置变更回调与原调用恢复 | — |
 | [desktop-login-hosted-callback.md](./desktop-login-hosted-callback.md) | 跨仓契约 | 参考 | Desktop 系统浏览器登录的托管回调链路：auth-server 路由契约、结果页模板交付、灰度开关与回滚 | — |

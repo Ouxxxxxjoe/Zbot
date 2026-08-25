@@ -158,7 +158,7 @@ export function buildClaudeRemoteToolGuards(
           ? { explicitSelectors: [...directive.explicitSelectors] }
           : {}),
         denialMessage: directive.replacement
-          ? `This downstream source was not explicitly selected. Use Cindy capability ${directive.replacement.id}.`
+          ? `This downstream source was not explicitly selected. Use Zbot capability ${directive.replacement.id}.`
           : 'This downstream source was not explicitly selected.',
       },
     ];
@@ -210,7 +210,7 @@ export function buildClaudeLocalToolGuardHooks(
         hookEventName: 'PreToolUse',
         permissionDecision: 'deny',
         permissionDecisionReason: route.replacement
-          ? `This downstream source was not explicitly selected. Use Cindy capability ${route.replacement.id}.`
+          ? `This downstream source was not explicitly selected. Use Zbot capability ${route.replacement.id}.`
           : 'This downstream source was not explicitly selected.',
       },
     };

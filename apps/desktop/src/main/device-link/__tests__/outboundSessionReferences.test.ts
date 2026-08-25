@@ -107,7 +107,7 @@ describe('rewriteOutboundSessionReferences', () => {
     const rewritten = await rewriteOutboundSessionReferences('maker:input:update-text', [
       'target-on-b',
       'client-1',
-      'now use cindy://session/replacement',
+      'now use zbot://session/replacement',
       refs,
     ]);
     expect(resolveSessionReferences).toHaveBeenCalledWith(refs);
@@ -121,14 +121,14 @@ describe('rewriteOutboundSessionReferences', () => {
     const rewritten = await rewriteOutboundSessionReferences('maker:input:update-text', [
       'target-on-b',
       'client-1',
-      'now use cindy://session/foreign',
+      'now use zbot://session/foreign',
       refs,
     ]);
 
     expect(rewritten).toEqual([
       'target-on-b',
       'client-1',
-      'now use cindy://session/foreign',
+      'now use zbot://session/foreign',
       [],
       [],
     ]);
@@ -156,7 +156,7 @@ describe('rewriteOutboundSessionReferences', () => {
     const updateText = stripOutboundSessionReferenceSideChannels('maker:input:update-text', [
       'target-on-b',
       'client-1',
-      'keep cindy://session/source',
+      'keep zbot://session/source',
       [{ sessionId: 'source' }],
       [{ sessionId: 'source', messages: [] }],
     ]);
@@ -170,7 +170,7 @@ describe('rewriteOutboundSessionReferences', () => {
     expect(updateText).toEqual([
       'target-on-b',
       'client-1',
-      'keep cindy://session/source',
+      'keep zbot://session/source',
       [],
       [],
     ]);

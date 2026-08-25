@@ -2511,7 +2511,7 @@ async function resumeClaimedPiSubagentRun(
     });
     const agentHome = piSubagentAgentHomeFromRunRoot(root);
     if (isPiSubagentLaunchFenceActive(agentHome, process.pid)) {
-      throw new Error('Cindy is restarting for an update; retry this resume shortly.');
+      throw new Error('Zbot is restarting for an update; retry this resume shortly.');
     }
     if (isPiSubagentDeletedTombstonePresent(agentHome, path.basename(root))) {
       throw new Error('The parent task was deleted; this resume will not start.');
@@ -2533,7 +2533,7 @@ async function resumeClaimedPiSubagentRun(
     // before spawn so a deleted parent never starts a runner. Refusal falls
     // into the rollback below.
     if (isPiSubagentLaunchFenceActive(agentHome, process.pid)) {
-      throw new Error('Cindy is restarting for an update; retry this resume shortly.');
+      throw new Error('Zbot is restarting for an update; retry this resume shortly.');
     }
     if (isPiSubagentDeletedTombstonePresent(agentHome, path.basename(root))) {
       throw new Error('The parent task was deleted; this resume will not start.');
@@ -2591,7 +2591,7 @@ export async function resumePiSubagentRun(
   // directory; the fence lives one level up, next to every session's runs.
   const agentHome = piSubagentAgentHomeFromRunRoot(root);
   if (isPiSubagentLaunchFenceActive(agentHome, process.pid)) {
-    throw new Error('Cindy is restarting for an update; retry this resume shortly.');
+    throw new Error('Zbot is restarting for an update; retry this resume shortly.');
   }
   if (isPiSubagentDeletedTombstonePresent(agentHome, path.basename(root))) {
     throw new Error('The parent task was deleted; this resume will not start.');

@@ -92,13 +92,13 @@ test('downloadUrlFor: 用版本化 URL 而不是 -latest-（否则 sha256 pin �
 
 test('ossZipUrlFor: 上传约定为「原始 zip 原名放在 <base>/android-platform-tools/<version>/」', () => {
   assert.equal(
-    ossZipUrlFor('win32-x64', '32.0.0', 'https://hotfix.cindy.com.cn/cindy'),
-    'https://hotfix.cindy.com.cn/cindy/android-platform-tools/32.0.0/platform-tools_r32.0.0-windows.zip',
+    ossZipUrlFor('win32-x64', '32.0.0', 'https://hotfix.zbot.local/zbot'),
+    'https://hotfix.zbot.local/zbot/android-platform-tools/32.0.0/platform-tools_r32.0.0-windows.zip',
   );
   // 海外 region 只换 base，路径结构不变。
   assert.equal(
-    ossZipUrlFor('win32-x64', '32.0.0', 'https://hotfix.cindy.app/cindy'),
-    'https://hotfix.cindy.app/cindy/android-platform-tools/32.0.0/platform-tools_r32.0.0-windows.zip',
+    ossZipUrlFor('win32-x64', '32.0.0', 'https://hotfix.zbot.local/zbot'),
+    'https://hotfix.zbot.local/zbot/android-platform-tools/32.0.0/platform-tools_r32.0.0-windows.zip',
   );
   assert.throws(() => ossZipUrlFor('darwin-arm64', '32.0.0', 'https://x.test'), /unsupported platform key/);
   assert.throws(() => ossZipUrlFor('win32-x64', '32.0.0', ''), /OSS base url unavailable/);

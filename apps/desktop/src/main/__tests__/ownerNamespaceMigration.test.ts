@@ -321,7 +321,7 @@ describe('claimLegacyOwnerNamespace', () => {
         isPidAlive: (pid) => pid === 4242,
         readProcessIdentity: () => ({
           startedAtMs: startedAtMs + 120_000,
-          command: '/Applications/Cindy.app/Contents/MacOS/Cindy',
+          command: '/Applications/Zbot.app/Contents/MacOS/Cindy',
         }),
       }),
     );

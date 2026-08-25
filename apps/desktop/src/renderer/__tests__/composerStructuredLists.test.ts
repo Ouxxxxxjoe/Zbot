@@ -1625,7 +1625,7 @@ describe('composer structured list serialization', () => {
   });
 
   it('preserves nested markers and projects atom ranges into wire offsets', () => {
-    const href = 'cindy://session/session-a?message=message-a';
+    const href = 'zbot://session/session-a?message=message-a';
     const editor = makeEditor({
       type: 'doc',
       content: [
@@ -1733,8 +1733,8 @@ describe('composer structured list serialization', () => {
   });
 
   it('serializes browser-tab and desktop-window chips as structured non-file references', () => {
-    const tabHref = 'cindy://browser-tab/tab-1?url=https%3A%2F%2Fexample.com%2Fdocs';
-    const windowHref = 'cindy://desktop-window/11/22?app=Code.exe';
+    const tabHref = 'zbot://browser-tab/tab-1?url=https%3A%2F%2Fexample.com%2Fdocs';
+    const windowHref = 'zbot://desktop-window/11/22?app=Code.exe';
     const editor = makeEditor({
       type: 'doc',
       content: [
@@ -1782,7 +1782,7 @@ describe('composer structured list serialization', () => {
   });
 
   it('serializes Plugin business resources as opaque structured references', () => {
-    const href = 'cindy://plugin-resource/issues/search_issues/ISSUE-1';
+    const href = 'zbot://plugin-resource/issues/search_issues/ISSUE-1';
     const editor = makeEditor({
       type: 'doc',
       content: [{

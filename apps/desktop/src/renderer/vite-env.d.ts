@@ -2756,7 +2756,7 @@ interface ElectronAPI {
   ) => () => void;
 
   /**
-   * cindy://(+ 历史 xdt-maker://)深度链接 + --open-folder 右键菜单订阅:main 端在 open-url /
+   * zbot://(+ 历史 xdt-maker://)深度链接 + --open-folder 右键菜单订阅:main 端在 open-url /
    * second-instance / 冷启动 argv 解析后通过此 channel 推 payload。
    * renderer 端 MainLayout 订阅 → navigate (session) / requestProjectFocus
    * (project) / patchDraft+navigate('/cc-agent/new') (new-session)。
@@ -3548,7 +3548,7 @@ interface ElectronAPI {
   anyActivityBlockingRelaunch: () => Promise<boolean>;
   /** Tell main process to apply the update and relaunch the app.
    *  `theme` is the renderer's *resolved* light/dark (after collapsing 'system'),
-   *  forwarded to cindy-updater so its splash matches the app the user is seeing. */
+   *  forwarded to zbot-updater so its splash matches the app the user is seeing. */
   relaunchToUpdate: (theme: 'light' | 'dark') => void;
   /** Startup-only apply path; main performs a final unattended-safety check. */
   autoRelaunchToUpdate: (theme: 'light' | 'dark') => Promise<{

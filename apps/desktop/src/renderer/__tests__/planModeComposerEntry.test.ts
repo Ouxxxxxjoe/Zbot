@@ -48,7 +48,7 @@ const iosSimulatorPluginSuggestion: ComposerPluginSuggestion = {
   item: {
     type: 'plugin-command',
     name: 'iOS Simulator',
-    relPath: 'cindy://host-capability/ios-simulator',
+    relPath: 'zbot://host-capability/ios-simulator',
     pluginId: 'ios-simulator',
   },
 };
@@ -63,7 +63,7 @@ const skillOnlyPluginSuggestion: ComposerPluginSuggestion = {
   item: {
     type: 'plugin-command',
     name: 'Skill only',
-    relPath: 'cindy://plugin/skill-only',
+    relPath: 'zbot://plugin/skill-only',
     pluginId: 'skill-only',
   },
   disabled: true,

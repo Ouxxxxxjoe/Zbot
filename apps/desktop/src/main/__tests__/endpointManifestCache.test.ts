@@ -144,10 +144,10 @@ describe('endpointManifestCache', () => {
 
 describe('缓存端点的受信任域约束(安全边界)', () => {
   // 生产实际取值:两份自举基址都由构建脚本注入,userData 写入改不了。
-  const GLOBAL_BASE = 'https://hotfix.cindy.app/cindy';
-  const CN_BASE = 'https://hotfix.cindy.com.cn/cindy';
+  const GLOBAL_BASE = 'https://hotfix.zbot.local/cindy';
+  const CN_BASE = 'https://hotfix.zbot.local/cindy';
   const TRUSTED = Object.values(REGION_ENDPOINT_DOMAIN);
-  /** CN 构建的策略:非跨区端点锁 cindy.com.cn,slack/telegram/x hook 才允许 cindy.app。 */
+  /** CN 构建的策略:非跨区端点锁 zbot.local,slack/telegram/x hook 才允许 zbot.local。 */
   const CN_POLICY = {
     regionDomain: REGION_ENDPOINT_DOMAIN.cn,
     crossRegionDomain: REGION_ENDPOINT_DOMAIN.global,
@@ -160,9 +160,9 @@ describe('缓存端点的受信任域约束(安全边界)', () => {
   it('区域域名是显式写死的(不从基址推导)', () => {
     // 上一版从自举基址「去掉最左一段」推导,在多段公共后缀上会**放宽**信任:
     // https://example.co.uk → co.uk,于是任何 attacker.co.uk 都成了可信。
-    expect([...TRUSTED].sort()).toEqual(['cindy.app', 'cindy.com.cn']);
-    expect(REGION_ENDPOINT_DOMAIN.cn).toBe('cindy.com.cn');
-    expect(REGION_ENDPOINT_DOMAIN.global).toBe('cindy.app');
+    expect([...TRUSTED].sort()).toEqual(['zbot.local', 'zbot.local']);
+    expect(REGION_ENDPOINT_DOMAIN.cn).toBe('zbot.local');
+    expect(REGION_ENDPOINT_DOMAIN.global).toBe('zbot.local');
   });
 
   it('跨区例外只有 slack / telegram / x hook 三个 key', () => {
@@ -180,8 +180,8 @@ describe('缓存端点的受信任域约束(安全边界)', () => {
     expect(
       findUntrustedCachedEndpoint(
         {
-          authApiBaseUrl: 'https://auth.cindy.app',
-          websiteUrl: 'https://cindy.com.cn',
+          authApiBaseUrl: 'https://auth.zbot.local',
+          websiteUrl: 'https://zbot.local',
         },
         CN_POLICY,
       ),
@@ -195,12 +195,12 @@ describe('缓存端点的受信任域约束(安全边界)', () => {
     'voiceApiBaseUrl',
     'authDesktopCallbackUrl',
   ])('CN 构建下 %s 也不允许落在 Global 域', (key) => {
-    expect(findUntrustedCachedEndpoint({ [key]: 'https://x.cindy.app' }, CN_POLICY)).toBe(key);
+    expect(findUntrustedCachedEndpoint({ [key]: 'https://x.zbot.local' }, CN_POLICY)).toBe(key);
   });
 
-  it('Global 构建下本区端点必须是 cindy.app,不接受 CN 域', () => {
+  it('Global 构建下本区端点必须是 zbot.local,不接受 CN 域', () => {
     expect(
-      findUntrustedCachedEndpoint({ authApiBaseUrl: 'https://auth.cindy.com.cn' }, GLOBAL_POLICY),
+      findUntrustedCachedEndpoint({ authApiBaseUrl: 'https://auth.zbot.local' }, GLOBAL_POLICY),
     ).toBe('authApiBaseUrl');
   });
 
@@ -224,15 +224,15 @@ describe('缓存端点的受信任域约束(安全边界)', () => {
     expect(
       findUntrustedCachedEndpoint(
         {
-          authApiBaseUrl: 'https://auth.cindy.com.cn',
-          slackHookWsUrl: 'wss://slack-hook.cindy.app',
-          telegramHookWsUrl: 'wss://telegram-hook.cindy.app',
+          authApiBaseUrl: 'https://auth.zbot.local',
+          slackHookWsUrl: 'wss://slack-hook.zbot.local',
+          telegramHookWsUrl: 'wss://telegram-hook.zbot.local',
           // CN 清单按 Telegram 同款单部署模式放量 X 时,离线缓存回退必须仍受信
           // (PR #1230 review:漏登记会让 CN 用户断网时失去缓存启动出口)。
-          xHookWsUrl: 'wss://x-hook.cindy.app',
-          websiteUrl: 'https://cindy.com.cn',
-          cdnBaseUrl: 'https://hotfix.cindy.com.cn/cindy',
-          authDesktopCallbackUrl: 'https://auth.cindy.com.cn/api/auth/desktop/callback',
+          xHookWsUrl: 'wss://x-hook.zbot.local',
+          websiteUrl: 'https://zbot.local',
+          cdnBaseUrl: 'https://hotfix.zbot.local/cindy',
+          authDesktopCallbackUrl: 'https://auth.zbot.local/api/auth/desktop/callback',
         },
         CN_POLICY,
       ),
@@ -243,10 +243,10 @@ describe('缓存端点的受信任域约束(安全边界)', () => {
     expect(
       findUntrustedCachedEndpoint(
         {
-          authApiBaseUrl: 'https://auth.cindy.app',
-          slackHookWsUrl: 'wss://slack-hook.cindy.app',
-          websiteUrl: 'https://cindy.app',
-          cdnBaseUrl: 'https://hotfix.cindy.app/cindy',
+          authApiBaseUrl: 'https://auth.zbot.local',
+          slackHookWsUrl: 'wss://slack-hook.zbot.local',
+          websiteUrl: 'https://zbot.local',
+          cdnBaseUrl: 'https://hotfix.zbot.local/cindy',
         },
         GLOBAL_POLICY,
       ),
@@ -255,13 +255,13 @@ describe('缓存端点的受信任域约束(安全边界)', () => {
 
   it.each([
     ['攻击者自选主机', 'https://evil.example.com'],
-    ['受信任域作为子串但不是后缀', 'https://cindy.app.evil.com'],
-    ['受信任域拼在主机名里', 'https://notcindy.app'],
-    ['末尾多一段', 'https://auth.cindy.app.attacker.net'],
+    ['受信任域作为子串但不是后缀', 'https://zbot.local.evil.com'],
+    ['受信任域拼在主机名里', 'https://notzbot.local'],
+    ['末尾多一段', 'https://auth.zbot.local.attacker.net'],
   ])('%s 被拒(返回越界的 key)', (_label, hostile) => {
     expect(
       findUntrustedCachedEndpoint(
-        { authApiBaseUrl: hostile, websiteUrl: 'https://cindy.app' },
+        { authApiBaseUrl: hostile, websiteUrl: 'https://zbot.local' },
         GLOBAL_POLICY,
       ),
     ).toBe('authApiBaseUrl');
@@ -276,7 +276,7 @@ describe('缓存端点的受信任域约束(安全边界)', () => {
   it('策略缺域名时一律拒绝(fail closed,不是放行)', () => {
     expect(
       findUntrustedCachedEndpoint(
-        { authApiBaseUrl: 'https://auth.cindy.app' },
+        { authApiBaseUrl: 'https://auth.zbot.local' },
         { regionDomain: '', crossRegionDomain: '' },
       ),
     ).toBe('origin-policy-unavailable');

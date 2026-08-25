@@ -86,7 +86,7 @@ export class MacComputerPermissionGuideNativeHost {
   async show(
     appBundlePath: string,
     state: ComputerPermissionGuideNativeState,
-    locale: SupportedLocale = 'en',
+    locale: SupportedLocale = 'zh-CN',
   ): Promise<boolean> {
     if (this.dismissed) return false;
     this.pendingState = state;

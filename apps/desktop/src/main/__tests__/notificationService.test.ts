@@ -357,14 +357,14 @@ describe('notificationService — channels 分发', () => {
     expect(notificationCtor).toHaveBeenCalledTimes(1);
     expect(notificationCtor).toHaveBeenCalledWith(
       expect.objectContaining({
-        title: 'Cindy · Hello',
+        title: 'Zbot · Hello',
         body: '已完成 ✓',
       }),
     );
     expect(feishuIm.sendMarkdownText).not.toHaveBeenCalled();
   });
 
-  it('needs-reply kind → 桌面显示需要你回复并标识 Cindy', async () => {
+  it('needs-reply kind → 桌面显示需要你回复并标识 Zbot', async () => {
     const { initNotificationService } = await freshService();
     const feishuIm = makeFeishuIm('ou_owner');
     initNotificationService(baseDeps(feishuIm));
@@ -378,7 +378,7 @@ describe('notificationService — channels 分发', () => {
 
     expect(notificationCtor).toHaveBeenCalledWith(
       expect.objectContaining({
-        title: 'Cindy · Needs input',
+        title: 'Zbot · Needs input',
         body: '需要你回复',
       }),
     );
@@ -401,7 +401,7 @@ describe('notificationService — channels 分发', () => {
     // 文案断言 — 锁住对外可见的飞书消息格式,后续如要改文案需主动调整测试。
     expect(feishuIm.sendMarkdownText).toHaveBeenCalledWith(
       'ou_owner',
-      'Cindy · 任务「Hello」需要你回复',
+      'Zbot · 任务「Hello」需要你回复',
     );
   });
 
@@ -421,7 +421,7 @@ describe('notificationService — channels 分发', () => {
     expect(feishuIm.sendMarkdownText).toHaveBeenCalledTimes(1);
     expect(feishuIm.sendMarkdownText).toHaveBeenCalledWith(
       'ou_owner',
-      'Cindy · 任务「Hello」已完成 ✓',
+      'Zbot · 任务「Hello」已完成 ✓',
     );
   });
 
@@ -439,47 +439,47 @@ describe('notificationService — channels 分发', () => {
 
     expect(notificationCtor).toHaveBeenCalledWith(
       expect.objectContaining({
-        title: 'Cindy · Broken model',
+        title: 'Zbot · Broken model',
         body: '执行失败',
       }),
     );
     expect(feishuIm.sendMarkdownText).toHaveBeenCalledWith(
       'ou_owner',
-      'Cindy · 任务「Broken model」执行失败',
+      'Zbot · 任务「Broken model」执行失败',
     );
   });
 
-  it('zh-TW → 桌面与飞书使用繁中，空标题兜底也跟随当前语言', async () => {
+  it('简体中文 → 桌面与飞书使用简中，空标题兜底跟随当前语言', async () => {
     const { initNotificationService, showDesktopSessionEvent } = await freshService();
     const { setMainLocale } = await import('../i18n');
     const feishuIm = makeFeishuIm('ou_owner');
     initNotificationService(baseDeps(feishuIm));
-    setMainLocale('zh-TW');
+    setMainLocale('zh-CN');
 
     await invokeHandler({
       sessionId: 's1',
-      title: '整理報告',
+      title: '整理报告',
       kind: 'needs-reply',
       channels: { desktop: true, feishu: true },
     });
 
     expect(notificationCtor).toHaveBeenCalledWith(
       expect.objectContaining({
-        title: 'Cindy · 整理報告',
-        body: '需要你回覆',
+        title: 'Zbot · 整理报告',
+        body: '需要你回复',
       }),
     );
     expect(feishuIm.sendMarkdownText).toHaveBeenCalledWith(
       'ou_owner',
-      'Cindy · 任務「整理報告」需要你回覆',
+      'Zbot · 任务「整理报告」需要你回复',
     );
 
     notificationCtor.mockClear();
     showDesktopSessionEvent(() => null, { sessionId: '', title: '', kind: 'error' });
     expect(notificationCtor).toHaveBeenCalledWith(
       expect.objectContaining({
-        title: 'Cindy · 未命名任務',
-        body: '執行失敗',
+        title: 'Zbot · 未命名任务',
+        body: '执行失败',
       }),
     );
   });

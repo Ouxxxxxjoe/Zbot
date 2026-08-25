@@ -495,7 +495,7 @@ const fanOutNotificationFocusSession = createIpcFanOut('notification:focus-sessi
 // device-link 远程控制端(手机看完会话),renderer 的 sessionAttentionStore 靠这条
 // 把本机侧栏红绿点一并清掉(本机自己发起的清除收到回声做幂等 no-op)。
 const fanOutSessionAttentionCleared = createIpcFanOut(SESSION_ATTENTION_CLEARED_CHANNEL);
-// cindy://(+ 历史 xdt-maker://)深度链接：main 端解析出 sessionId / workingDir 后广播,
+// zbot://(+ 历史 xdt-maker://)深度链接：main 端解析出 sessionId / workingDir 后广播,
 // renderer 端 MainLayout 订阅 → 路由 / 聚焦 project。
 const fanOutDeepLinkNavigate = createIpcFanOut('deep-link:navigate');
 // RSB web-browser plugin:guest webview 内 window.open / target=_blank 路由。
@@ -3426,14 +3426,14 @@ contextBridge.exposeInMainWorld('electronAPI', {
       }
     }),
 
-  // cindy://(+ 历史 xdt-maker://)deep link / --open-folder 推送 — main 端解析后通过此 channel 通知 renderer。
+  // zbot://(+ 历史 xdt-maker://)deep link / --open-folder 推送 — main 端解析后通过此 channel 通知 renderer。
   // payload 形态在 vite-env.d.ts 上声明:
   //   - { type: 'session', id, messageClientId? } : 跳路由到指定 session(可带消息锚点)
   //   - { type: 'project', workingDir }    : 聚焦已有 project 节点
   //   - { type: 'new-session', workingDir }: 新建对话且预填 workingDir (右键 "通过 Cindy 打开")
   //   - { type: 'share-import', filePath } : 打开 .cshare/.xdtshare 会话导入向导
   //   - { type: 'settings', tab, connect? }: 打开设置页 (connect 为可选 provider / preset id,
-  //     来自 cindy://settings/providers?connect=<providerId> 深链, per-type 白名单再校验)
+  //     来自 zbot://settings/providers?connect=<providerId> 深链, per-type 白名单再校验)
   onDeepLinkNavigate: (
     callback: (
       payload:

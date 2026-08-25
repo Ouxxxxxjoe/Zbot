@@ -37,7 +37,7 @@ describe('BRAND_IDENTITY invariants', () => {
   });
 
   it('executableName / userDataDirName 是安全的文件名段(允许首字母大写)', () => {
-    // executableName 首字母大写是产品决策(Cindy.exe,同 Discord/Slack 惯例):
+    // executableName 首字母大写是产品决策(zagent.exe,同 Discord/Slack 惯例):
     // Windows 进程匹配大小写不敏感,mac Mach-O 名对用户不可见;OSS key 等大小写
     // 敏感场景一律走小写的 cdnPrefix,不用本字段。userDataDirName 同理
     // (Electron productName 惯例)。区域值不含空格(owner 决策,双装路径安全)。
@@ -55,8 +55,8 @@ describe('BRAND_IDENTITY invariants', () => {
 
   it('系统身份与数据目录两区互不相同;exe 名两区同值(显示名统一决策)', () => {
     // userData 目录 / appId 撞名会让两区共库、共系统身份,必须保持分离。
-    // exe 名(安装目录 / .app / 快捷方式)2026-07-26 起 cn/global 同值
-    // 'Cindy':owner 决策显示名统一,放弃文件层双装隔离(见
+    // exe 名(安装目录 / .app / 快捷方式)cn/global 同值
+    // 'zagent':owner 决策显示名统一,放弃文件层双装隔离(见
     // executableNameByRegion doc)。cdnPrefix 两区共用是 owner 决策:
     // 发布渠道靠不同 OSS bucket 区分,不靠路径前缀。
     expect(BRAND_IDENTITY.executableNameByRegion.cn)
@@ -97,10 +97,12 @@ describe('BRAND_IDENTITY invariants', () => {
     );
   });
 
-  it('身份翻转后 legacy 数组必须携带 xdt-maker 旧值(兼容锚,只增不减)', () => {
-    expect(BRAND_IDENTITY.legacySchemes).toContain('xdt-maker');
-    expect(BRAND_IDENTITY.legacyUserDataDirNames).toContain('xdt-maker');
-    expect(BRAND_IDENTITY.legacyDbFilePrefixes).toContain('xdt-maker');
+  it('Zbot 为全新产品,legacy 数组为空(无存量兼容锚)', () => {
+    // Zbot fork 无存量用户,不继承 Cindy / xdt-maker 兼容锚;
+    // 若未来需要从 Cindy 存量数据迁移,再把旧值加回 legacy 数组。
+    expect(BRAND_IDENTITY.legacySchemes).toEqual([]);
+    expect(BRAND_IDENTITY.legacyUserDataDirNames).toEqual([]);
+    expect(BRAND_IDENTITY.legacyDbFilePrefixes).toEqual([]);
   });
 
   it('档案与内嵌数组已冻结,消费方无法运行时篡改', () => {
@@ -123,56 +125,56 @@ describe('BRAND_IDENTITY invariants', () => {
 });
 
 describe('区域解析与派生', () => {
-  it('resolveCindyRegion:空值 → 默认 global;合法值归一化;非法值抛错', () => {
-    expect(resolveCindyRegion(undefined)).toBe('global');
-    expect(resolveCindyRegion(null)).toBe('global');
-    expect(resolveCindyRegion('')).toBe('global');
-    expect(resolveCindyRegion('  ')).toBe('global');
+  it('resolveCindyRegion:空值 → 默认 cn;合法值归一化;非法值抛错', () => {
+    expect(resolveCindyRegion(undefined)).toBe('cn');
+    expect(resolveCindyRegion(null)).toBe('cn');
+    expect(resolveCindyRegion('')).toBe('cn');
+    expect(resolveCindyRegion('  ')).toBe('cn');
     expect(resolveCindyRegion('cn')).toBe('cn');
     expect(resolveCindyRegion('global')).toBe('global');
     expect(resolveCindyRegion('GLOBAL')).toBe('global');
     expect(() => resolveCindyRegion('us')).toThrow(/Invalid Cindy region/);
   });
 
-  it('brandAppId / brandBundleIdPrefix 按区域取值,默认 global', () => {
-    expect(DEFAULT_CINDY_REGION).toBe('global');
-    expect(brandAppId()).toBe('com.xd.cindy');
-    expect(brandAppId('global')).toBe('com.xd.cindy');
-    expect(brandBundleIdPrefix('cn')).toBe('com.xd.cindycn');
-    expect(brandBundleIdPrefix('global')).toBe('com.xd.cindy');
+  it('brandAppId / brandBundleIdPrefix 按区域取值,默认 cn', () => {
+    expect(DEFAULT_CINDY_REGION).toBe('cn');
+    expect(brandAppId()).toBe('com.zhida.agentcn');
+    expect(brandAppId('global')).toBe('com.zhida.agent');
+    expect(brandBundleIdPrefix('cn')).toBe('com.zhida.agentcn');
+    expect(brandBundleIdPrefix('global')).toBe('com.zhida.agent');
   });
 
-  it('brandExecutableName / brandUserDataDirName 按区域取值,默认 global', () => {
-    expect(brandExecutableName()).toBe('Cindy');
-    // global 与 cn 同值(2026-07-26 显示名统一决策);dev 仍独立。
-    expect(brandExecutableName('global')).toBe('Cindy');
-    expect(brandExecutableName('dev')).toBe('CindyDev');
-    expect(brandUserDataDirName()).toBe('CindyGlobal');
-    expect(brandUserDataDirName('global')).toBe('CindyGlobal');
-    expect(brandUserDataDirName('cn')).toBe('Cindy');
+  it('brandExecutableName / brandUserDataDirName 按区域取值,默认 cn', () => {
+    expect(brandExecutableName()).toBe('zagent');
+    // global 与 cn 同值(显示名统一决策);dev 仍独立。
+    expect(brandExecutableName('global')).toBe('zagent');
+    expect(brandExecutableName('dev')).toBe('zagentDev');
+    expect(brandUserDataDirName()).toBe('Zbot');
+    expect(brandUserDataDirName('global')).toBe('ZbotGlobal');
+    expect(brandUserDataDirName('cn')).toBe('Zbot');
   });
 });
 
 describe('派生 helper', () => {
   it('allDeepLinkSchemes 主 scheme 恒为首位且包含全部 legacy', () => {
-    expect(allDeepLinkSchemes()).toEqual(['cindy', 'xdt-maker']);
+    expect(allDeepLinkSchemes()).toEqual(['zbot']);
   });
 
   it('allUserDataDirNames 本区域目录名恒为首位 + 全部历史值,且不含另一区域', () => {
-    expect(allUserDataDirNames()).toEqual(['CindyGlobal']);
-    expect(allUserDataDirNames('cn')).toEqual(['Cindy', 'xdt-maker']);
-    // global 的匹配集不含 cn 的 Cindy / xdt-maker：orphan-reaper 按路径认领
-    // 进程，跨区域匹配会误杀另一个安装的进程。
-    expect(allUserDataDirNames('global')).toEqual(['CindyGlobal']);
+    expect(allUserDataDirNames()).toEqual(['Zbot']);
+    expect(allUserDataDirNames('cn')).toEqual(['Zbot']);
+    // global 的匹配集不含 cn 的 Zbot：orphan-reaper 按路径认领进程，跨区域
+    // 匹配会误杀另一个安装的进程。
+    expect(allUserDataDirNames('global')).toEqual(['ZbotGlobal']);
   });
 
   it('legacyBrandUserDataDirNames 只返回品牌翻转前的共享 mToc 来源', () => {
-    expect(legacyBrandUserDataDirNames()).toEqual(['xdt-maker']);
+    expect(legacyBrandUserDataDirNames()).toEqual([]);
   });
 
   it('dialogue cwd 迁移来源按区域保留旧品牌目录', () => {
     expect(legacyDialogueUserDataDirNames()).toEqual([]);
-    expect(legacyDialogueUserDataDirNames('cn')).toEqual(['xdt-maker']);
+    expect(legacyDialogueUserDataDirNames('cn')).toEqual([]);
     expect(legacyDialogueUserDataDirNames('global')).toEqual([]);
     expect(legacyDialogueUserDataDirNames('dev')).toEqual([]);
   });
@@ -182,7 +184,7 @@ describe('派生 helper', () => {
       ...BRAND_IDENTITY,
       primaryScheme: 'xdt-maker',
       legacySchemes: [],
-      userDataDirNameByRegion: { cn: 'xdt-maker', global: 'xdt-maker' },
+      userDataDirNameByRegion: { cn: 'xdt-maker', global: 'xdt-maker', dev: 'xdt-maker' },
       legacyUserDataDirNames: [],
       legacyUserDataDirNamesByRegion: { cn: [], global: [], dev: [] },
       legacyDialogueUserDataDirNamesByRegion: { cn: [], global: [], dev: [] },

@@ -434,8 +434,8 @@ describe("IOSSimulatorProjectBuilder", () => {
     const first = await builder.build(input);
     const second = await builder.build(input);
 
-    expect(first.resultBundlePath).toMatch(/CindyBuild-[0-9a-f-]+\.xcresult$/);
-    expect(second.resultBundlePath).toMatch(/CindyBuild-[0-9a-f-]+\.xcresult$/);
+    expect(first.resultBundlePath).toMatch(/ZbotBuild-[0-9a-f-]+\.xcresult$/);
+    expect(second.resultBundlePath).toMatch(/ZbotBuild-[0-9a-f-]+\.xcresult$/);
     expect(second.resultBundlePath).not.toBe(first.resultBundlePath);
   });
 
@@ -483,7 +483,7 @@ describe("IOSSimulatorProjectBuilder", () => {
         /Earlier command output.*BUILD_FAILURE_MARKER.*compile failed/s,
       ),
       resultBundlePath: expect.stringMatching(
-        /CindyBuild-[0-9a-f-]+\.xcresult$/,
+        /ZbotBuild-[0-9a-f-]+\.xcresult$/,
       ),
       outputTruncated: true,
     });
@@ -569,7 +569,7 @@ describe("IOSSimulatorProjectBuilder", () => {
     );
     const builder = new IOSSimulatorProjectBuilder({ commandRunner: { run } });
     const readPromise = builder.readXcresult(
-      "/tmp/CindyBuild-cancelled.xcresult",
+      "/tmp/ZbotBuild-cancelled.xcresult",
       1024,
       controller.signal,
     );
@@ -586,7 +586,7 @@ describe("IOSSimulatorProjectBuilder", () => {
         "xcresulttool",
         "get",
         "--path",
-        "/tmp/CindyBuild-cancelled.xcresult",
+        "/tmp/ZbotBuild-cancelled.xcresult",
         "--format",
         "json",
       ],

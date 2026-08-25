@@ -1,6 +1,6 @@
 /**
  * remarkSessionLinks — 把正文纯文本里裸写的 Cindy 深链切成 mdast `link`
- * 节点(cindy:// 主 scheme + 历史 xdt-maker:// 都认),让它进入 `a` 渲染器
+ * 节点(zbot:// 主 scheme + 历史 xdt-maker:// 都认),让它进入 `a` 渲染器
  * 的对应分支:
  *   - `<scheme>://session/<id>[?message=<clientId>]` → SessionLinkChip
  *   - `<scheme>://project/<urlencoded-workingDir>`   → ProjectLinkChip
@@ -87,7 +87,7 @@ const remarkSessionLinks: Plugin<[], Root> = () => {
       if (!parent || index == null) return;
       // 已在链接里的 text 不动:避免把链接 label 再切成嵌套链接。
       if (parent.type === 'link') return;
-      // 快速预筛:双 scheme(cindy:// / xdt-maker://)任一出现才进正则。
+      // 快速预筛:双 scheme(zbot:// / xdt-maker://)任一出现才进正则。
       if (!node.value || !textContainsDeepLink(node.value)) return;
 
       const matches = findSessionLinkMatches(node.value);

@@ -788,7 +788,7 @@ class DesktopPiAuthAdapter implements AuthAdapter {
     if (!key) {
       return { authenticated: false, errorReason: 'cindy_gateway_key_unavailable' };
     }
-    return { authenticated: true, identity: 'Cindy AI', authSource: 'api-key' };
+    return { authenticated: true, identity: 'Zbot AI', authSource: 'api-key' };
   }
 
   async triggerLogin(): Promise<AuthState> {

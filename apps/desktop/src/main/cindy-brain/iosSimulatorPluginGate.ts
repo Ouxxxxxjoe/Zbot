@@ -41,7 +41,7 @@ export function resolveIOSSimulatorPluginAccess(
       allowed: false,
       errorCode: 'IOS_SIMULATOR_PLUGIN_REQUIRED',
       message:
-        "Cindy's embedded iOS Simulator requires the iOS Simulator plugin. The embedded route is unavailable until the user installs and enables “iOS Simulator” from Plugins → Marketplace; other iOS workflows are unaffected.",
+        "Zbot's embedded iOS Simulator requires the iOS Simulator plugin. The embedded route is unavailable until the user installs and enables “iOS Simulator” from Plugins → Marketplace; other iOS workflows are unaffected.",
       data: pluginActionData('not-installed', 'install-plugin'),
     };
   }

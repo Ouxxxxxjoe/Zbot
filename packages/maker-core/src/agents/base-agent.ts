@@ -1392,7 +1392,7 @@ export interface StartSessionOptions {
    */
   makerMemoryEnabled?: boolean;
   /**
-   * Host-owned Cindy Review policy. This is not a user permission preset:
+   * Host-owned Zbot Review policy. This is not a user permission preset:
    * adapters must keep the session local, fresh, memory-free and hard
    * read-only even if a later control request tries to widen permissions.
    */

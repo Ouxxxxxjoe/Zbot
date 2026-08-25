@@ -81,5 +81,4 @@
 
 命中凭证进入仓库或不受信任边界的改动必须阻断。验证命令按
 [`desktop-development.md`](desktop-development.md) 或
-[`mobile-development.md`](mobile-development.md) 选择，并为路径回退、清理和秘密不外泄补
 定向测试。

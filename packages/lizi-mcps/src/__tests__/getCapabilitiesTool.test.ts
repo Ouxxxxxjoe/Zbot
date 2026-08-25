@@ -77,8 +77,8 @@ describe('capabilities data source', () => {
     // 执行位置不能被写死成客户端:SSH 远程工作区下 agent 进程在远端主机。
     expect(entry!.detail).toContain('SSH 远程工作区');
     // 官网是区域敏感的:两个都要给,只给国际版会把大陆用户导错。
-    expect(entry!.detail).toContain('https://cindy.cn');
-    expect(entry!.detail).toContain('https://cindy.app');
+    expect(entry!.detail).toContain('https://zbot.local');
+    expect(entry!.detail).toContain('https://github.com/makecindy/cindy');
   });
 
   it('collab-mode 明确 Pi 可作本地 Lead 和 Worker，且不扩大到 SSH 远程 Pi', () => {

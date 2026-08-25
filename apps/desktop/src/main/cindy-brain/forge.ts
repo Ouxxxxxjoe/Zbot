@@ -2104,7 +2104,7 @@ const r = await cindy.send({ type: 'cindy-request', kind: 'gen_image', prompt: '
 const search = await cindy.send({
   type: 'cindy-request',
   kind: 'search_web',
-  query: 'Cindy 最新版本',
+  query: 'Zbot 最新版本',,
   limit: 5,                       // 可选,1–10,缺省 5
   provider: 'cindy',
   callId: msg.callId,             // 搜索只由 tool-call 触发,必须透传

@@ -17,11 +17,11 @@ import {
   type EndpointManifestDialogLocale,
 } from '../endpointManifestDialogCopy';
 
-const LOCALES: EndpointManifestDialogLocale[] = ['zh-CN', 'zh-TW', 'en', 'ja', 'ko'];
+const LOCALES: EndpointManifestDialogLocale[] = ['zh-CN'];
 
 /** CJK 与拉丁字母混排检测用:排除产品名、已裁决术语与占位符后仍有英文单词即视为混排。 */
 function stripAllowedLatin(text: string): string {
-  return text.replace(/\{\{\w+\}\}/g, ' ').replace(/Cindy|Proxy/g, ' ');
+  return text.replace(/\{\{\w+\}\}/g, ' ').replace(/Zbot|Proxy/g, " ");
 }
 
 describe('端点清单弹框文案', () => {
@@ -45,7 +45,7 @@ describe('端点清单弹框文案', () => {
   });
 
   it('CJK 语言的文案不夹带英文句子(不再中英混排)', () => {
-    for (const locale of ['zh-CN', 'zh-TW', 'ja', 'ko'] as const) {
+    for (const locale of ['zh-CN'] as const) {
       for (const [key, value] of Object.entries(ENDPOINT_MANIFEST_DIALOG_COPY[locale])) {
         const leftover = stripAllowedLatin(value);
         expect(/[A-Za-z]{3,}/.test(leftover), `${locale}.${key} 夹带英文:${value}`).toBe(false);
@@ -79,15 +79,17 @@ describe('端点清单弹框文案', () => {
 
   it('网络失败但没有缓存:不出现离线按钮', () => {
     const content = buildEndpointManifestDialogContent({
-      locale: 'en',
+      locale: 'zh-CN',
       kind: 'network',
       reason: 'fetch-failed:ERR_CONNECTION_RESET',
       offlineSavedAt: null,
     });
     expect(content.choices).toEqual(['retry', 'copy-diagnostics', 'exit']);
-    expect(content.detail).toContain(ENDPOINT_MANIFEST_DIALOG_COPY.en.noSavedConfigurationHint);
+    expect(content.detail).toContain(
+      ENDPOINT_MANIFEST_DIALOG_COPY['zh-CN'].noSavedConfigurationHint,
+    );
     expect(content.detail).not.toContain(
-      ENDPOINT_MANIFEST_DIALOG_COPY.en.offlineHint.split('{{')[0],
+      ENDPOINT_MANIFEST_DIALOG_COPY['zh-CN'].offlineHint.split('{{')[0],
     );
   });
 
@@ -111,7 +113,7 @@ describe('端点清单弹框文案', () => {
       reason: 'fetch-failed:ERR_CONNECTION_RESET',
       source: 'https://cdn.example.com/endpoint.json',
       diagnosis: 'proxy=DIRECT dns=ok(1.2.3.4)',
-      logPath: '/Users/example/Library/Logs/Cindy/capture.json',
+      logPath: '/Users/example/Library/Logs/Zbot/capture.json',
       offlineSavedAt: null,
     });
     expect(content.detail).not.toContain('{{');

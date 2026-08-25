@@ -20,9 +20,9 @@ const expectedXiaohongshuDescriptions: Record<string, string> = {
 
 describe('Settings About social links', () => {
   it('uses the official destinations and prioritizes the Discord community', () => {
-    const discordIndex = aboutSource.indexOf('https://discord.gg/V4yKguac7K');
-    const xIndex = aboutSource.indexOf('https://x.com/making_cindy');
-    const xiaohongshuIndex = aboutSource.indexOf('https://xhslink.com/m/XmfveHjLlL');
+    const discordIndex = aboutSource.indexOf('https://help.zbot.local/community');
+    const xIndex = aboutSource.indexOf('https://help.zbot.local/news');
+    const xiaohongshuIndex = aboutSource.indexOf('https://help.zbot.local/channel');
 
     expect(discordIndex).toBeGreaterThan(-1);
     expect(xIndex).toBeGreaterThan(discordIndex);

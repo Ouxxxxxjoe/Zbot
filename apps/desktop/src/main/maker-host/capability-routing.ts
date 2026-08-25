@@ -16,7 +16,7 @@ const CODEX_COMPUTER_USE_REPLACEMENT_ROUTE = {
     kind: 'cindy-host',
     id: 'cindy_computer',
   },
-  reason: 'Cindy owns desktop-control enablement, permissions, and execution.',
+  reason: 'Zbot owns desktop-control enablement, permissions, and execution.',
 } as const satisfies CapabilityRouteOverride;
 
 /**
@@ -142,7 +142,7 @@ const CODEX_IN_APP_BROWSER_UNAVAILABLE_OVERRIDE = {
     id: 'browser@openai-bundled',
   },
   invocation: 'disabled',
-  reason: 'Cindy does not host the ChatGPT in-app browser runtime.',
+  reason: 'Zbot does not host the ChatGPT in-app browser runtime.',
 } as const satisfies CapabilityRoutingPolicy['overrides'][number];
 
 const CODEX_CHROME_USE_OVERRIDES = [
@@ -159,7 +159,7 @@ const CODEX_CHROME_USE_OVERRIDES = [
       kind: 'cindy-plugin',
       id: 'browser',
     },
-    reason: 'Cindy Browser owns browser automation while it is enabled for this workspace.',
+    reason: 'Zbot Browser owns browser automation while it is enabled for this workspace.',
   },
   {
     capabilityId: 'browser-use',
@@ -174,7 +174,7 @@ const CODEX_CHROME_USE_OVERRIDES = [
       kind: 'cindy-plugin',
       id: 'browser',
     },
-    reason: 'Cindy Browser owns browser automation while it is enabled for this workspace.',
+    reason: 'Zbot Browser owns browser automation while it is enabled for this workspace.',
   },
 ] as const satisfies CapabilityRoutingPolicy['overrides'];
 

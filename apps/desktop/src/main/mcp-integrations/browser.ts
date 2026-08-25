@@ -46,13 +46,13 @@ export { extractBrowserAvailability, type BrowserAvailability } from './browser-
 
 const logger = createLogger('mcp/cindy_browser');
 
-/** 翻转前(≤2026-07-17)创建的受管 profile 目录名,仅用于就地改名自愈。 */
-const LEGACY_MANAGED_PROFILE = 'XDMaker';
+/** 上游 Cindy 品牌的受管 profile 目录名,仅用于就地改名自愈(Cindy → Zbot)。 */
+const LEGACY_MANAGED_PROFILE = 'Cindy';
 
 /**
- * 就地改名自愈:同一 userData 下存在翻转前的 `browser/XDMaker` 而无 `browser/Cindy`
- * 时,整目录 rename(同卷原子、瞬时)——覆盖「身份翻转后、本次改名前」跑过 agent
- * 浏览器的 dev 实例。mToc 迁移直接落到新名,不依赖这里。必须在 runtime 首次
+ * 就地改名自愈:同一 userData 下存在 `browser/Cindy` 而无 `browser/Zbot`
+ * 时,整目录 rename(同卷原子、瞬时)——覆盖「上游 Cindy 跑过 agent 浏览器、
+ * 换 Zbot 后首次启动」的实例。必须在 runtime 首次
  * launch(创建 profile 目录)之前执行;rename 失败(如旧 Chrome 进程持锁)只 warn,
  * 后果是该实例从空 profile 重新开始,不阻塞。
  */

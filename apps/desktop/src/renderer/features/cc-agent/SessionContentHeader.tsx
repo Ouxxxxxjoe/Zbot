@@ -274,7 +274,7 @@ export function SessionContentHeader({
     t,
   ]);
 
-  /* ---- 复制任务链接(cindy://session/<id> 深链,与 SessionItem 同语义;
+  /* ---- 复制任务链接(zbot://session/<id> 深链,与 SessionItem 同语义;
           远程会话把归属设备冻进 ?device=) ---- */
   const handleCopyDeepLink = useCallback(async () => {
     try {

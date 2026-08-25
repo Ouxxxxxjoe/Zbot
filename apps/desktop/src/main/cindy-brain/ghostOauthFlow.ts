@@ -494,7 +494,7 @@ async function runGhostOauthFlow(
 ): Promise<GhostOauthFlowResult> {
   const { config, openExternal, fetchImpl, logger } = opts;
   const timeoutMs = opts.timeoutMs ?? FLOW_TIMEOUT_DEFAULT_MS;
-  const brandName = opts.brandName ?? 'Cindy';
+  const brandName = opts.brandName ?? 'Zbot';
 
   // PKCE 缺省开;broker 模式同样支持(verifier 经 broker exchange 透传服务端),
   // 不吃 PKCE 的服务商(jira/slack)在声明里显式 pkce:false。

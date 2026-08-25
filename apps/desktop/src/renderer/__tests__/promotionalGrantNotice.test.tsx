@@ -53,7 +53,7 @@ vi.mock('@/contexts/AuthContext', () => ({
 // CN 区固定:金额格式化要有确定的币种，否则断言随构建区域漂移。
 vi.mock('../../shared/brandRegion', () => ({
   CURRENT_CINDY_REGION: 'cn',
-  CURRENT_APP_ID: 'com.xd.cindycn',
+  CURRENT_APP_ID: 'com.zhida.agentcn',
 }));
 
 vi.mock('react-i18next', () => ({

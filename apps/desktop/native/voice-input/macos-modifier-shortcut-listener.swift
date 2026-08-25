@@ -219,7 +219,7 @@ guard let eventTap = CGEvent.tapCreate(
   ListenerState.emit([
     "type": "error",
     // 这条 message 只进日志：用户可见的引导由 renderer 按 errorCode 出 i18n 文案。
-    "message": "Could not listen for modifier shortcuts. Enable Input Monitoring for Cindy.",
+    "message": "Could not listen for modifier shortcuts. Enable Input Monitoring for Zbot.",
   ])
   exit(3)
 }

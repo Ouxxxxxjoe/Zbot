@@ -274,7 +274,7 @@ describe('composerQuoteDocument', () => {
   });
 
   it('projects structured reference offsets through block separators and trimming', () => {
-    const href = 'cindy://session/session-a?message=message-a';
+    const href = 'zbot://session/session-a?message=message-a';
     const serialized = serializeComposerContentBlocksWithRanges([
       {
         kind: 'text',

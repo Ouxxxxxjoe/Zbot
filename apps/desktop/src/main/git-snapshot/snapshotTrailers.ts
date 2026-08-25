@@ -11,7 +11,7 @@
  * 两代格式并存:
  * - X-XDT-*(legacy): 旧版把保存点直接 commit 到用户当前分支时写入的前缀。
  *   仅保留解析与旧执行器路径, 不再产生新提交。
- * - X-Cindy-*: shadow savepoint(挂在 refs/cindy/savepoints/<sessionId>
+ * - X-Zbot-*: shadow savepoint(挂在 refs/cindy/savepoints/<sessionId>
  *   隐藏引用下, 不移动 HEAD)使用的前缀。
  */
 
@@ -57,7 +57,7 @@ export interface SnapshotMeta {
 }
 
 /** 保存点 trailer 前缀代际。 */
-export type SnapshotTrailerSource = 'legacy-xdt' | 'cindy';
+export type SnapshotTrailerSource = 'legacy-xdt' | 'zbot';
 
 /** 从 commit message 解析回来的保存点。 */
 export interface ParsedSnapshot extends SnapshotMeta {
@@ -81,11 +81,11 @@ const KEY_PRE_ROLLBACK = 'PreRollback';
 
 const PREFIX_BY_SOURCE: Record<SnapshotTrailerSource, string> = {
   'legacy-xdt': 'X-XDT',
-  cindy: 'X-Cindy',
+  zbot: 'X-Zbot',
 };
 
-/** 一行保存点 trailer 的匹配: `X-XDT-Xxx: value` 或 `X-Cindy-Xxx: value`。 */
-const SNAPSHOT_TRAILER_RE = /^X-(XDT|Cindy)-([A-Za-z0-9]+):\s?(.*)$/;
+/** 一行保存点 trailer 的匹配: `X-XDT-Xxx: value` 或 `X-Zbot-Xxx: value`。 */
+const SNAPSHOT_TRAILER_RE = /^X-(XDT|Cindy|Zbot)-([A-Za-z0-9]+):\s?(.*)$/;
 
 /** 一行 git trailer 的粗匹配, 用于识别混合 trailer block 的边界。 */
 const GIT_TRAILER_RE = /^[A-Za-z0-9][A-Za-z0-9-]*:\s?.*$/;
@@ -145,15 +145,15 @@ function buildTrailerBlock(prefix: string, meta: SnapshotMeta): string {
 /**
  * 组装 legacy commit message: 正文 label + 空行 + X-XDT-* trailer 块。
  * 仅供旧格式(直接 commit 到用户分支)的既有路径使用, 新代码用
- * buildCindyCommitMessage。anchor 等缺省时不产生空 trailer 行。
+ * buildZbotCommitMessage。anchor 等缺省时不产生空 trailer 行。
  */
 export function buildCommitMessage(label: string, meta: SnapshotMeta): string {
   return `${label}\n\n${buildTrailerBlock(PREFIX_BY_SOURCE['legacy-xdt'], meta)}`;
 }
 
-/** 组装 shadow savepoint 的 commit message(X-Cindy-* trailer 块)。 */
-export function buildCindyCommitMessage(label: string, meta: SnapshotMeta): string {
-  return `${label}\n\n${buildTrailerBlock(PREFIX_BY_SOURCE.cindy, meta)}`;
+/** 组装 shadow savepoint 的 commit message(X-Zbot-* trailer 块)。 */
+export function buildZbotCommitMessage(label: string, meta: SnapshotMeta): string {
+  return `${label}\n\n${buildTrailerBlock(PREFIX_BY_SOURCE.zbot, meta)}`;
 }
 
 interface CollectedTrailerFields {
@@ -213,7 +213,7 @@ function toParsedSnapshot(
  * 解析 commit message(通常来自 git log %B)。
  *
  * 策略: 从末尾向上收集"连续的 git trailer 行"作为 trailer 块, 再筛
- * X-XDT-* / X-Cindy-*。因为 label 行不会以这两个前缀开头, 即使 label 含
+ * X-XDT-* / X-Zbot-*。因为 label 行不会以这两个前缀开头, 即使 label 含
  * 冒号/换行也不会误判。两种前缀同时出现时(实际不会发生)X-Cindy 优先。
  * 缺 Session / 缺 Kind / Kind 非法 → 返回 null(不是合法保存点)。
  */
@@ -236,7 +236,7 @@ export function parseSnapshotCommit(rawMessage: string): ParsedSnapshot | null {
     const match = SNAPSHOT_TRAILER_RE.exec(line);
     if (!match) continue;
     const [, prefixTag, key, rawValue] = match;
-    const fields = prefixTag === 'Cindy' ? cindyFields : legacyFields;
+    const fields = prefixTag === 'Zbot' ? cindyFields : legacyFields;
     assignTrailerField(fields, key, rawValue.trim());
   }
 
@@ -244,7 +244,7 @@ export function parseSnapshotCommit(rawMessage: string): ParsedSnapshot | null {
   const label = lines.slice(0, i + 1).join('\n').replace(/\n+$/, '');
 
   return (
-    toParsedSnapshot(cindyFields, label, 'cindy') ??
+    toParsedSnapshot(cindyFields, label, 'zbot') ??
     toParsedSnapshot(legacyFields, label, 'legacy-xdt')
   );
 }

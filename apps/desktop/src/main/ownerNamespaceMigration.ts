@@ -449,7 +449,7 @@ function looksLikeCindyRuntime(command: string, rootDir?: string): boolean {
   }
 
   return (
-    normalizedCommand.includes('/cindy.app/') ||
+    normalizedCommand.includes('/zbot.local/') ||
     normalizedCommand.includes('/electron.app/') ||
     /(^|[\s/])cindy(?:\.exe)?(?:\s|$)/.test(normalizedCommand) ||
     /(^|[\s/])electron(?:\.exe)?(?:\s|$)/.test(normalizedCommand)

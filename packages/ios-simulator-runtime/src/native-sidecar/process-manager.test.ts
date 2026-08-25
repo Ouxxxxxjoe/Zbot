@@ -1062,12 +1062,12 @@ describe("IOSSimulatorNativeSidecarProcessManager", () => {
     });
     expect(
       resolveIOSSimulatorNativeSidecarBinary(
-        "/Applications/Cindy.app/Contents/Resources",
+        "/Applications/Zbot.app/Contents/Resources",
         "arm64",
       ),
     ).toBe(
       path.join(
-        "/Applications/Cindy.app/Contents/Resources",
+        "/Applications/Zbot.app/Contents/Resources",
         "ios-simulator",
         "native",
         "arm64",
@@ -1079,12 +1079,12 @@ describe("IOSSimulatorNativeSidecarProcessManager", () => {
     ).toThrow("must be absolute");
     expect(
       resolveIOSSimulatorPackagedSidecarBinary(
-        "/Applications/Cindy.app/Contents/Resources",
+        "/Applications/Zbot.app/Contents/Resources",
       ),
     ).toBe(
       path.join(
-        "/Applications/Cindy.app/Contents/Helpers",
-        "Cindy iOS Simulator Helper.app",
+        "/Applications/Zbot.app/Contents/Helpers",
+        "Zbot iOS Simulator Helper.app",
         "Contents",
         "MacOS",
         "ios-simulator-sidecar",

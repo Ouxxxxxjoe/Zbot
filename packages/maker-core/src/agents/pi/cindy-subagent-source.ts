@@ -175,7 +175,7 @@ const RENAME_RETRY_MAX_MS = 100;
 // 审批通过 child RPC → durable runner → Cindy 审批 UI 往返，未获明确 allow 就 fail-closed。
 const WRITE_TOOLS = 'read,grep,find,ls,edit,write,bash';
 const THINKING_LEVELS = 'off|minimal|low|medium|high|xhigh|max';
-const LAUNCH_RECEIPT = 'Cindy subagent launched. The agent is working in the background.';
+const LAUNCH_RECEIPT = 'Zbot subagent launched. The agent is working in the background.';
 let controlWriteSequence = 0;
 const PROFILES = {
   scout: {
@@ -1309,7 +1309,7 @@ export default async function cindySubagent(pi: any) {
       if (!runtime.provider) {
         report('failed', 'model routing snapshot unavailable');
         throw new Error(
-          'subagent is unavailable: Cindy could not read this session\'s model routing snapshot, '
+          'subagent is unavailable: Zbot could not read this session\'s model routing snapshot, '
           + 'so a subagent would run against the wrong provider. Tell the user; do the work yourself.',
         );
       }

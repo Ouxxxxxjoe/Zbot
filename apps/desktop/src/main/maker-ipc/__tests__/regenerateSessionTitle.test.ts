@@ -32,7 +32,7 @@ vi.mock('../../utility-model/auxiliary-model-settings-store.js', () => ({
   readAuxiliaryModelSelection: vi.fn(() => null),
 }));
 vi.mock('../../i18n.js', () => ({
-  getResolvedMainLocale: vi.fn(() => 'en'),
+  getResolvedMainLocale: vi.fn(() => 'zh-CN'),
 }));
 
 import {
@@ -48,7 +48,7 @@ import { getResolvedMainLocale } from '../../i18n.js';
 import type { RegenerateTitleMaterial } from '../../localDb/latestMessageText.js';
 
 beforeEach(() => {
-  vi.mocked(getResolvedMainLocale).mockReturnValue('en');
+  vi.mocked(getResolvedMainLocale).mockReturnValue('zh-CN');
   vi.clearAllMocks();
 });
 
@@ -356,9 +356,6 @@ describe('regenerateMakerSessionTitle', () => {
 
   it.each([
     ['zh-CN', 'Simplified Chinese'],
-    ['en', 'English'],
-    ['ja', 'Japanese'],
-    ['ko', 'Korean'],
   ] as const)('界面语言 %s → regenerate prompt 明确要求 %s 标题', async (locale, language) => {
     vi.mocked(getResolvedMainLocale).mockReturnValue(locale);
     const deps = makeDeps();
@@ -396,9 +393,6 @@ describe('generateMakerSessionTitle', () => {
 
   it.each([
     ['zh-CN', 'Simplified Chinese'],
-    ['en', 'English'],
-    ['ja', 'Japanese'],
-    ['ko', 'Korean'],
   ] as const)('界面语言 %s → auto-title prompt 明确要求 %s 标题', async (locale, language) => {
     vi.mocked(getResolvedMainLocale).mockReturnValue(locale);
     vi.mocked(generateTitleViaProvider).mockClear();

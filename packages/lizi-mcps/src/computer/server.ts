@@ -483,7 +483,7 @@ export function createComputerMcpServer(
     if (typeof directory !== 'string' || !workingDir) {
       return {
         error: trajectoryValidationFailedResult(
-          'Cindy could not safely resolve the trajectory directory.',
+          'Zbot could not safely resolve the trajectory directory.',
         ),
       };
     }
@@ -531,7 +531,7 @@ export function createComputerMcpServer(
       });
       return {
         error: trajectoryValidationFailedResult(
-          'Cindy could not read the trajectory directory before replay.',
+          'Zbot could not read the trajectory directory before replay.',
         ),
       };
     }
@@ -675,7 +675,7 @@ export function createComputerMcpServer(
         });
         return {
           error: trajectoryValidationFailedResult(
-            'Cindy could not safely validate this recorded action.',
+            'Zbot could not safely validate this recorded action.',
             turn,
           ),
         };

@@ -3,9 +3,6 @@ import { describe, expect, it } from 'vitest';
 import { i18n } from '@/i18n';
 import { formatMarketRelativeTime } from '../../hooks/useMarketList';
 import zhCNCommon from '@/i18n/locales/zh-CN/common.json';
-import enCommon from '@/i18n/locales/en/common.json';
-import jaCommon from '@/i18n/locales/ja/common.json';
-import koCommon from '@/i18n/locales/ko/common.json';
 
 const NOW = Date.parse('2026-06-11T12:00:00.000Z');
 
@@ -23,11 +20,9 @@ describe('market relative time i18n', () => {
     }
   });
 
-  it('keeps market card keys aligned across supported locales', () => {
-    const referenceKeys = Object.keys(zhCNCommon.skillhub.marketCard.relativeTime).sort();
-    for (const common of [zhCNCommon, enCommon, jaCommon, koCommon]) {
-      const relativeTime = common.skillhub.marketCard.relativeTime as Record<string, string>;
-      expect(Object.keys(relativeTime).sort()).toEqual(referenceKeys);
+  it('keeps market card keys present in the zh-CN catalog', () => {
+    const common = zhCNCommon;
+    const relativeTime = common.skillhub.marketCard.relativeTime as Record<string, string>;
       expect(common.skillhub.marketCard.clone).toBeTruthy();
       expect(common.skillhub.marketCard.timeLabel).toBeTruthy();
       expect(common.skillhub.marketCard.downloadsLabel).toBeTruthy();
@@ -45,6 +40,5 @@ describe('market relative time i18n', () => {
       expect(relativeTime.months_other).toBeTruthy();
       expect(relativeTime.years_one).toBeTruthy();
       expect(relativeTime.years_other).toBeTruthy();
-    }
   });
 });

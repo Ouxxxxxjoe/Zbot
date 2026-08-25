@@ -443,7 +443,7 @@ export class Maker {
       const existing = this.activeCodexThreadClaims.get(nextKey);
       if (existing && existing.token !== owner.token) {
         throw new Error(
-          `Codex thread ${threadId} is already active in another Cindy task. Close that task and try again.`,
+          `Codex thread ${threadId} is already active in another Zbot task. Close that task and try again.`,
         );
       }
       this.activeCodexThreadClaims.set(nextKey, owner);

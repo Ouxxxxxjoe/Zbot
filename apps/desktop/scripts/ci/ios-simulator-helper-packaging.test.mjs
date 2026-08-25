@@ -22,7 +22,7 @@ function helperExecutable(appPath) {
     appPath,
     'Contents',
     'Helpers',
-    'Cindy iOS Simulator Helper.app',
+    'Zbot iOS Simulator Helper.app',
     'Contents',
     'MacOS',
     'ios-simulator-sidecar',

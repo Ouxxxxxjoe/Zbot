@@ -159,7 +159,7 @@ function parseSnapshot(value: unknown): IOSSimulatorInstance[] | null {
 function invalidRegistryError(): IOSSimulatorInstanceError {
   return new IOSSimulatorInstanceError(
     "DEVICE_BUSY",
-    "Cindy cannot safely manage iOS Simulator devices because the ownership registry is invalid.",
+    "Zbot cannot safely manage iOS Simulator devices because the ownership registry is invalid.",
     false,
   );
 }

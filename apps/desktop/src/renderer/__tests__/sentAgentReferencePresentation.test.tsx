@@ -16,7 +16,7 @@ import { formatQuoteForSend, parseChatQuoteSegments } from '@/lib/chatQuotes';
 afterEach(cleanup);
 
 function browserReference(label = 'Cindy issue #1462') {
-  const href = 'cindy://browser-tab/tab-1?url=https%3A%2F%2Fgithub.com%2Fmakecindy%2Fcindy%2Fissues%2F1462';
+  const href = 'zbot://browser-tab/tab-1?url=https%3A%2F%2Fgithub.com%2Fmakecindy%2Fcindy%2Fissues%2F1462';
   const wire = `[${label}](${href})`;
   const reference: AgentInputReference = {
     kind: 'browser-tab',
@@ -93,7 +93,7 @@ describe('sent structured reference chips', () => {
         kind: 'desktop-window',
         start: 0,
         end: 5,
-        href: 'cindy://desktop-window/42/7?app=Cindy',
+        href: 'zbot://desktop-window/42/7?app=Cindy',
         windowId: 7,
         pid: 42,
         appName: 'Cindy',
@@ -106,7 +106,7 @@ describe('sent structured reference chips', () => {
         kind: 'plugin-resource',
         start: 0,
         end: 5,
-        href: 'cindy://plugin-resource/crm/search/customer-1',
+        href: 'zbot://plugin-resource/crm/search/customer-1',
         ghostId: 'crm',
         tool: 'search',
         resourceId: 'customer-1',
@@ -121,7 +121,7 @@ describe('sent structured reference chips', () => {
     expect(chip).not.toBeNull();
     expect(chip?.textContent).toBe(label);
     expect(chip?.querySelector('svg')).not.toBeNull();
-    expect(container.textContent).not.toContain('cindy://');
+    expect(container.textContent).not.toContain('zbot://');
   });
 
   it('renders static sent references without focus or button semantics', () => {
@@ -147,7 +147,7 @@ describe('sent structured reference chips', () => {
           kind: 'message',
           start: 0,
           end: 16,
-          href: 'cindy://session/session-1?message=message-1',
+          href: 'zbot://session/session-1?message=message-1',
           sessionId: 'session-1',
           messageClientId: 'message-1',
           text: 'Quoted message',

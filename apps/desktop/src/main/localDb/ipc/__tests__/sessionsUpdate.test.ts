@@ -747,7 +747,7 @@ async function invokeSetPinnedCardSummaries(event: unknown, enabled: unknown): P
 
 describe('local-db:sessions:set-pinned-card-summaries', () => {
   it('boolean 主路径先校验 sender 再通知摘要开关', async () => {
-    await invokeSetPinnedCardSummaries({ senderFrame: { url: 'cindy://app' } }, true);
+    await invokeSetPinnedCardSummaries({ senderFrame: { url: 'zbot://app' } }, true);
     await vi.dynamicImportSettled();
 
     expect(assertTrustedAppRendererEvent).toHaveBeenCalledTimes(1);

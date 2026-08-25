@@ -53,7 +53,7 @@ function bundledArtifact(
     source: "bundled",
     version: "1.0.0",
     architecture: "arm64",
-    executablePath: "/Applications/Cindy.app/Contents/Resources/sidecar",
+    executablePath: "/Applications/Zbot.app/Contents/Resources/sidecar",
     trust: "development",
     sha256: null,
     ...patch,
@@ -331,7 +331,7 @@ describe("HostIOSSimulatorSidecarSupervisor", () => {
       artifactId: "example.ios-sidecar",
       source: "plugin",
       trust: "untrusted",
-      executablePath: "/Library/Application Support/Cindy/plugin/sidecar",
+      executablePath: "/Library/Application Support/Zbot/plugin/sidecar",
     });
     const { supervisor, createRuntime } = createSupervisor({
       resolve: () => pluginArtifact,
@@ -361,7 +361,7 @@ describe("HostIOSSimulatorSidecarSupervisor", () => {
       source: "plugin",
       trust: "verified",
       sha256: "a".repeat(64),
-      executablePath: "/Library/Application Support/Cindy/plugin/sidecar",
+      executablePath: "/Library/Application Support/Zbot/plugin/sidecar",
     });
     const { supervisor, createRuntime } = createSupervisor({
       resolve: () => artifact,
@@ -401,7 +401,7 @@ describe("HostIOSSimulatorSidecarSupervisor", () => {
     await supervisor.start(START);
     artifact = bundledArtifact({
       version: "2.0.0",
-      executablePath: "/Applications/Cindy.app/Contents/Resources/sidecar-v2",
+      executablePath: "/Applications/Zbot.app/Contents/Resources/sidecar-v2",
     });
 
     await expect(

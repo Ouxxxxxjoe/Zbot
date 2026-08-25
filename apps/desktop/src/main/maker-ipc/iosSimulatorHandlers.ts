@@ -204,7 +204,7 @@ function throwIOSSimulatorPluginAccessError(
     case 'session-unavailable':
       throwIpcError(
         'IOS_SIMULATOR_PLUGIN_SESSION_UNAVAILABLE',
-        'The iOS Simulator plugin is unavailable in the current Cindy session.',
+        'The iOS Simulator plugin is unavailable in the current Zbot session.',
       );
     case 'disabled':
     default:

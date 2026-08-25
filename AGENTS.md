@@ -1,16 +1,28 @@
-# Cindy 客户端仓：Agent 工作入口
+# Zbot 客户端仓：本地优先的 Agent 工作客户端
 
-> 本文件是 Codex 与 Claude Code 共用的项目指令正本。`CLAUDE.md` 只保留
+> 本文件是 Codex、Claude Code 等 Agent 共用的项目指令正本。`CLAUDE.md` 只保留
 > `@AGENTS.md`，不要在两处重复维护规则。
+>
+> **产品定位（Zbot v0.1）**：去除 Cindy 云端依赖，做成**完整本地 Agent 工作客户端**。
+> 登录页选「跳过登录」即可进入免账号的本地会话（`local` 模式），本机 agent（Claude Code /
+> Codex / 本地模型）不依赖任何云即可干活。云端登录**作为未来接入点保留**：所有出站服务
+> 统一经 `config/endpoint.json` 端点清单取值（见 `docs/zbot/LOCAL_MODE.md`），未来接我们
+> 自己的中控系统时只需改端点层，无需重写客户端。
 
 ## 仓库边界
 
-- 本仓库只负责 desktop、mobile 及其共享 packages。
+- 本仓库只负责 desktop(Windows / macOS 简体中文版)及其共享 packages。移动端已移除。
 - 服务端位于独立仓库；除非用户明确要求，不要跨仓修改服务端。
 - 开始工作前先检查工作区状态和相关源码，不覆盖、不回退用户已有改动。
+- **定位不变量**：不要引入「本地模式也向云端上报状态」的逻辑（本地模式的隐私语义），也不要把
+  客户端做成必须先登录云账号才能工作。访问 `docs/dev-rules/`、`docs/product-rules/` 里的
+  上游规则时，留意它们带有 Cindy 多端 / 全局默认 / 云账号优先的旧预设，可能与 Zbot 的
+  本地优先 + cn 单区定位不一致；冲突处以 `docs/zbot/` 与本文件为准。
 
 ## 规则组织
 
+- Zbot 自有定位与决策说明放在 `docs/zbot/`（本地模式、品牌、与上游同步、架构、发布），
+  是 Zbot 侧的行为与定位正本。
 - 开发与工程规则统一放在 `docs/dev-rules/`。
 - 产品行为与体验规则统一放在 `docs/product-rules/`。
 - UI 视觉、交互与内容设计规则统一放在 `docs/design-rules/`，权威视觉规范正文为
@@ -19,9 +31,17 @@
 - 根 `AGENTS.md` 只保留所有任务都适用的规则、风险入口和文档索引。
 - 目录或模块专属规则优先放到对应目录的嵌套 `AGENTS.md`；需要跨目录复用的
   专题说明放在 `docs/`，并由本文件写明触发条件。
+- **上游保留文档标识**：`docs/dev-rules/`、`docs/product-rules/`、`docs/design-rules/`
+  沿用上游 Cindy 的表述，主要用作工程实现与排查参照；其服务端 / 多端 / 全局默认 / 云账号
+  优先的旧预设可能已不适用于 Zbot。两者冲突时，以 `docs/zbot/` 与本文件为准。
 
 ## 当前规则索引
 
+- 初次接触 Zbot 定位、本地/云边界或冷启动会话流程，先读
+  `docs/zbot/LOCAL_MODE.md`；品牌标识符与区域模型见 `docs/zbot/BRANDING.md`；
+  仓库结构与进程模型见 `docs/zbot/ARCHITECTURE.md`。
+- 从上游 Cindy 拉取/合并改动前，先读 `docs/zbot/UPSTREAM_SYNC.md`；
+  打包与发布前，先读 `docs/zbot/RELEASE.md`。
 - 首次接触本仓、需要定位功能代码位置或判断新代码归属模块时，先读仓库地图
   `docs/dev-rules/repo-map.md`。
 - 首次安装、修复依赖或准备新 worktree 时，必须先读
@@ -39,21 +59,16 @@
   `docs/dev-rules/media-storage-and-protocols.md`。
 - 修改 Desktop 数据库 schema、migration、companion script 或运行期数据库访问前，必须
   先读 `docs/dev-rules/database-and-migrations.md`。
-- 开发、调试或验证 Mobile 时，必须先读 `docs/dev-rules/mobile-development.md`。
-- 修改 `apps/mobile` 的原生配置、原生依赖、config plugin 或原生模块（`app.json`、
-  `app.config.js`、`eas.json`、`apps/mobile/package.json`、`plugins/`、`modules/` 等会
-  进入 runtime fingerprint 的输入）前，必须先读 `docs/dev-rules/mobile-development.md`
-  的「冷更边界」：**除非必要，不得提交会改变指纹的改动**；会触发冷更的 PR 与技术框架
-  变动同级，必须由仓库指定的把关人针对冷更明确确认后才能合并——不看改动大小，也不看谁
-  提的，提交者身份不构成例外。
 - 新增或调整产品功能、判断能力应进入 Core / Skill / 插件、设计人机交互或多端体验
   前，必须先读 `docs/product-rules/core-product-principles.md`。
 - 新增或修改 `/review`、Reviewer 任务、成果快照、Finding 协议、复核入口、结果呈现或
   复核生命周期前，必须先读 `docs/product-rules/review-product-direction.md`。
-- 新增或修改按区域（`cn` / `global`）分支的逻辑、构建身份与命名、端点选择、区域相关
-  UI 标注，或涉及两个版本关系的对外文案前，必须先读
-  `docs/product-rules/region-and-editions.md`：**无限定词身份归 Global，未显式指定
-  区域一律落在 `global`，只标注中国大陆版**。
+- 新增或修改按区域（`cn` / `global` / `dev`）分支的逻辑、构建身份与命名、端点选择、
+  区域相关 UI 标注或对外文案前，必须先读
+  `docs/product-rules/region-and-editions.md`（上游保留文档，仅作参照）。
+  **Zbot 只发行简体中文版，未显式指定区域一律落在 `cn`**（`DEFAULT_CINDY_REGION =
+  'cn'`）；`global` / `dev` 保留在类型与分支以便未来需要，但发布链路只配 `cn`。
+  这是对上游「默认 global」的 Zbot 偏离，区域徽标与身份落地见 `docs/zbot/BRANDING.md`。
 - 新增或修改任何界面、组件、布局、样式、动效或 UI 文案前，必须先读权威设计规范
   `docs/design-rules/DESIGN.md`；设计文档索引见
   `docs/design-rules/cindy-design-system.md`。
@@ -98,7 +113,7 @@
 - 新增或修改插件持久 Library（library 槽、binding / 目录选择、随时迁移、
   回收站删除、SQLite 语句门或 `/library/` 面板投影）前，必须先读
   `docs/dev-rules/plugin-library-storage.md`。
-- 修改客户端自动更新链路（`cindy-updater` 或 Electron 侧更新服务）前，必须先读
+- 修改客户端自动更新链路（`zbot-updater` 或 Electron 侧更新服务）前，必须先读
   `docs/dev-rules/cindy-updater.md`。
 - 新增或修改 Desktop 日志、IPC 错误处理、main 侧业务逻辑与测试、跨平台（macOS／
   Windows）行为，或任何 UI 文案的 i18n 落地前，必须先读
@@ -121,7 +136,7 @@
   或修改 device-link 的重试／超时／断链恢复逻辑前，必须先读
   `docs/dev-rules/remote-and-mobile-adaptation.md`；其中恢复路径改动必须回答该文件的
   「故障半径三问」。
-- 在 Cindy 内嵌 worktree 会话里工作、准备提交或直推、或做 code review 前，必须先读
+- 在 Zbot 内嵌 worktree 会话里工作、准备提交或直推、或做 code review 前，必须先读
   `docs/dev-rules/development-workflow.md`。
 
 ## 通用工作流程
@@ -130,8 +145,8 @@
 2. 尊重开发者或宿主已经提供的 Git 工作流。已有任务分支或 worktree 时直接复用，
    不嵌套创建；没有隔离方案时，可以建议新功能使用独立分支或 worktree，但不要
    擅自搬动或混用现有工作区。
-3. 根据任务类型读取 `docs/dev-rules/`、`docs/product-rules/` 与
-   `docs/design-rules/` 中相关规则。
+3. 根据任务类型读取 `docs/zbot/`（Zbot 定位）、`docs/dev-rules/`、
+   `docs/product-rules/` 与 `docs/design-rules/` 中相关规则。
 4. 先读实际代码和测试，再决定实现；不要只依赖文档猜测现状。
 5. 修改时保持范围最小，保护用户已有改动，不使用破坏性 Git 命令。
 6. 完成后运行与风险匹配的检查，并 review 整体 diff。
@@ -141,7 +156,7 @@
 
 - 本仓默认 PR-first。代码和文档通常从非默认分支通过 PR 进入 `main`；只有仓库
   维护者明确选择例外时才允许直推主干。
-- commit、push 和创建 PR 的执行时机由开发者或 Codex、Claude Code、Cindy 等宿主
+- commit、push 和创建 PR 的执行时机由开发者或 Codex、Claude Code 等宿主
   工作流决定；仓库规则本身不额外授权外部写操作。
 - 提交 PR 时遵循 `.github/PULL_REQUEST_TEMPLATE.md`，如实说明改动、验证和风险。
 - 非 fork 的非 draft PR 会触发自动 code review（`.github/workflows/pr-code-review.yml`），

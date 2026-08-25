@@ -2951,7 +2951,7 @@ export class CodexAgent extends BaseAgent {
     const log = this.deps.logger.child(sid ? `s:${sid}/codex` : 'codex');
     const reviewMode = opts.reviewMode === true;
     if (reviewMode && opts.remoteHostId) {
-      throw new Error('Cindy Review currently supports local Codex sessions only');
+      throw new Error('Zbot Review currently supports local Codex sessions only');
     }
 
     log.info('startSession', {
@@ -4310,7 +4310,7 @@ export class CodexAgent extends BaseAgent {
     if (reviewMode && !capabilityRoutingProtocolSupported) {
       releaseHostBindingLeaseIfNeeded();
       throw new Error(
-        `Cindy Review requires Codex app-server 0.145.0 or newer for plugin and Skill isolation (current: ${initResp.userAgent ?? 'unknown'})`,
+        `Zbot Review requires Codex app-server 0.145.0 or newer for plugin and Skill isolation (current: ${initResp.userAgent ?? 'unknown'})`,
       );
     }
     if (requiresCodexCapabilitySkillDiscovery(capabilityRoutingPolicy)) {
@@ -4338,7 +4338,7 @@ export class CodexAgent extends BaseAgent {
       } catch (error) {
         releaseHostBindingLeaseIfNeeded();
         throw new Error(
-          `Cannot start Codex safely because Cindy could not inspect restricted Codex Skills: ${error instanceof Error ? error.message : String(error)}`,
+          `Cannot start Codex safely because Zbot could not inspect restricted Codex Skills: ${error instanceof Error ? error.message : String(error)}`,
         );
       }
     }
@@ -4449,7 +4449,7 @@ export class CodexAgent extends BaseAgent {
       } catch (error) {
         releaseHostBindingLeaseIfNeeded();
         throw new Error(
-          `Cannot start Codex Review safely because Cindy could not disable local Skills, plugins, and MCP servers: ${error instanceof Error ? error.message : String(error)}`,
+          `Cannot start Codex Review safely because Zbot could not disable local Skills, plugins, and MCP servers: ${error instanceof Error ? error.message : String(error)}`,
         );
       }
     }
@@ -4459,7 +4459,7 @@ export class CodexAgent extends BaseAgent {
     ) {
       releaseHostBindingLeaseIfNeeded();
       throw new Error(
-        `Cindy capability routing requires Codex app-server 0.145.0 or newer (current: ${initResp.userAgent ?? 'unknown'})`,
+        `Zbot capability routing requires Codex app-server 0.145.0 or newer (current: ${initResp.userAgent ?? 'unknown'})`,
       );
     }
     // Only the official OpenAI OAuth route uses Codex Guardian. Third-party,
@@ -4473,7 +4473,7 @@ export class CodexAgent extends BaseAgent {
     if (reviewMode && !readonlyReferenceDirsSupported) {
       releaseHostBindingLeaseIfNeeded();
       throw new Error(
-        `Cindy Review requires Codex permission profiles from app-server 0.144.6 or newer (current: ${initResp.userAgent ?? 'unknown'})`,
+        `Zbot Review requires Codex permission profiles from app-server 0.144.6 or newer (current: ${initResp.userAgent ?? 'unknown'})`,
       );
     }
     if (mutableExtraDirs.length > 0 && !readonlyReferenceDirsSupported) {
@@ -4604,7 +4604,7 @@ export class CodexAgent extends BaseAgent {
           releaseHostBindingLeaseIfNeeded();
           await this.retireHostKey(
             currentHostKey,
-            'Cindy Review could not disable Codex memory',
+            'Zbot Review could not disable Codex memory',
             {
               failIfActive: false,
               logPrefix: 'codex review memory isolation',
@@ -4616,7 +4616,7 @@ export class CodexAgent extends BaseAgent {
               error: retireError instanceof Error ? retireError.message : String(retireError),
             });
           });
-          throw new Error('Cindy Review could not disable Codex memory; review was not started');
+          throw new Error('Zbot Review could not disable Codex memory; review was not started');
         }
         log.warn('ensureMemoryOverridePushed failed, continuing without memory override', {
           error: e instanceof Error ? e.message : String(e),
@@ -7931,7 +7931,7 @@ export class CodexAgent extends BaseAgent {
     ): Promise<DynamicToolCallResponse> => {
       if (reviewMode) {
         return {
-          contentItems: [{ type: 'inputText', text: 'Cindy Review does not allow dynamic tools.' }],
+          contentItems: [{ type: 'inputText', text: 'Zbot Review does not allow dynamic tools.' }],
           success: false,
         };
       }
@@ -11019,7 +11019,7 @@ export class CodexAgent extends BaseAgent {
     }
     const retireReviewHost = async (): Promise<void> => {
       if (!reviewMode) return;
-      await this.retireHostKey(currentHostKey, 'Cindy Review host is single-session', {
+      await this.retireHostKey(currentHostKey, 'Zbot Review host is single-session', {
         failIfActive: false,
         logPrefix: 'codex review host cleanup',
         ...(capturedHostWasRegistered ? { expectedHost: host } : {}),

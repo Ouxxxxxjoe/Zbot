@@ -1,8 +1,8 @@
 /**
  * windowsShortcutSelfHeal — Windows 快捷方式品牌改名启动自愈
  * ---------------------------------------------------------------------------
- * 背景:品牌显示名 XDMaker → Cindy 后,NSIS 的 shortcutName 只在「完整安装器」
- * 运行时生效;差量更新(cindy-updater 补丁)不重跑安装器,存量用户桌面 / 开始菜单
+ * 背景:品牌显示名 Cindy → Zbot 后,NSIS 的 shortcutName 只在「完整安装器」
+ * 运行时生效;差量更新(zbot-updater 补丁)不重跑安装器,存量用户桌面 / 开始菜单
  * 上的旧名快捷方式(XDMaker.lnk / 更早的 xdt-maker.lnk)会永远留着旧名。
  * 本模块在 app 启动时做一次自愈,把指向本程序的旧名快捷方式换成新名。
  *
@@ -39,10 +39,10 @@ const log = createLogger('shortcutSelfHeal');
 const LEGACY_SHORTCUT_BASENAMES = ['xdt-maker', 'XDMaker'] as const;
 
 /**
- * 重建目标快捷方式名 = 本区域 NSIS shortcutName(cn/global 'Cindy' /
- * dev 'CindyDev',与 forge.config 同源;2026-07-26 起 cn/global 同名,
+ * 重建目标快捷方式名 = 本区域 NSIS shortcutName(cn/global 'zagent' /
+ * dev 'zagentDev',与 forge.config 同源;cn/global 同名,
  * 双装 .lnk 互抢已被 owner 接受)。仍从 brandExecutableName 派生而不用共享的
- * BRAND_NAME:dev 包必须写自己的 CindyDev.lnk,不能抢正式包的 Cindy.lnk。
+ * BRAND_NAME:dev 包必须写自己的 zagentDev.lnk,不能抢正式包的 zagent.lnk。
  */
 const SHORTCUT_BASENAME = brandExecutableName(CURRENT_CINDY_REGION);
 

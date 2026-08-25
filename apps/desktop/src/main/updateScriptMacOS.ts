@@ -44,7 +44,7 @@ export interface MacUpdateScriptParams {
   lockFilePath: string;
   /** Where this script itself is written (self-deleted at the end). */
   scriptPath: string;
-  /** cindy-update.log path. */
+  /** zbot-update.log path. */
   logPath: string;
   timings?: Partial<MacUpdateScriptTimings>;
 }

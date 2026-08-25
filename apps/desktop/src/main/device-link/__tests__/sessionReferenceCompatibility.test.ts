@@ -16,7 +16,7 @@ function depsForInvoke(
 
 function queuedWithReference() {
   return {
-    text: 'compare cindy://session/source',
+    text: 'compare zbot://session/source',
     sessionRefs: [{ sessionId: 'source', deviceId: 'source-device' }],
   };
 }
@@ -52,7 +52,7 @@ describe('device-link target session-reference capability gate', () => {
       'maker:input:enqueue',
       [
         'target-session',
-        { text: 'compare cindy://session/source' },
+        { text: 'compare zbot://session/source' },
       ],
     );
     expect(rewrite).toHaveBeenCalledTimes(1);
@@ -104,7 +104,7 @@ describe('device-link target session-reference capability gate', () => {
       'maker:input:enqueue',
       [
         'target-session',
-        expect.objectContaining({ text: 'compare cindy://session/source' }),
+        expect.objectContaining({ text: 'compare zbot://session/source' }),
       ],
     );
   });

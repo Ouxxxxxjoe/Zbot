@@ -581,7 +581,7 @@ export function promptRetryDialog(
     // createWindow 之前无父窗口,showMessageBoxSync 直接系统模态。
     const clicked = dialog.showMessageBoxSync({
       type: 'warning',
-      title: 'Cindy',
+      title: 'Zbot',
       message: content.message,
       detail: content.detail,
       buttons: content.buttons,

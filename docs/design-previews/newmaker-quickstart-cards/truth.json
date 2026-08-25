@@ -392,30 +392,6 @@
         "value": "explore"
       },
       "labels": {
-        "en": {
-          "provenance": {
-            "hash": "82bfd5c361cdd206335281081f5a38f83a3e9dfec73b20e2e40daff781c2f6be",
-            "locator": "newChat.createAgent.quickStarts.explore",
-            "source": "../../../apps/desktop/src/renderer/i18n/locales/en/common.json"
-          },
-          "value": "Explore and understand code"
-        },
-        "ja": {
-          "provenance": {
-            "hash": "080d96878a334d7e306fa69ef8bb62d25009e112d6a7a33f17aed1638a33f86e",
-            "locator": "newChat.createAgent.quickStarts.explore",
-            "source": "../../../apps/desktop/src/renderer/i18n/locales/ja/common.json"
-          },
-          "value": "コードを探索して理解"
-        },
-        "ko": {
-          "provenance": {
-            "hash": "f70c76cbda37d6e223d5385b3bbd56974310555d5a75dca27b13f920052a8356",
-            "locator": "newChat.createAgent.quickStarts.explore",
-            "source": "../../../apps/desktop/src/renderer/i18n/locales/ko/common.json"
-          },
-          "value": "코드 탐색 및 이해"
-        },
         "zh-CN": {
           "provenance": {
             "hash": "6071491df8a53e436e94937e32590a203a44b98cedd5819fc591ce938273e41d",
@@ -423,14 +399,6 @@
             "source": "../../../apps/desktop/src/renderer/i18n/locales/zh-CN/common.json"
           },
           "value": "探索并理解代码"
-        },
-        "zh-TW": {
-          "provenance": {
-            "hash": "7180dda313e46f1291e1373206ffa1e2b642349d70a2b6c2c81e2b4240e1531d",
-            "locator": "newChat.createAgent.quickStarts.explore",
-            "source": "../../../apps/desktop/src/renderer/i18n/locales/zh-TW/common.json"
-          },
-          "value": "探索並理解程式碼"
         }
       }
     },
@@ -452,30 +420,6 @@
         "value": "build"
       },
       "labels": {
-        "en": {
-          "provenance": {
-            "hash": "82bfd5c361cdd206335281081f5a38f83a3e9dfec73b20e2e40daff781c2f6be",
-            "locator": "newChat.createAgent.quickStarts.build",
-            "source": "../../../apps/desktop/src/renderer/i18n/locales/en/common.json"
-          },
-          "value": "Build a feature, app, or tool"
-        },
-        "ja": {
-          "provenance": {
-            "hash": "080d96878a334d7e306fa69ef8bb62d25009e112d6a7a33f17aed1638a33f86e",
-            "locator": "newChat.createAgent.quickStarts.build",
-            "source": "../../../apps/desktop/src/renderer/i18n/locales/ja/common.json"
-          },
-          "value": "新機能、アプリ、ツールを構築"
-        },
-        "ko": {
-          "provenance": {
-            "hash": "f70c76cbda37d6e223d5385b3bbd56974310555d5a75dca27b13f920052a8356",
-            "locator": "newChat.createAgent.quickStarts.build",
-            "source": "../../../apps/desktop/src/renderer/i18n/locales/ko/common.json"
-          },
-          "value": "새 기능, 앱 또는 도구 만들기"
-        },
         "zh-CN": {
           "provenance": {
             "hash": "6071491df8a53e436e94937e32590a203a44b98cedd5819fc591ce938273e41d",
@@ -483,14 +427,6 @@
             "source": "../../../apps/desktop/src/renderer/i18n/locales/zh-CN/common.json"
           },
           "value": "构建新功能、应用或工具"
-        },
-        "zh-TW": {
-          "provenance": {
-            "hash": "7180dda313e46f1291e1373206ffa1e2b642349d70a2b6c2c81e2b4240e1531d",
-            "locator": "newChat.createAgent.quickStarts.build",
-            "source": "../../../apps/desktop/src/renderer/i18n/locales/zh-TW/common.json"
-          },
-          "value": "構建新功能、應用或工具"
         }
       }
     },
@@ -512,30 +448,6 @@
         "value": "review"
       },
       "labels": {
-        "en": {
-          "provenance": {
-            "hash": "82bfd5c361cdd206335281081f5a38f83a3e9dfec73b20e2e40daff781c2f6be",
-            "locator": "newChat.createAgent.quickStarts.review",
-            "source": "../../../apps/desktop/src/renderer/i18n/locales/en/common.json"
-          },
-          "value": "Review code and suggest changes"
-        },
-        "ja": {
-          "provenance": {
-            "hash": "080d96878a334d7e306fa69ef8bb62d25009e112d6a7a33f17aed1638a33f86e",
-            "locator": "newChat.createAgent.quickStarts.review",
-            "source": "../../../apps/desktop/src/renderer/i18n/locales/ja/common.json"
-          },
-          "value": "コードをレビューして修正を提案"
-        },
-        "ko": {
-          "provenance": {
-            "hash": "f70c76cbda37d6e223d5385b3bbd56974310555d5a75dca27b13f920052a8356",
-            "locator": "newChat.createAgent.quickStarts.review",
-            "source": "../../../apps/desktop/src/renderer/i18n/locales/ko/common.json"
-          },
-          "value": "코드 검토 및 수정 제안"
-        },
         "zh-CN": {
           "provenance": {
             "hash": "6071491df8a53e436e94937e32590a203a44b98cedd5819fc591ce938273e41d",
@@ -543,14 +455,6 @@
             "source": "../../../apps/desktop/src/renderer/i18n/locales/zh-CN/common.json"
           },
           "value": "审查代码并提出修改建议"
-        },
-        "zh-TW": {
-          "provenance": {
-            "hash": "7180dda313e46f1291e1373206ffa1e2b642349d70a2b6c2c81e2b4240e1531d",
-            "locator": "newChat.createAgent.quickStarts.review",
-            "source": "../../../apps/desktop/src/renderer/i18n/locales/zh-TW/common.json"
-          },
-          "value": "審查程式碼並提出修改建議"
         }
       }
     },
@@ -572,30 +476,6 @@
         "value": "fix"
       },
       "labels": {
-        "en": {
-          "provenance": {
-            "hash": "82bfd5c361cdd206335281081f5a38f83a3e9dfec73b20e2e40daff781c2f6be",
-            "locator": "newChat.createAgent.quickStarts.fix",
-            "source": "../../../apps/desktop/src/renderer/i18n/locales/en/common.json"
-          },
-          "value": "Fix issues and failures"
-        },
-        "ja": {
-          "provenance": {
-            "hash": "080d96878a334d7e306fa69ef8bb62d25009e112d6a7a33f17aed1638a33f86e",
-            "locator": "newChat.createAgent.quickStarts.fix",
-            "source": "../../../apps/desktop/src/renderer/i18n/locales/ja/common.json"
-          },
-          "value": "問題や失敗を修正"
-        },
-        "ko": {
-          "provenance": {
-            "hash": "f70c76cbda37d6e223d5385b3bbd56974310555d5a75dca27b13f920052a8356",
-            "locator": "newChat.createAgent.quickStarts.fix",
-            "source": "../../../apps/desktop/src/renderer/i18n/locales/ko/common.json"
-          },
-          "value": "문제와 실패 수정"
-        },
         "zh-CN": {
           "provenance": {
             "hash": "6071491df8a53e436e94937e32590a203a44b98cedd5819fc591ce938273e41d",
@@ -603,14 +483,6 @@
             "source": "../../../apps/desktop/src/renderer/i18n/locales/zh-CN/common.json"
           },
           "value": "修复问题和失败"
-        },
-        "zh-TW": {
-          "provenance": {
-            "hash": "7180dda313e46f1291e1373206ffa1e2b642349d70a2b6c2c81e2b4240e1531d",
-            "locator": "newChat.createAgent.quickStarts.fix",
-            "source": "../../../apps/desktop/src/renderer/i18n/locales/zh-TW/common.json"
-          },
-          "value": "修復問題和失敗"
         }
       }
     }
@@ -833,30 +705,6 @@
       "value": 18.004
     },
     "titles": {
-      "en": {
-        "provenance": {
-          "hash": "82bfd5c361cdd206335281081f5a38f83a3e9dfec73b20e2e40daff781c2f6be",
-          "locator": "newChat.createAgent.quickStart",
-          "source": "../../../apps/desktop/src/renderer/i18n/locales/en/common.json"
-        },
-        "value": "Quick start"
-      },
-      "ja": {
-        "provenance": {
-          "hash": "080d96878a334d7e306fa69ef8bb62d25009e112d6a7a33f17aed1638a33f86e",
-          "locator": "newChat.createAgent.quickStart",
-          "source": "../../../apps/desktop/src/renderer/i18n/locales/ja/common.json"
-        },
-        "value": "クイックスタート"
-      },
-      "ko": {
-        "provenance": {
-          "hash": "f70c76cbda37d6e223d5385b3bbd56974310555d5a75dca27b13f920052a8356",
-          "locator": "newChat.createAgent.quickStart",
-          "source": "../../../apps/desktop/src/renderer/i18n/locales/ko/common.json"
-        },
-        "value": "빠른 시작"
-      },
       "zh-CN": {
         "provenance": {
           "hash": "6071491df8a53e436e94937e32590a203a44b98cedd5819fc591ce938273e41d",
@@ -864,14 +712,6 @@
           "source": "../../../apps/desktop/src/renderer/i18n/locales/zh-CN/common.json"
         },
         "value": "快速开始"
-      },
-      "zh-TW": {
-        "provenance": {
-          "hash": "7180dda313e46f1291e1373206ffa1e2b642349d70a2b6c2c81e2b4240e1531d",
-          "locator": "newChat.createAgent.quickStart",
-          "source": "../../../apps/desktop/src/renderer/i18n/locales/zh-TW/common.json"
-        },
-        "value": "快速開始"
       }
     }
   },
@@ -883,38 +723,6 @@
         "source": "../../../apps/desktop/src/shared/locale.ts"
       },
       "value": "zh-CN"
-    },
-    {
-      "provenance": {
-        "hash": "219f54bce0a14a3c717f1d20db0954ca85d3501c3be2cb75a931e3208931aa4d",
-        "locator": "SUPPORTED_LOCALES[1]",
-        "source": "../../../apps/desktop/src/shared/locale.ts"
-      },
-      "value": "zh-TW"
-    },
-    {
-      "provenance": {
-        "hash": "219f54bce0a14a3c717f1d20db0954ca85d3501c3be2cb75a931e3208931aa4d",
-        "locator": "SUPPORTED_LOCALES[2]",
-        "source": "../../../apps/desktop/src/shared/locale.ts"
-      },
-      "value": "en"
-    },
-    {
-      "provenance": {
-        "hash": "219f54bce0a14a3c717f1d20db0954ca85d3501c3be2cb75a931e3208931aa4d",
-        "locator": "SUPPORTED_LOCALES[3]",
-        "source": "../../../apps/desktop/src/shared/locale.ts"
-      },
-      "value": "ja"
-    },
-    {
-      "provenance": {
-        "hash": "219f54bce0a14a3c717f1d20db0954ca85d3501c3be2cb75a931e3208931aa4d",
-        "locator": "SUPPORTED_LOCALES[4]",
-        "source": "../../../apps/desktop/src/shared/locale.ts"
-      },
-      "value": "ko"
     }
   ]
 }

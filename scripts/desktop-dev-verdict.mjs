@@ -46,7 +46,7 @@ function singleLine(value) {
 export function isolationNameFromWorktree(rootDir, { foldCase } = {}) {
   const resolved = path.resolve(rootDir);
   let name = path.basename(resolved);
-  name = name.replace(/^cindy-/i, '');
+  name = name.replace(/^zbot-/i, '');
   name = name.replace(/[^A-Za-z0-9_-]+/g, '-').replace(/^-+|-+$/g, '');
   if (!name) name = 'worktree';
   const shouldFold = foldCase ?? process.platform !== 'linux';
@@ -100,7 +100,7 @@ export function inferDesktopDevFailureCode(message) {
   if (/cannot run migration artifacts/i.test(text)) return 'MIGRATION_POLICY';
   if (/already in use by another checkout/i.test(text)) return 'USERDATA_IN_USE';
   if (/cannot share official userData while hosted/i.test(text)) return 'HOSTED_SHARED_REFUSED';
-  if (/Refusing to restart from within|running inside an Cindy desktop dev process tree/i.test(text)) {
+  if (/Refusing to restart from within|running inside an Zbot desktop dev process tree/i.test(text)) {
     return 'HOSTED_RESTART_REFUSED';
   }
   if (/--preserve-running cannot/i.test(text)) return 'PRESERVE_RUNNING_INCOMPATIBLE';

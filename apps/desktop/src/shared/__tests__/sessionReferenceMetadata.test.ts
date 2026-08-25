@@ -7,7 +7,7 @@ import {
 
 describe('sessionReferenceMetadata', () => {
   it('attaches display-safe summaries without persisting referenced bodies', () => {
-    const content = JSON.stringify({ text: 'See cindy://session/s-1', images: [], files: [] });
+    const content = JSON.stringify({ text: 'See zbot://session/s-1', images: [], files: [] });
     const result = JSON.parse(
       attachSessionReferenceMetadata(content, [
         {

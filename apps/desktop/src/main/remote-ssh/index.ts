@@ -348,7 +348,7 @@ function isAgentCacheHit(
  * 把"binary not installed"这类问题从 daemon 启动失败的 stack trace 转成 renderer
  * 能正确 toast 的 SSH_AGENT_NOT_INSTALLED IPC error, 引导用户去 Settings 安装。
  *
- * Claude Code 首次检查走完整 probeRemoteAgent,确保 Cindy 管理的远端 runtime
+ * Claude Code 首次检查走完整 probeRemoteAgent,确保 Zbot 管理的远端 runtime
  * 与当前 pin 一致；否则客户端升级后旧 binary 会永久命中 `test -x`。Codex 仍
  * 只做存在性检查。两者命中内存 cache 后续都是 ~0ms。
  */
@@ -1180,7 +1180,7 @@ export function registerRemoteSshIpc(): void {
       if (!env) {
         throwIpcError(
           'SSH_AGENT_NOT_INSTALLED',
-          'Cindy AI is not connected in Cindy; connect it in Settings → Model Providers first',
+          'Zbot AI is not connected in Zbot; connect it in Settings → Model Providers first',
         );
       }
       // tunnel 模式内部会等隧道 armed (超时抛错, fail-closed 不静默直连);
@@ -1197,7 +1197,7 @@ export function registerRemoteSshIpc(): void {
       if (!apiKey || !endpoint) {
         throwIpcError(
           'SSH_AGENT_NOT_INSTALLED',
-          'Cindy AI is not connected in Cindy; connect it in Settings → Model Providers first',
+          'Zbot AI is not connected in Zbot; connect it in Settings → Model Providers first',
         );
       }
       // heredoc 注入防御:endpoint 进 bash heredoc(<<'PIEOF'),含换行会提前终止
@@ -1312,7 +1312,7 @@ export function registerRemoteSshIpc(): void {
     if (!localAuthPath) {
       throwIpcError(
         'SSH_AGENT_NOT_INSTALLED',
-        'no local Codex auth.json found; log in via Cindy (or `codex login`) first',
+        'no local Codex auth.json found; log in via Zbot (or `codex login`) first',
       );
     }
 
@@ -1545,7 +1545,7 @@ export function registerRemoteSshIpc(): void {
   //                    (下次 desktop 重启 + 探到版本不匹配会再提)。
   ipcMain.handle(REMOTE_SSH_INVOKE.CC_MGR_FORCE_UPGRADE, async (event, args: unknown) => {
     // 轮 43 P1(codex-connector):用 assertTrustedAppRendererEvent 统一校验
-    // sender 是顶层 Cindy renderer(非 child frame/webview/别的窗口), 比
+    // sender 是顶层 Zbot renderer(非 child frame/webview/别的窗口), 比
     // BrowserWindow.fromWebContents 更严格(还校验 frame + window 身份)。
     assertTrustedAppRendererEvent(event);
     const obj = requireObject(args);

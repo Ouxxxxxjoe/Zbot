@@ -3,7 +3,7 @@
 //! Hold-lock and swallow are different jobs:
 //! - any non-idle press stays locked until the real key-up, so auto-repeat
 //!   cannot `start` after other keys are released;
-//! - swallow only happens after Cindy claimed the key-down (`Active` /
+//! - swallow only happens after Zbot claimed the key-down (`Active` /
 //!   `Canceled`). A rejected press, including its auto-repeats, stays with
 //!   the foreground app.
 

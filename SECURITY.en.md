@@ -12,10 +12,10 @@ chat.
 
 The preferred channel is GitHub's private vulnerability reporting form:
 
-<https://github.com/makecindy/cindy/security/advisories/new>
+<https://github.com/Ouxxxxxjoe/Zbot/security/advisories/new>
 
-If that form is unavailable, email **feedback@cindy.app**. We recommend using
-`[Cindy Security]` in the subject. If reproduction materials contain sensitive
+If that form is unavailable, email **feedback@zbot.local**. We recommend using
+`[Zbot Security]` in the subject. If reproduction materials contain sensitive
 information, tell us in the email and wait for the maintainers to provide an
 appropriate secure transfer method. Do not send sensitive materials through a
 public channel.

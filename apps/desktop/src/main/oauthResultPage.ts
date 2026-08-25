@@ -33,7 +33,7 @@ export interface OAuthResultPageInput {
   body: string;
   /** Raw diagnostic text rendered as escaped monospace detail. */
   detail?: string;
-  /** Optional CTA, normally a cindy://focus/... link back to the app. */
+  /** Optional CTA, normally a zbot://focus/... link back to the app. */
   action?: { href: string; label: string };
   /** Preview-only override. Production omits it and follows the OS setting. */
   theme?: OAuthResultPageTheme;

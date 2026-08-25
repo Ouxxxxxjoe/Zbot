@@ -101,7 +101,7 @@ describe('sidebar-embedded session navigation boundary', () => {
   });
 
   it('renders session links as static chips without resolving or navigating', async () => {
-    render(embedded(<SessionLinkChip href="xdt-maker://session/session-a" label="Session A" />));
+    render(embedded(<SessionLinkChip href="zbot://session/session-a" label="Session A" />));
 
     expect(screen.queryByRole('button')).toBeNull();
     const chip = screen.getByText('Session A').closest('[data-inline-reference-chip]');
@@ -115,7 +115,7 @@ describe('sidebar-embedded session navigation boundary', () => {
     const onSessionNavigate = vi.fn();
     render(
       splitPane(
-        <SessionLinkChip href="xdt-maker://session/session-target" label="Session target" />,
+        <SessionLinkChip href="zbot://session/session-target" label="Session target" />,
         onSessionNavigate,
       ),
     );
@@ -136,7 +136,7 @@ describe('sidebar-embedded session navigation boundary', () => {
     const onSessionNavigate = vi.fn();
     render(
       splitPane(
-        <SessionLinkChip href="xdt-maker://session/worker-target" label="Worker target" />,
+        <SessionLinkChip href="zbot://session/worker-target" label="Worker target" />,
         onSessionNavigate,
       ),
     );
@@ -158,7 +158,7 @@ describe('sidebar-embedded session navigation boundary', () => {
     const onSessionNavigate = vi.fn();
     const view = render(
       splitPane(
-        <SessionLinkChip href="xdt-maker://session/session-target" label="Session target" />,
+        <SessionLinkChip href="zbot://session/session-target" label="Session target" />,
         onSessionNavigate,
       ),
     );
@@ -180,7 +180,7 @@ describe('sidebar-embedded session navigation boundary', () => {
     render(
       embedded(
         <SessionLinkChip
-          href="cindy://session/session-a?message=message-1"
+          href="zbot://session/session-a?message=message-1"
           label="Session A"
           referenceMetadata={{
             sessionId: 'session-a',
@@ -207,7 +207,7 @@ describe('sidebar-embedded session navigation boundary', () => {
   it('keeps the anchored pill and its range summary on a single line', async () => {
     const { container } = render(
       <SessionLinkChip
-        href="cindy://session/session-a?message=message-1"
+        href="zbot://session/session-a?message=message-1"
         label="Session A"
         referenceMetadata={{
           sessionId: 'session-a',
@@ -453,7 +453,7 @@ describe('sidebar-embedded session navigation boundary', () => {
   });
 
   it('keeps route-owner session links interactive', async () => {
-    render(<SessionLinkChip href="xdt-maker://session/session-d" label="Session D" />);
+    render(<SessionLinkChip href="zbot://session/session-d" label="Session D" />);
     fireEvent.click(screen.getByRole('button'));
 
     await waitFor(() => expect(mocks.resolveSessionRoute).toHaveBeenCalledWith('session-d', null));
@@ -463,7 +463,7 @@ describe('sidebar-embedded session navigation boundary', () => {
   it('renders anchored links from message content and preserves jump navigation', async () => {
     const { container } = render(
       <SessionLinkChip
-        href="cindy://session/session-message?message=client-1"
+        href="zbot://session/session-message?message=client-1"
         label="Session Message"
       />,
     );
@@ -498,7 +498,7 @@ describe('sidebar-embedded session navigation boundary', () => {
     const longMessage = `  ${'x'.repeat(320)}  `;
     mocks.resolveSessionMessageText.mockResolvedValueOnce(longMessage);
     const { container } = render(
-      <SessionLinkChip href="cindy://session/session-message?message=client-long" />,
+      <SessionLinkChip href="zbot://session/session-message?message=client-long" />,
     );
 
     await waitFor(() =>

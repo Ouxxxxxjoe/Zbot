@@ -2733,7 +2733,7 @@ describe('makerChatStore text delta batching', () => {
         kind: 'session' as const,
         start: 0,
         end: 5,
-        href: 'cindy://session/source',
+        href: 'zbot://session/source',
         sessionId: 'source',
       },
     ];
@@ -2794,7 +2794,7 @@ describe('makerChatStore text delta batching', () => {
         kind: 'message' as const,
         start: 4,
         end: 44,
-        href: 'cindy://session/source?message=message-1',
+        href: 'zbot://session/source?message=message-1',
         sessionId: 'source',
         messageClientId: 'message-1',
         text: 'referenced body',
@@ -2807,7 +2807,7 @@ describe('makerChatStore text delta batching', () => {
         sessionId: SESSION_ID,
         role: 'user',
         content: JSON.stringify({
-          text: 'see cindy://session/source?message=message-1',
+          text: 'see zbot://session/source?message=message-1',
           agentReferences,
         }),
         toolUseId: null,
@@ -2818,7 +2818,7 @@ describe('makerChatStore text delta batching', () => {
 
     expect(mapped).toEqual(
       expect.objectContaining({
-        content: 'see cindy://session/source?message=message-1',
+        content: 'see zbot://session/source?message=message-1',
         agentReferences,
       }),
     );

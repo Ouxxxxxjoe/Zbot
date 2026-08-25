@@ -105,7 +105,7 @@ export function selectLocalizedContent(
     return hasUsableContent(legacy) ? legacy : null;
   }
 
-  for (const candidate of [locale, 'en', 'zh-CN'] as const) {
+  for (const candidate of [locale, 'zh-CN'] as const) {
     const content = localized?.[candidate];
     if (hasUsableContent(content)) return content;
   }

@@ -19,14 +19,6 @@ import { pathToFileURL } from 'node:url';
 // 有误报时作者可用「不涉及：<理由>」豁免；调整边界直接改这两个列表。
 const UI_PATH_PREFIXES = [
   'apps/desktop/src/renderer/',
-  'apps/mobile/app/',
-  'apps/mobile/src/auth/',
-  'apps/mobile/src/components/',
-  'apps/mobile/src/i18n/',
-  'apps/mobile/src/notifications/',
-  'apps/mobile/src/session/',
-  'apps/mobile/src/settings/',
-  'apps/mobile/src/theme/',
 ];
 const UI_FILE_SUFFIXES = ['.css', '.scss', '.less'];
 

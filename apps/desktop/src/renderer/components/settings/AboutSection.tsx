@@ -39,19 +39,19 @@ const DESKTOP_SOCIAL_LINKS = [
     id: 'discord',
     labelKey: 'settings.about.social.discordLabel',
     descriptionKey: 'settings.about.social.discordDescription',
-    url: 'https://discord.gg/V4yKguac7K',
+    url: 'https://help.zbot.local/community',
   },
   {
     id: 'x',
     labelKey: 'settings.about.social.xLabel',
     descriptionKey: 'settings.about.social.xDescription',
-    url: 'https://x.com/making_cindy',
+    url: 'https://help.zbot.local/news',
   },
   {
     id: 'xiaohongshu',
     labelKey: 'settings.about.social.xiaohongshuLabel',
     descriptionKey: 'settings.about.social.xiaohongshuDescription',
-    url: 'https://xhslink.com/m/XmfveHjLlL',
+    url: 'https://help.zbot.local/channel',
   },
 ] as const;
 

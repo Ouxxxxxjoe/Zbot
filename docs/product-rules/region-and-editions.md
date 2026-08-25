@@ -5,6 +5,13 @@
 > **读取时机**：新增或修改区域分支逻辑、构建身份、端点选择、区域相关 UI 或对外
 > 文案之前
 
+> **Zbot 决策（2026-08，覆盖本文 §2.1 / §2.2 的 upstream 默认）**：Zbot 只发行
+> 简体中文版（Windows / macOS 桌面端），不发行国际版。默认区域为 `cn`
+> （`DEFAULT_CINDY_REGION`），未显式注入区域的构建一律产出中文版；`global`
+> 区域保留在类型与代码分支中（防未来需要），但发布链路只配 cn
+> （`release-regions.json.example` 无 global 段，发布 global 会 fail-closed）。
+> 本文其余条款（dev 身份语义、区域派生规则）不变。
+
 ## 1. 基本关系
 
 Cindy 是一个面向全球的产品。中国大陆版是它为当地法规、网络与服务依赖单独构建的
@@ -116,7 +123,6 @@ Cindy 是一个面向全球的产品。中国大陆版是它为当地法规、�
    （§1.1）。
 
 具体命令、构建脚本与区域参数的用法见 `docs/dev-rules/desktop-development.md` 与
-`docs/dev-rules/mobile-development.md`；本文只约束产品判断。
 
 ## 4. 已知例外与待收敛项
 
@@ -130,7 +136,6 @@ Cindy 是一个面向全球的产品。中国大陆版是它为当地法规、�
 | 侧栏与移动端的区域标签 | 桌面侧栏 `apps/desktop/src/renderer/components/sidebar/UserInfoSection.tsx` 的 **§2.3 部分已收敛**：区域代号统一走 `apps/desktop/src/shared/regionCode.ts` 的 `CINDY_REGION_CODE`（cn → `CN`、dev → `Dev`、global 为 `null` 不标），Global 构建的版本行只剩版本号。**§2.5 部分未收敛**：cn 构建仍渲染代号 `CN`，不是本文规定的 `Mainland China`。`apps/mobile/src/settings/mobileSettings.ts:124` 的 debug 项两条都未收敛，仍输出 `Global` / `CN` | §2.5（桌面）；§2.3、§2.5（移动端） | 属于调试 / 身份自查信息而非产品叙事表达，收敛优先级低于登录页。**`CN` → `Mainland China` 是待产品裁决项**，不是单纯落码：术语表把 `CN` / `Dev` 登记为 `proposed`（`i18n/GLOSSARY.md` region-code-cn / region-code-dev），且 `DESIGN.md` §16.3 现规定徽标值就是四语同文的区域代号——改判要同时动设计规范、术语表与三条消费链路（登录页徽标、侧栏版本行、issue 正文）。本行的删除条件是移动端补上 §2.3、且 `CN` 措辞冲突被裁决或重新归类 |
 | 端点清单文件名 | `config/endpoint.json` 是中国大陆版，`config/endpoint.global.json` 才是 Global | §2.1 | 改名牵动构建脚本与发布链路 |
 | Electron userData 目录名 | `cn` 为 `Cindy`、`global` 为 `CindyGlobal` | §2.1 | 已发布客户端的数据目录不能直接改名，需要迁移方案 |
-| Mobile 构建的 region 缺省 | `apps/mobile/app.config.js` 的 `resolveRegion()` 与 `scripts/shared/client-endpoint-build-env.cjs` 的 `resolveRegion()` 在未注入 `EXPO_PUBLIC_CINDY_AUTH_REGION` 时缺省为 `cn` | §2.2 | **有意保留的兼容基线**：这是 mobile 原生指纹基线，翻转默认值即触发一次全量冷更（`app.config.js` 顶部注释已写明）。日常开发脚本都显式注入 `global`，该缺省只在无 env 时兜底。收敛必须并入一次计划内冷更，并按 `docs/dev-rules/mobile-development.md` 的「冷更边界」取得把关人确认 |
 
 新增或收敛任一项时同步更新本表；涉及设计规范的项，必须与 `docs/design-rules/`
 对应条款同时修订，不允许两处并存互相矛盾的规定。当同一项的规范散落在多份设计文档

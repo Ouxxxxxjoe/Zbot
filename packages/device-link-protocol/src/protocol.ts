@@ -157,7 +157,7 @@ export interface NotifyPayload {
    * 与敏感度,server 不落盘通知内容。
    */
   body?: string;
-  /** 点击通知的跳转深链,如 cindy://devices/<deviceId>/sessions/<sessionId> */
+  /** 点击通知的跳转深链,如 zbot://devices/<deviceId>/sessions/<sessionId> */
   deepLink: string;
   /** 系统层合并键(APNs collapse-id / thread-id):同键新通知顶替旧通知 */
   collapseId: string;

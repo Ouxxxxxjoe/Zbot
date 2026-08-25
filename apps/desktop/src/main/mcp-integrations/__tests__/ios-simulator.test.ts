@@ -933,8 +933,8 @@ describe('iOS Simulator host', () => {
       'projects',
       `orphan-reconcile-${crypto.randomUUID()}`,
     );
-    const staleBundle = path.join(projectRoot, `CindyBuild-${crypto.randomUUID()}.xcresult`);
-    const freshBundle = path.join(projectRoot, `CindyBuild-${crypto.randomUUID()}.xcresult`);
+    const staleBundle = path.join(projectRoot, `ZbotBuild-${crypto.randomUUID()}.xcresult`);
+    const freshBundle = path.join(projectRoot, `ZbotBuild-${crypto.randomUUID()}.xcresult`);
     await mkdir(staleBundle, { recursive: true });
     await mkdir(freshBundle, { recursive: true });
     const staleTime = new Date(Date.now() - 31 * 60_000);
@@ -2901,7 +2901,7 @@ describe('iOS Simulator host', () => {
       'projects',
       `dispose-build-${crypto.randomUUID()}`,
     );
-    const resultBundlePath = path.join(projectRoot, `CindyBuild-${crypto.randomUUID()}.xcresult`);
+    const resultBundlePath = path.join(projectRoot, `ZbotBuild-${crypto.randomUUID()}.xcresult`);
     await mkdir(resultBundlePath, { recursive: true });
     let buildSignal: AbortSignal | undefined;
     const build = vi.fn(
@@ -2983,7 +2983,7 @@ describe('iOS Simulator host', () => {
       sourceFingerprint: 'fingerprint-a',
       device: READY_REPORT.devices[0]!,
     });
-    const resultBundlePath = `/tmp/CindyBuild-${crypto.randomUUID()}.xcresult`;
+    const resultBundlePath = `/tmp/ZbotBuild-${crypto.randomUUID()}.xcresult`;
     const build = vi.fn<IOSSimulatorProjectBuilderAdapter['build']>(async (input) => ({
       kind: 'xcode-project',
       worktreeRoot: input.worktreeRoot,
@@ -7958,7 +7958,7 @@ describe('iOS Simulator host', () => {
         containerPath: `${worktreeRoot}/ios/Demo.xcodeproj`,
         scheme: 'Demo',
         appPath: `${worktreeRoot}/build/Demo.app`,
-        resultBundlePath: `${derivedDataPath}/CindyBuild.xcresult`,
+        resultBundlePath: `${derivedDataPath}/ZbotBuild.xcresult`,
         buildLogTail:
           'compile /tmp/session-a/secret.swift\\nGH_TOKEN=ghp_1234567890abcdefghijkl\\nwarning: keep this warning',
       }),
@@ -8232,7 +8232,7 @@ describe('iOS Simulator host', () => {
       stop: vi.fn(async () => undefined),
     };
     const resultBundlePath =
-      '/tmp/cindy-user-data/ios-simulator/projects/build/CindyBuild-failed.xcresult';
+      '/tmp/cindy-user-data/ios-simulator/projects/build/ZbotBuild-failed.xcresult';
     const projectBuilder: IOSSimulatorProjectBuilderAdapter = {
       build: vi.fn(async () => {
         throw new IOSSimulatorProjectBuildError(

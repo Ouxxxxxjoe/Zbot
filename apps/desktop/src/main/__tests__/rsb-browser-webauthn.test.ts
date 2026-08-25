@@ -70,25 +70,25 @@ function createSessionHarness() {
 
 describe('resolveWebAuthnKeychainAccessGroup', () => {
   it('combines the signed Apple team identity with the runtime bundle id', () => {
-    expect(resolveWebAuthnKeychainAccessGroup('TEAM123456', 'com.xd.cindy')).toBe(
-      'TEAM123456.com.xd.cindy.webauthn',
+    expect(resolveWebAuthnKeychainAccessGroup('TEAM123456', 'com.zhida.agent')).toBe(
+      'TEAM123456.com.zhida.agent.webauthn',
     );
   });
 
   it.each([
-    [undefined, 'com.xd.cindy'],
-    ['', 'com.xd.cindy'],
-    ['too-short', 'com.xd.cindy'],
+    [undefined, 'com.zhida.agent'],
+    ['', 'com.zhida.agent'],
+    ['too-short', 'com.zhida.agent'],
     ['TEAM123456', ''],
     ['TEAM123456', 'com..xd.cindy'],
-    ['TEAM123456', 'com.xd.cindy<bad>'],
+    ['TEAM123456', 'com.zhida.agent<bad>'],
   ])('fails closed for an invalid signing identity (%s, %s)', (teamId, appId) => {
     expect(resolveWebAuthnKeychainAccessGroup(teamId, appId)).toBeNull();
   });
 });
 
 describe('selectRsbWebAuthnAccount', () => {
-  const labels = RSB_BROWSER_WEBAUTHN_LABELS.en;
+  const labels = RSB_BROWSER_WEBAUTHN_LABELS['zh-CN'];
 
   it('returns the only discoverable credential without showing a redundant chooser', async () => {
     const showDialog = vi.fn();
@@ -124,9 +124,9 @@ describe('selectRsbWebAuthnAccount', () => {
     expect(showDialog).toHaveBeenCalledWith(
       visibleOwner,
       expect.objectContaining({
-        title: 'Choose a Passkey',
-        message: 'Choose a passkey for login.example.com',
-        buttons: ['1. Dash (dash@example.com)', '2. work@example.com', 'Cancel Passkey Sign-In'],
+        title: '选择通行密钥',
+        message: '选择用于 login.example.com 的通行密钥',
+        buttons: ['1. Dash (dash@example.com)', '2. work@example.com', '取消通行密钥登录'],
         defaultId: 0,
         cancelId: 2,
         noLink: true,
@@ -201,8 +201,8 @@ describe('selectRsbWebAuthnAccount', () => {
     expect(showDialog).toHaveBeenCalledWith(
       visibleOwner,
       expect.objectContaining({
-        message: 'Choose a passkey for example.com spoofed prompt',
-        buttons: ['1. Dash Admin', '2. Passkey 2', 'Cancel Passkey Sign-In'],
+        message: '选择用于 example.com spoofed prompt 的通行密钥',
+        buttons: ['1. Dash Admin', '2. 通行密钥 2', '取消通行密钥登录'],
       }),
     );
   });
@@ -416,7 +416,7 @@ describe('configureRsbBrowserWebAuthn', () => {
       configureRsbBrowserWebAuthn({
         platform: 'darwin',
         appleTeamId: '',
-        appId: 'com.xd.cindy',
+        appId: 'com.zhida.agent',
         browserSession: harness.browserSession,
         configureWebAuthn,
         logger: silentLogger,
@@ -432,7 +432,7 @@ describe('configureRsbBrowserWebAuthn', () => {
       configureRsbBrowserWebAuthn({
         platform: 'darwin',
         appleTeamId: 'TEAM123456',
-        appId: 'com.xd.cindy',
+        appId: 'com.zhida.agent',
         browserSession: harness.browserSession,
         configureWebAuthn,
         logger: silentLogger,
@@ -440,7 +440,7 @@ describe('configureRsbBrowserWebAuthn', () => {
     ).toEqual({ accountSelectionInstalled: true, touchIdConfigured: true });
     expect(configureWebAuthn).toHaveBeenCalledWith({
       touchID: {
-        keychainAccessGroup: 'TEAM123456.com.xd.cindy.webauthn',
+        keychainAccessGroup: 'TEAM123456.com.zhida.agent.webauthn',
         promptReason: expect.stringContaining('$1'),
       },
     });

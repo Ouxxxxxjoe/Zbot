@@ -993,7 +993,7 @@ export function registerProviderHandlers(
   // 处理(assertTrustedProviderMutationSender)。写的是 main 侧持久化 override,目录
   // 本身没变,**不**走 refreshCatalog,只广播 PROVIDER_CHANGED 让各端重拉视图。
   // 入参尺寸上限:本通道会把内容同步序列化落盘(model-disable-prefs.json),sender 守卫
-  // 挡不住 Cindy 自身主页面被 XSS 的情形 —— 超长 id / 超大数组必须在边界拒绝,防止
+  // 挡不住 Zbot 自身主页面被 XSS 的情形 —— 超长 id / 超大数组必须在边界拒绝,防止
   // 拖死 main 或往磁盘灌垃圾、预埋不存在的目录 id(PR #744 review)。上限取目录现实
   // 规模的宽裕倍数:单 id ≤256 字符(目录 id 实际 <64),一次 ≤512 个模型 id。
   const MAX_DISABLE_ID_LENGTH = 256;
@@ -1212,7 +1212,7 @@ export function registerProviderHandlers(
       const target = parsePriceTarget(targetInput);
       const desired = parseDesiredPrice(quoteInput);
       if (target.providerId === 'xd') {
-        throwIpcError('INVALID_PARAMS', 'Cindy AI Gateway pricing is server-controlled');
+        throwIpcError('INVALID_PARAMS', 'Zbot AI Gateway pricing is server-controlled');
       }
       if (desired.currency === 'CNY' && deps.getLedgerCurrency() === 'USD') {
         throwIpcError('INVALID_PARAMS', 'CNY price overrides cannot project into a USD ledger');
@@ -1520,7 +1520,7 @@ export function registerProviderHandlers(
   // 获取模型列表：查询型结构化返回（同上例外条款）；仅网络/上游失败在结果 code 里，不抛。
   registry.handle(MAKER_INVOKE.PROVIDER_MODELS_FETCH, async (event, input: unknown) => {
     // 这条查询会把 renderer 提供的 API key / 自定义 headers 带到目标 endpoint；
-    // 与重新发现一样，必须先确认调用方是 Cindy 自有顶层页面，避免 WebView / 子 frame
+    // 与重新发现一样，必须先确认调用方是 Zbot 自有顶层页面，避免 WebView / 子 frame
     // 把 Main 变成可向任意 http(s) 地址发凭证请求的代理。
     assertTrustedProviderMutationSender(event);
     const parsed = parseModelsFetchInput(input);

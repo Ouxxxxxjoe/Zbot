@@ -307,7 +307,7 @@ export class IOSSimulatorProjectBuilder {
       if (result.exitCode !== 0) {
         throw new IOSSimulatorProjectBuildError(
           "APP_BUILD_FAILED",
-          "Cindy Mobile could not be built.",
+          "Zbot Mobile could not be built.",
           commandLogTail([result]),
           null,
           Boolean(result.outputTruncated),
@@ -417,7 +417,7 @@ export class IOSSimulatorProjectBuilder {
     ];
     const resultBundlePath = path.join(
       input.derivedDataPath,
-      `CindyBuild-${randomUUID()}.xcresult`,
+      `ZbotBuild-${randomUUID()}.xcresult`,
     );
     const build = await this.#runner.run(
       "xcodebuild",
@@ -571,7 +571,7 @@ export class IOSSimulatorProjectBuilder {
     if (result.exitCode !== 0 || !status?.healthy) {
       throw new IOSSimulatorInstanceError(
         "METRO_NOT_READY",
-        "Cindy Mobile is not installed on the target simulator, or Metro 8081 is not owned by this worktree or its source fingerprint is stale.",
+        "Zbot Mobile is not installed on the target simulator, or Metro 8081 is not owned by this worktree or its source fingerprint is stale.",
         true,
       );
     }

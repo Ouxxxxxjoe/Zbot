@@ -946,7 +946,7 @@ describe("IOSSimulatorInstanceActor", () => {
     const createdUdid = "2A9D41E0-E031-4AD0-A8B5-847480802E8E";
     vi.mocked(harness.lifecycle.createExact).mockResolvedValue({
       udid: createdUdid,
-      name: "Cindy iPhone",
+      name: "Zbot iPhone",
       runtimeIdentifier: DEVICE.runtimeIdentifier,
       deviceTypeIdentifier: DEVICE.deviceTypeIdentifier!,
     });
@@ -956,13 +956,13 @@ describe("IOSSimulatorInstanceActor", () => {
       sessionId: "session-a",
       worktreeRoot: "/tmp/session-a",
       sourceFingerprint: "abc",
-      name: "Cindy iPhone",
+      name: "Zbot iPhone",
       templateDevice: DEVICE,
     });
 
     expect(harness.lifecycle.createExact).toHaveBeenCalledWith(
       {
-        name: "Cindy iPhone",
+        name: "Zbot iPhone",
         runtimeIdentifier: DEVICE.runtimeIdentifier,
         deviceTypeIdentifier: DEVICE.deviceTypeIdentifier,
       },
@@ -970,7 +970,7 @@ describe("IOSSimulatorInstanceActor", () => {
     );
     expect(created).toMatchObject({
       simulatorUdid: createdUdid,
-      simulatorName: "Cindy iPhone",
+      simulatorName: "Zbot iPhone",
       creationProvenance: "cindy",
       lifecycleState: "stopped",
     });
@@ -991,12 +991,12 @@ describe("IOSSimulatorInstanceActor", () => {
       expect(harness.store.listAll()).toEqual([
         expect.objectContaining({
           simulatorUdid: createdUdid,
-          simulatorName: "Cindy iPhone",
+          simulatorName: "Zbot iPhone",
           sessionId: "session-a",
         }),
       ]);
       expect(udid).toBe(createdUdid);
-      expect(name).toBe("Cindy iPhone");
+      expect(name).toBe("Zbot iPhone");
     });
     await harness.actor.detach(harness.route());
 
@@ -1004,18 +1004,18 @@ describe("IOSSimulatorInstanceActor", () => {
       sessionId: "session-a",
       worktreeRoot: "/tmp/session-a",
       sourceFingerprint: "abc",
-      name: "Cindy iPhone",
+      name: "Zbot iPhone",
       templateDevice: DEVICE,
     });
 
     expect(harness.lifecycle.renameExact).toHaveBeenCalledWith(
       createdUdid,
-      "Cindy iPhone",
+      "Zbot iPhone",
       expect.any(AbortSignal),
     );
     expect(created).toMatchObject({
       simulatorUdid: createdUdid,
-      simulatorName: "Cindy iPhone",
+      simulatorName: "Zbot iPhone",
     });
   });
 
@@ -1041,7 +1041,7 @@ describe("IOSSimulatorInstanceActor", () => {
       sessionId: "session-a",
       worktreeRoot: "/tmp/session-a",
       sourceFingerprint: "abc",
-      name: "Cindy iPhone",
+      name: "Zbot iPhone",
       templateDevice: DEVICE,
     });
     await vi.waitFor(() => expect(createSignal).toBeDefined());
@@ -1060,7 +1060,7 @@ describe("IOSSimulatorInstanceActor", () => {
 
     resolveCreate({
       udid: createdUdid,
-      name: "Cindy iPhone",
+      name: "Zbot iPhone",
       runtimeIdentifier: DEVICE.runtimeIdentifier,
       deviceTypeIdentifier: DEVICE.deviceTypeIdentifier!,
     });
@@ -1085,7 +1085,7 @@ describe("IOSSimulatorInstanceActor", () => {
     const createdDevice = {
       ...DEVICE,
       udid: createdUdid,
-      name: "Cindy iPhone",
+      name: "Zbot iPhone",
     };
     let resolveCreate: (created: {
       udid: string;
@@ -1151,7 +1151,7 @@ describe("IOSSimulatorInstanceActor", () => {
     const createdDevice = {
       ...DEVICE,
       udid: createdUdid,
-      name: "Cindy iPhone",
+      name: "Zbot iPhone",
     };
     let createSignal: AbortSignal | undefined;
     let resolveCreate: (created: {
@@ -1228,7 +1228,7 @@ describe("IOSSimulatorInstanceActor", () => {
     const createdDevice = {
       ...DEVICE,
       udid: createdUdid,
-      name: "Cindy iPhone",
+      name: "Zbot iPhone",
     };
     let findSignal: AbortSignal | undefined;
     const lifecycle: IOSSimulatorSimctlLifecycle = {
@@ -1319,7 +1319,7 @@ describe("IOSSimulatorInstanceActor", () => {
       sessionId: "session-a",
       worktreeRoot: "/tmp/session-a",
       sourceFingerprint: "abc",
-      name: "Cindy iPhone",
+      name: "Zbot iPhone",
       templateDevice: DEVICE,
     });
     await vi.waitFor(() => expect(createSignal).toBeDefined());
@@ -1327,7 +1327,7 @@ describe("IOSSimulatorInstanceActor", () => {
       harness.actor.cancelLifecycleStartsForSession("session-a");
     resolveCreate({
       udid: createdUdid,
-      name: "Cindy iPhone",
+      name: "Zbot iPhone",
       runtimeIdentifier: DEVICE.runtimeIdentifier,
       deviceTypeIdentifier: DEVICE.deviceTypeIdentifier!,
     });
@@ -1361,7 +1361,7 @@ describe("IOSSimulatorInstanceActor", () => {
         throw new IOSSimulatorCreateCleanupRequiredError(
           {
             udid: createdUdid,
-            name: "Cindy iPhone",
+            name: "Zbot iPhone",
             runtimeIdentifier: DEVICE.runtimeIdentifier,
             deviceTypeIdentifier: DEVICE.deviceTypeIdentifier!,
           },
@@ -1380,7 +1380,7 @@ describe("IOSSimulatorInstanceActor", () => {
         sessionId: "session-a",
         worktreeRoot: "/tmp/session-a",
         sourceFingerprint: "abc",
-        name: "Cindy iPhone",
+        name: "Zbot iPhone",
         templateDevice: DEVICE,
       }),
     ).rejects.toBe(createFailure);
@@ -1408,7 +1408,7 @@ describe("IOSSimulatorInstanceActor", () => {
       shutdownExact: vi.fn(),
       createExact: vi.fn(async () => ({
         udid: createdUdid,
-        name: "Cindy iPhone",
+        name: "Zbot iPhone",
         runtimeIdentifier: DEVICE.runtimeIdentifier,
         deviceTypeIdentifier: DEVICE.deviceTypeIdentifier!,
       })),
@@ -1425,7 +1425,7 @@ describe("IOSSimulatorInstanceActor", () => {
         sessionId: "session-a",
         worktreeRoot: "/tmp/session-a",
         sourceFingerprint: "abc",
-        name: "Cindy iPhone",
+        name: "Zbot iPhone",
         templateDevice: DEVICE,
       }),
     ).rejects.toThrow("writer lease lost");

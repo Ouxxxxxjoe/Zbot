@@ -153,10 +153,7 @@ github-result-*.json
 # local 模式的端点清单(restart:desktop:local 从 config/endpoint.json 生成,api/auth/device-link 指 localhost)
 config/endpoint.local.json
 # dev 区端点清单为本地文件(内部/自托管环境各自维护,不入仓)。
-# mobile 打包静态引用该文件;缺失时从 config/endpoint.dev.json.example 复制一份。
 config/endpoint.dev.json
-# 发布机本地地区 / 签名配置；仓库只保留对应的 .example 文件。
-apps/mobile/scripts/self-host-regions.json
 apps/desktop/scripts/release-regions.json
 # iOS Simulator WDA archives and native sidecars are generated locally.
 apps/desktop/resources/ios-simulator/*.tar.gz
@@ -170,8 +167,6 @@ apps/desktop/resources/ios-simulator/helper/
 # dev 缺失则该渠道的日志上报整体关闭。
 config/log-upload.json
 # 视觉基线截图是开发者本地对照数据(可能截到真实会话内容),不入仓;
-# 本地跑 visual-baseline-check 时会自动生成。
-apps/mobile/e2e/visual-baselines/
 .cindy-worktrees/
 # 品牌迁移前已创建的 worktree 仍需保持 ignored。
 .xdt-worktrees/
@@ -190,3 +185,7 @@ github-result-*.json
 
 # 内置插件种子已废弃(改走 plugin-store 安装);历史克隆含私有插件与凭证,永不入仓。
 apps/desktop/resources/builtin-ghosts/
+
+# 本地包管理 / 依赖缓存(随仓库根移动,永不入仓)
+.pnpm-store/
+.electron-cache/

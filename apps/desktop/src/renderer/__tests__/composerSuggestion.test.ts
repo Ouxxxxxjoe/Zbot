@@ -38,7 +38,7 @@ describe('composerSuggestion', () => {
       query: '',
       actions,
       resources: [
-        { type: 'browser-tab', name: 'Docs', relPath: 'cindy://browser/docs' },
+        { type: 'browser-tab', name: 'Docs', relPath: 'zbot://browser/docs' },
         { type: 'agent', name: 'reviewer', relPath: '.claude/agents/reviewer.md' },
       ],
       plugins: [

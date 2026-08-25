@@ -115,7 +115,7 @@ describe('启动失败系统提示框', () => {
         logPath: '/Users/example/Library/Logs/Cindy/endpoint-netlog/capture.json',
         offlineSavedAt: null,
       },
-      'https://hotfix.cindy.app/cindy/endpoint.json',
+      'https://hotfix.zbot.local/zbot/endpoint.json',
       'zh-CN',
     );
 
@@ -151,7 +151,7 @@ describe('启动失败系统提示框', () => {
         logPath: '/Users/example/Library/Logs/Cindy/endpoint-netlog/capture.json',
         offlineSavedAt: null,
       },
-      'https://hotfix.cindy.app/cindy/endpoint.json',
+      'https://hotfix.zbot.local/zbot/endpoint.json',
       'zh-CN',
     );
 
@@ -159,7 +159,7 @@ describe('启动失败系统提示框', () => {
     expect(showMessageBoxSync).toHaveBeenCalledTimes(2);
     expect(clipboardWriteText).toHaveBeenCalledTimes(1);
     expect(clipboardWriteText.mock.calls[0]?.[0]).toContain('ERR_CONNECTION_RESET');
-    expect(clipboardWriteText.mock.calls[0]?.[0]).toContain('hotfix.cindy.app');
+    expect(clipboardWriteText.mock.calls[0]?.[0]).toContain('hotfix.zbot.local');
     expect(clipboardWriteText.mock.calls[0]?.[0]).toContain('proxy=DIRECT');
     expect(clipboardWriteText.mock.calls[0]?.[0]).toContain('/Users/example');
     expect(showMessageBoxSync.mock.calls[1]?.[0].detail).toContain('诊断信息已复制');
@@ -179,7 +179,7 @@ describe('启动失败系统提示框', () => {
         logPath: '/Users/example/Library/Logs/Cindy/endpoint-netlog/capture.json',
         offlineSavedAt: null,
       },
-      'https://hotfix.cindy.app/cindy/endpoint.json',
+      'https://hotfix.zbot.local/zbot/endpoint.json',
       'zh-CN',
     );
 

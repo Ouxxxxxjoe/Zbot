@@ -35,7 +35,7 @@ describe('extractPlainText', () => {
   });
 
   it('DB user envelope uses semantic projection for quote and message chips', () => {
-    const href = 'cindy://session/session-a?message=message-a';
+    const href = 'zbot://session/session-a?message=message-a';
     const text = `> <!-- cindy-composer-quote -->\n> selected\n\ninspect ${href}`;
     const content = {
       text,
@@ -132,7 +132,7 @@ describe('buildHandoffText', () => {
   });
 
   it('handoff history never exposes product quote markers or private deep-link-only semantics', () => {
-    const href = 'cindy://session/session-a?message=message-a';
+    const href = 'zbot://session/session-a?message=message-a';
     const text = `> <!-- cindy-composer-quote -->\n> selected\n\ninspect ${href}`;
     const handoff = buildHandoffText([
       msg('user', {

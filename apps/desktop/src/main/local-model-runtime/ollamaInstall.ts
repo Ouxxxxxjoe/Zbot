@@ -57,7 +57,7 @@ export async function resolveOfficialSidecarAsset(
   const response = await fetchImpl(OLLAMA_GITHUB_API_LATEST, {
     headers: {
       Accept: 'application/vnd.github+json',
-      'User-Agent': 'Cindy-Desktop',
+      'User-Agent': 'Zbot-Desktop',
       'X-GitHub-Api-Version': '2022-11-28',
     },
     signal,
@@ -106,7 +106,7 @@ export async function downloadOfficialAsset(
         reject(new Error('blocked unofficial ollama download url'));
         return;
       }
-      const request = get(url, { headers: { 'User-Agent': 'Cindy-Desktop' } }, (response) => {
+      const request = get(url, { headers: { 'User-Agent': 'Zbot-Desktop' } }, (response) => {
         const status = response.statusCode ?? 0;
         if (status >= 300 && status < 400 && response.headers.location) {
           response.resume();

@@ -40,20 +40,20 @@ describe('iOS Simulator packaged release gate CLI', () => {
   it('parses strict trust and native requirements', () => {
     expect(
       parseIOSSimulatorReleaseGateCli([
-        '--app-path=/tmp/Cindy.app',
+        '--app-path=/tmp/Zbot.app',
         '--arch=arm64',
         '--expected-trust=verified',
         '--require-native',
       ]),
     ).toMatchObject({
-      appPath: path.resolve('/tmp/Cindy.app'),
+      appPath: path.resolve('/tmp/Zbot.app'),
       arch: 'arm64',
       expectedTrust: 'verified',
       requireNative: true,
     });
     expect(() =>
       parseIOSSimulatorReleaseGateCli([
-        '--app-path=/tmp/Cindy.app',
+        '--app-path=/tmp/Zbot.app',
         '--arch=arm64',
         '--expected-trust=untrusted',
         '--require-native',
@@ -73,7 +73,7 @@ describe('iOS Simulator packaged release gate CLI', () => {
   it('accepts a promoted verified static report', () => {
     expect(
       validateReleaseGateReport(BASE_REPORT, {
-        appPath: '/tmp/Cindy.app',
+        appPath: '/tmp/Zbot.app',
         arch: 'arm64',
         expectedTrust: 'verified',
         requireNative: false,
@@ -93,7 +93,7 @@ describe('iOS Simulator packaged release gate CLI', () => {
     };
     expect(
       validateReleaseGateReport(report, {
-        appPath: '/tmp/Cindy.app',
+        appPath: '/tmp/Zbot.app',
         arch: 'arm64',
         expectedTrust: 'untrusted',
         requireNative: false,
@@ -104,9 +104,9 @@ describe('iOS Simulator packaged release gate CLI', () => {
   it('rejects private signing or filesystem metadata in archived output', () => {
     expect(() =>
       validateReleaseGateReport(
-        { ...BASE_REPORT, executablePath: '/Applications/Cindy.app' },
+        { ...BASE_REPORT, executablePath: '/Applications/Zbot.app' },
         {
-          appPath: '/tmp/Cindy.app',
+          appPath: '/tmp/Zbot.app',
           arch: 'arm64',
           expectedTrust: 'verified',
           requireNative: false,

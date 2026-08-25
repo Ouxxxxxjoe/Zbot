@@ -5,7 +5,6 @@ import {
   getDesktopMcpToolApprovalPolicy,
   getDesktopMcpToolApprovalPresentation,
 } from '../mcp-tool-approval-policy.js';
-import { setMainLocale } from '../../i18n.js';
 
 describe('desktop Claude read-only allowlist', () => {
   it('allows only explicitly reviewed read-only tools', () => {
@@ -236,7 +235,6 @@ describe('desktop MCP approval policy', () => {
   });
 
   it('discloses host file access before an agent starts an Xcode build', () => {
-    setMainLocale('en');
     expect(
       getDesktopMcpToolApprovalPresentation({
         serverName: 'cindy_ios_simulator',
@@ -244,9 +242,9 @@ describe('desktop MCP approval policy', () => {
         toolParams: { name: 'build_app', args: {} },
       }),
     ).toEqual({
-      title: 'Allow Xcode to build this project?',
+      title: '允许 Xcode 构建此项目？',
       description: expect.stringMatching(
-        /macOS user.*outside the project.*returned to the Agent.*trust this project/i,
+        /macOS 用户权限.*项目外.*返回给 Agent.*信任此项目/,
       ),
     });
     expect(
@@ -261,14 +259,13 @@ describe('desktop MCP approval policy', () => {
         serverName: 'cindy_ios_simulator',
         toolParams: { name: 'build_app', args: {} },
       })?.description,
-    ).toContain('outside the project');
+    ).toContain('项目外');
   });
 
   it('discloses the task-scoped control lease before an agent creates or attaches a simulator', () => {
-    setMainLocale('en');
     for (const [name, title] of [
-      ['attach_device', /connect to and control this simulator/i],
-      ['create_instance', /create and control a simulator/i],
+      ['attach_device', /连接并控制此模拟器/],
+      ['create_instance', /创建并控制模拟器/],
     ] as const) {
       const presentation = getDesktopMcpToolApprovalPresentation({
         serverName: 'cindy_ios_simulator',
@@ -277,7 +274,7 @@ describe('desktop MCP approval policy', () => {
       });
       expect(presentation?.title).toMatch(title);
       expect(presentation?.description).toMatch(
-        /current Cindy task.*start or stop.*install or launch.*tap.*swipe.*type.*screenshots.*settings.*without another device-control prompt.*disconnect.*revoke Agent control.*sensitive actions.*separate approval/i,
+        /当前 Zbot 任务.*启动或停止.*安装或启动.*点击、滑动、输入、截图.*无需再次确认设备控制.*断开设备.*撤销 Agent 控制.*敏感操作.*单独批准/,
       );
     }
 
@@ -288,7 +285,7 @@ describe('desktop MCP approval policy', () => {
         serverName: 'cindy_ios_simulator',
         toolParams: { name: 'attach_device', args: {} },
       })?.description,
-    ).toContain('without another device-control prompt');
+    ).toContain('无需再次确认设备控制');
     expect(
       getDesktopMcpToolApprovalPresentation({
         serverName: 'cindy_ios_simulator',

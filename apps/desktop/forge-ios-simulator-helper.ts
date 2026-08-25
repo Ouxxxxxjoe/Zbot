@@ -1,7 +1,7 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 
-const IOS_SIMULATOR_HELPER_BUNDLE = 'Cindy iOS Simulator Helper.app';
+const IOS_SIMULATOR_HELPER_BUNDLE = 'Zbot iOS Simulator Helper.app';
 const IOS_SIMULATOR_HELPER_EXECUTABLE = 'ios-simulator-sidecar';
 const IOS_SIMULATOR_HELPER_BUILD_RESULT = 'build-result.json';
 const IOS_SIMULATOR_PACKAGED_BUILD_RESULT = 'native-helper-build-result.json';

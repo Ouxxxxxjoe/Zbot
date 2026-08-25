@@ -182,7 +182,7 @@ describe('commitEditAndResend', () => {
       kind: 'session' as const,
       start: 0,
       end: 11,
-      href: 'cindy://session/source',
+      href: 'zbot://session/source',
       sessionId: 'source',
     }];
     const pastedTextRanges = [{ start: 0, end: 11, display: 'Pasted text (1 line)' }];

@@ -200,7 +200,7 @@ export function segmentPastedContent(
 
 /** 深链(session + project,裸 / markdown 两形态)分段;无命中 → null。 */
 function segmentDeepLinks(text: string): PastedContentSegment[] | null {
-  // 快速预筛:双 scheme(cindy:// / xdt-maker://)任一出现才进正则。
+  // 快速预筛:双 scheme(zbot:// / xdt-maker://)任一出现才进正则。
   if (!textContainsDeepLink(text)) return null;
   interface Candidate {
     start: number;

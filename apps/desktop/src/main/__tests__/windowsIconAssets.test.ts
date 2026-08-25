@@ -9,7 +9,7 @@ vi.setConfig({ testTimeout: process.platform === 'win32' ? 60_000 : 30_000 });
 
 const desktopRoot = path.resolve(__dirname, '../../..');
 const resourcesDir = path.join(desktopRoot, 'resources');
-const updaterIconsDir = path.join(desktopRoot, 'cindy-updater', 'src-tauri', 'icons');
+const updaterIconsDir = path.join(desktopRoot, 'zbot-updater', 'src-tauri', 'icons');
 
 interface DecodedIcoEntry {
   size: number;

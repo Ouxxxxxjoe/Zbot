@@ -1716,7 +1716,7 @@ export function AddProviderWizard({
                 <InfoLine text={t('settings.providers.wizard.noAuthNote')} />
               )}
               {/* 官方端点默认只读；本机 / 自托管代理预设可编辑。codex + openai-chat
-                  上游标注「Cindy 桥接」，让用户明确该通道是协议转换而非原生。 */}
+                  上游标注「Zbot 桥接」，让用户明确该通道是协议转换而非原生。 */}
               <div className="flex flex-col gap-2">
                 {presetAgents.map((agent) => {
                   const rt = sel.preset.runtimes[agent];

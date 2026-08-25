@@ -51,7 +51,7 @@ beforeEach(() => {
   vi.useFakeTimers();
   Object.defineProperty(process, 'platform', { value: 'darwin', configurable: true });
   Object.defineProperty(process, 'resourcesPath', {
-    value: '/Applications/Cindy.app/Contents/Resources',
+    value: '/Applications/Zbot.app/Contents/Resources',
     configurable: true,
   });
   h.spawn.mockReset();

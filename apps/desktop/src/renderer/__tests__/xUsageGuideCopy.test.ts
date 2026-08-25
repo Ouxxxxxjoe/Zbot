@@ -19,11 +19,7 @@
 
 import { describe, expect, it } from 'vitest';
 
-import en from '../i18n/locales/en/common.json';
-import ja from '../i18n/locales/ja/common.json';
-import ko from '../i18n/locales/ko/common.json';
 import zhCN from '../i18n/locales/zh-CN/common.json';
-import zhTW from '../i18n/locales/zh-TW/common.json';
 
 const BOT_HANDLE = '@askmycindy';
 
@@ -41,14 +37,6 @@ type GuideCopy = {
 
 const LOCALES: Record<string, GuideCopy> = {
   'zh-CN': (zhCN as never as { settings: { remoteControl: { hook: { x: { guide: GuideCopy } } } } })
-    .settings.remoteControl.hook.x.guide,
-  'zh-TW': (zhTW as never as { settings: { remoteControl: { hook: { x: { guide: GuideCopy } } } } })
-    .settings.remoteControl.hook.x.guide,
-  en: (en as never as { settings: { remoteControl: { hook: { x: { guide: GuideCopy } } } } })
-    .settings.remoteControl.hook.x.guide,
-  ja: (ja as never as { settings: { remoteControl: { hook: { x: { guide: GuideCopy } } } } })
-    .settings.remoteControl.hook.x.guide,
-  ko: (ko as never as { settings: { remoteControl: { hook: { x: { guide: GuideCopy } } } } })
     .settings.remoteControl.hook.x.guide,
 };
 
@@ -74,12 +62,8 @@ describe('X 用法与风险告知的多语言文案', () => {
     }
   });
 
-  it('中文命令词按简繁中文展示, 对非中文用户不产生噪音', () => {
+  it('中文命令词在中文文案里展示', () => {
     expect(LOCALES['zh-CN'].withdrawBody).toContain('/删除');
-    expect(LOCALES['zh-TW'].withdrawBody).toContain('/刪除');
-    for (const loc of ['en', 'ja', 'ko']) {
-      expect(LOCALES[loc].withdrawBody, `${loc} 不该提 /删除`).not.toContain('删除');
-    }
   });
 
   it('风险那两条都点明了公开可见与默认工作目录', () => {
@@ -100,18 +84,10 @@ describe('X 用法与风险告知的多语言文案', () => {
     // 指出 P2; 初版四语分别是「我明白」/ Got it / 了解しました / 이해했어요)。
     const BANNED: Record<string, readonly string[]> = {
       'zh-CN': ['我明白', '知道了', '确定', '提交'],
-      'zh-TW': ['我明白', '知道了', '確定', '提交'],
-      en: ['Got it', 'Got It', 'OK', 'Confirm'],
-      ja: ['了解しました', 'OK'],
-      ko: ['이해했어요', '확인'],
     };
-    // 对象 = 风险本身。四语各自的说法, 比"长度下限"之类的代理判据准确。
+    // 对象 = 风险本身。
     const OBJECT: Record<string, string> = {
       'zh-CN': '风险',
-      'zh-TW': '風險',
-      en: 'Risk',
-      ja: 'リスク',
-      ko: '위험',
     };
     for (const [loc, guide] of Object.entries(LOCALES)) {
       for (const word of BANNED[loc]) {
@@ -135,10 +111,6 @@ describe('X 用法与风险告知的多语言文案', () => {
     // 「一份文案、两处渲染, 不各写一份」, 加 variant 等于把它想消掉的漂移风险请回来。
     const BANNED: Record<string, readonly string[]> = {
       'zh-CN': ['下面', '下方', '以下'],
-      'zh-TW': ['下面', '下方', '以下'],
-      en: ['below'],
-      ja: ['下で', '以下'],
-      ko: ['아래'],
     };
     for (const [loc, guide] of Object.entries(LOCALES)) {
       for (const word of BANNED[loc]) {

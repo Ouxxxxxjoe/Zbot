@@ -25,7 +25,7 @@
 // 下载来源(按顺序尝试,任一成功即止):
 //   1) 上游 dl.google.com 的版本化 zip;
 //   2) 公司 OSS 兜底 —— 与 agent 二进制那条链路同一份 cdnBaseUrl 与 region 切换
-//      (cn → hotfix.cindy.com.cn / global → hotfix.cindy.app),见 ossZipUrlFor 的
+//      (cn → hotfix.zbot.local / global → hotfix.zbot.local),见 ossZipUrlFor 的
 //      路径约定。国内打包机可设 CINDY_ANDROID_PLATFORM_TOOLS_PREFER_OSS=1 让 OSS
 //      先行,免得每次先吃一轮 Google 的连接超时。
 // 无论来自哪个来源,校验都是本文件里硬 pin 的 sha256,不因来源放宽。
@@ -53,7 +53,7 @@ import {
 // 文案,不在这里重复实现哈希校验。
 import { sha256File, sha256Hex, assertSha256 } from '../../../tools/shared/verify-sha256.mjs';
 // OSS 兜底的基址与 agent 二进制那条链路同源:同一份 config/endpoint*.json 的
-// cdnBaseUrl,同一套 region 切换(cn → hotfix.cindy.com.cn,global → hotfix.cindy.app)。
+// cdnBaseUrl,同一套 region 切换(cn → hotfix.zbot.local,global → hotfix.zbot.local)。
 import { loadEndpointManifestBaseUrl } from '../../../scripts/shared/client-endpoint-build-env.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -146,8 +146,8 @@ export function resolveOssBaseUrl() {
  *
  *   <cdnBaseUrl>/android-platform-tools/<version>/platform-tools_r<version>-<os>.zip
  *
- * 例(cn):  https://hotfix.cindy.com.cn/cindy/android-platform-tools/32.0.0/platform-tools_r32.0.0-windows.zip
- * 例(global): https://hotfix.cindy.app/cindy/android-platform-tools/32.0.0/platform-tools_r32.0.0-windows.zip
+ * 例(cn):  https://hotfix.zbot.local/zbot/android-platform-tools/32.0.0/platform-tools_r32.0.0-windows.zip
+ * 例(global): https://hotfix.zbot.local/zbot/android-platform-tools/32.0.0/platform-tools_r32.0.0-windows.zip
  *
  * 不需要 manifest:期望 sha256 硬 pin 在本文件里,比 agent 二进制那套"manifest
  * 版本对得上才校验"的 best-effort 更严 —— OSS 上的文件被换掉一样会被拦下。

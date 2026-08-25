@@ -846,14 +846,14 @@ function incrementApplyAttempts(): void {
 }
 
 /**
- * Sweep stale `cindy-update*` / legacy `xdt-update*` leftovers from %TEMP%
+ * Sweep stale `zbot-update*` / legacy `xdt-update*` leftovers from %TEMP%
  * older than MAX_AGE_DAYS.
  * Mirrors the Rust updater's `sweep_stale_temp_dirs` (installer.rs) but
  * runs in the main process at app startup — so users who never trigger
  * another update still get their disk cleaned up. The Rust sweep only
  * fires when the updater itself is launched; without this counterpart a
  * user on the latest version would keep the post-update workdir + the
- * `cindy-updater-{ts}.exe` binary inside it forever.
+ * `zbot-updater-{ts}.exe` binary inside it forever.
  *
  * Best-effort: any IO failure is swallowed — sweeping is housekeeping, not
  * correctness. 7-day threshold matches the Rust side so the two sweeps
@@ -871,7 +871,7 @@ function sweepStaleUpdateTempDirs(): void {
     return;
   }
   for (const name of entries) {
-    if (!name.startsWith('cindy-update') && !name.startsWith('xdt-update')) continue;
+    if (!name.startsWith("zbot-update") && !name.startsWith('xdt-update')) continue;
     const full = path.join(tmp, name);
     let stat: fs.Stats;
     try {
@@ -1257,7 +1257,7 @@ function handleApplyFailure(reason: string): void {
   // `error` and 5s spawn-timeout callbacks and returns immediately, so
   // `isRelaunching` was still true when the outer `finally` checked it and the
   // fence was skipped. It then stood for the rest of the process's life, and
-  // every durable Subagent launch this host attempted was refused as "Cindy is
+  // every durable Subagent launch this host attempted was refused as "Zbot is
   // restarting". Releasing here covers the synchronous refusals too, where it
   // is simply redundant — `clearSubagentLaunchFence` nulls the handle first, so
   // the outer `finally` finds nothing left to do.
@@ -1284,7 +1284,7 @@ function executeUpdateWindows(zipPath: string, theme: 'light' | 'dark'): void {
   const lockFilePath = getUpdateLockPath();
   const logDir = path.join(app.getPath('userData'), 'logs');
   fs.mkdirSync(logDir, { recursive: true });
-  const logPath = path.join(logDir, 'cindy-update.log');
+  const logPath = path.join(logDir, 'zbot-update.log');
   const pid = process.pid;
 
   log.info('Windows relaunch: exe=%s, zip=%s, pid=%d', maskPath(appExePath), maskPath(zipPath), pid);
@@ -1408,7 +1408,7 @@ function executeUpdateMacOS(zipPath: string): void {
   const lockFilePath = getUpdateLockPath();
   const logDir = path.join(app.getPath('userData'), 'logs');
   fs.mkdirSync(logDir, { recursive: true });
-  const logPath = path.join(logDir, 'cindy-update.log');
+  const logPath = path.join(logDir, 'zbot-update.log');
   const pid = process.pid;
 
   log.info('macOS relaunch: app=%s, zip=%s, pid=%d', maskPath(appPath), maskPath(zipPath), pid);
@@ -1565,7 +1565,7 @@ function executeUpdateLinux(debPath: string): void {
   const lockFilePath = getUpdateLockPath();
   const logDir = path.join(app.getPath('userData'), 'logs');
   fs.mkdirSync(logDir, { recursive: true });
-  const logPath = path.join(logDir, 'cindy-update.log');
+  const logPath = path.join(logDir, 'zbot-update.log');
   const pid = process.pid;
 
   if (!debPath.toLowerCase().endsWith('.deb') || !fs.existsSync(debPath)) {
@@ -1777,7 +1777,7 @@ async function executeRelaunchUnguarded(theme: 'light' | 'dark'): Promise<void> 
 // ── Public API ─────────────────────────────────────────────────────────────
 
 export function initUpdateService(): void {
-  // Best-effort cleanup of >7-day-old `cindy-update*`/`xdt-update*` leftovers in %TEMP%.
+  // Best-effort cleanup of >7-day-old `zbot-update*`/`xdt-update*` leftovers in %TEMP%.
   // Counterpart to the Rust updater's own sweep — covers the case where the
   // user stays on the latest version and never triggers another updater run.
   sweepStaleUpdateTempDirs();

@@ -200,7 +200,7 @@ describe('UserMessageEditBox — idle 发送', () => {
       kind: 'session' as const,
       start: 0,
       end: 13,
-      href: 'cindy://session/source',
+      href: 'zbot://session/source',
       sessionId: 'source',
     }];
     const ranges = {
@@ -296,7 +296,7 @@ describe('UserMessageEditBox — idle 发送', () => {
       kind: 'session' as const,
       start: 0,
       end: 13,
-      href: 'cindy://session/source',
+      href: 'zbot://session/source',
       sessionId: 'source',
     }];
     const ranges = {

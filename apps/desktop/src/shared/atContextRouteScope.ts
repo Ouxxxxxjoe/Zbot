@@ -24,7 +24,7 @@ export function atContextVisibleSessionIdsFromRendererUrl(rendererUrl: string): 
     const appUrl = new URL(rendererUrl);
     const route = appUrl.hash.startsWith('#') ? appUrl.hash.slice(1) : '';
     if (!route.startsWith('/')) return sessionIds;
-    const routeUrl = new URL(route, 'cindy://renderer');
+    const routeUrl = new URL(route, 'zbot://renderer');
     const segments = routeUrl.pathname.split('/').filter(Boolean);
     if (segments[0] !== 'cc-agent') return sessionIds;
 

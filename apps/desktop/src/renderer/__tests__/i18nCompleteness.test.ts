@@ -111,7 +111,7 @@ describe('i18n completeness (static keys present in all locales)', () => {
   it('every static t() key (no inline default) exists in all supported locales', async () => {
     const locales = localeNames();
     const trees = loadLocales();
-    expect(locales.length).toBeGreaterThanOrEqual(5); // zh-CN / zh-TW / en / ja / ko
+    expect(locales.length).toBeGreaterThanOrEqual(1); // Zbot 只保留 zh-CN
 
     const { used, withDefault, templateCount } = await scanSource();
 

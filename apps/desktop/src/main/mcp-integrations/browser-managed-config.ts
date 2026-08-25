@@ -3,22 +3,20 @@ import type { BrowserRuntimeConfig } from '@cindy/browser-control-runtime';
 /**
  * Managed profile identity. The profile key doubles as (a) the Chrome profile
  * display name rendered in the launched browser's top-right profile button and (b)
- * the user-data-dir folder name — so it's branded "Cindy" to make the automation
+ * the user-data-dir folder name — so it's branded "Zbot" to make the automation
  * browser obviously distinct from the user's everyday Chrome at a glance. The runtime
  * seeds the name + color into the profile's Local State / Preferences before launch
  * (decoration re-checks the desired name every launch, so a profile dir carried over
- * with an old display name self-heals to "Cindy" on first run).
+ * with an old display name self-heals to "Zbot" on first run).
  * (Same Chrome binary as the user's, so the dock/taskbar icon is unchanged.)
  *
- * ⚠️ 磁盘标识符:这是 2026-07 品牌翻转时钉死的目录名,之后【不要】再跟随
+ * ⚠️ 磁盘标识符:Zbot fork 钉死的目录名,之后【不要】再跟随
  * @cindy/maker-shared/branding 的 BRAND_NAME 变化——改了会指向新的空 profile
  * 目录,丢失既有登录态/Cookie。老 profile 的接续路径:
- *  - 老 userData(xdt-maker)里的 `browser-runtime/browser/XDMaker` 由 mToc 首登
- *    迁移(legacyUserDataMigration.ts)复制为新 userData 的 `browser/Cindy`;
- *  - 新 userData 里若已有旧名目录(翻转前的 dev 实例),browser.ts module-eval 的
- *    就地改名自愈处理。两处的 'XDMaker'/'Cindy' 字面量与本常量保持一致。
+ *  - 老 userData 里的 `browser-runtime/browser/Cindy` 由 browser.ts 的
+ *    LEGACY_MANAGED_PROFILE 就地改名自愈为新目录 `browser/Zbot`。
  */
-export const MANAGED_PROFILE = 'Cindy';
+export const MANAGED_PROFILE = 'Zbot';
 
 /**
  * Fixed brand tint for the managed profile. This intentionally stays on the vivid

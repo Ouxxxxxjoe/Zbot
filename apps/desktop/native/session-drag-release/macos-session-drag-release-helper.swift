@@ -14,7 +14,7 @@ private func emit(_ payload: [String: Any]) {
     FileHandle.standardOutput.write(Data(line.utf8))
 }
 
-/// A tiny, listen-only AppKit process used only while Cindy owns a task drag.
+/// A tiny, listen-only AppKit process used only while Zbot owns a task drag.
 /// It never records positions or input contents; it reports one matching
 /// left-button release and immediately removes both event monitors.
 private final class DragReleaseListener {

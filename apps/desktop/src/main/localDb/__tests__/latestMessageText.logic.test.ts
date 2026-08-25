@@ -23,7 +23,7 @@ describe('selectRecentTitleMessages', () => {
       row(
         'user',
         1201000,
-        '[供应商后台列表拖拽排序](cindy://session/cc2031db-dd60-4274-9dc2-997643594fd2) 你看看这个任务。我们自己的Codex总感觉不太对，新对话，没干多久就压缩了，甚至一个任务都执行不完',
+        '[供应商后台列表拖拽排序](zbot://session/cc2031db-dd60-4274-9dc2-997643594fd2) 你看看这个任务。我们自己的Codex总感觉不太对，新对话，没干多久就压缩了，甚至一个任务都执行不完',
       ),
       row('assistant', 1211101, '好,这就开工。这是一次产品行为变更 + UI 改动,我按仓库流程来。', {
         uuid: 'progress-1',
@@ -66,7 +66,7 @@ describe('selectRecentTitleMessages', () => {
     const selected = selectRecentTitleMessages(rows, 8);
 
     expect(selected.map((message) => message.text)).toEqual([
-      '[供应商后台列表拖拽排序](cindy://session/cc2031db-dd60-4274-9dc2-997643594fd2) 你看看这个任务。我们自己的Codex总感觉不太对，新对话，没干多久就压缩了，甚至一个任务都执行不完',
+      '[供应商后台列表拖拽排序](zbot://session/cc2031db-dd60-4274-9dc2-997643594fd2) 你看看这个任务。我们自己的Codex总感觉不太对，新对话，没干多久就压缩了，甚至一个任务都执行不完',
       '全部完成,门禁通过。',
       '我本地测试下你告诉我要怎么测试',
       '开发版已启动并验证通过,你可以直接测了。',

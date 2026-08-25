@@ -54,7 +54,7 @@ export const PROJECT_ROOT = path.resolve(DESKTOP_ROOT, '../..');
 export const RELEASE_DIR = path.join(DESKTOP_ROOT, 'release');
 
 /**
- * electron-forge 打包产物基名(2026-07-17 品牌翻转 xdt-maker → Cindy):
+ * electron-forge 打包产物基名(Zbot fork: zagent):
  *   - packaged 目录  out/<PACKAGED_APP_NAME>-<platform>-<arch>/
  *   - Windows exe    <packaged>/<PACKAGED_APP_NAME>.exe
  *   - macOS .app     <packaged>/<PACKAGED_APP_NAME>.app(Mach-O 同名)
@@ -67,19 +67,19 @@ export const RELEASE_DIR = path.join(DESKTOP_ROOT, 'release');
  * (xdt-maker-<version>-Setup.exe / .dmg / .zip 等)仍留在老值:新渠道 bucket
  * 未就绪,发布目标另议,不随本次翻转。
  */
-export const PACKAGED_APP_NAME = 'Cindy';
+export const PACKAGED_APP_NAME = 'zagent';
 
 /**
  * 按区域取打包产物基名(exe / .app / 安装目录 / 快捷方式全部跟随)。
- * cn/global 同值 'Cindy'(2026-07-26 显示名统一决策,放弃文件层双装隔离),
+ * cn/global 同值 'zagent'(显示名统一决策,放弃文件层双装隔离),
  * dev 独立。镜像 brandIdentity.ts 的 executableNameByRegion,一致性由
  * scripts/__tests__/brand-identity-sync.test.mjs 断言兜底。
  * PACKAGED_APP_NAME 保留为正式版共同基线值,供未传 region 的 legacy 脚本使用。
  */
 export const PACKAGED_APP_NAME_BY_REGION = Object.freeze({
-  cn: 'Cindy',
-  global: 'Cindy',
-  dev: 'CindyDev',
+  cn: 'zagent',
+  global: 'zagent',
+  dev: 'zagentDev',
 });
 
 export function packagedAppName(region = 'global') {
@@ -115,12 +115,12 @@ export function releaseArtifactBasename(region = 'global') {
  * 在任何 desktop 发布/上传动作前调用;新渠道 bucket 就绪并把 OSS 前缀切走
  * 之前,发布一律拒绝。确需覆盖(如演练)显式设 XDT_ALLOW_LEGACY_CHANNEL_RELEASE=1。
  */
-export function assertNotPublishingCindyToLegacyChannel(ossPrefix) {
+export function assertNotPublishingZbotToLegacyChannel(ossPrefix) {
   if (process.env.XDT_ALLOW_LEGACY_CHANNEL_RELEASE === '1') return;
-  if (PACKAGED_APP_NAME === 'Cindy' && ossPrefix === 'xdt-maker') {
+  if (PACKAGED_APP_NAME === 'zagent' && ossPrefix === 'xdt-maker') {
     throw new Error(
-      '[channel-freeze] 拒绝把 Cindy 身份的产物发布到已冻结的 /xdt-maker 渠道:'
-      + '存量用户更新器会因 exe 布局变化(Cindy.exe)当场断裂。'
+      '[channel-freeze] 拒绝把 Zbot 身份的产物发布到已冻结的 /xdt-maker 渠道:'
+      + '存量用户更新器会因 exe 布局变化(zagent.exe)当场断裂。'
       + '等新渠道 OSS 前缀就绪后再发布;演练可设 XDT_ALLOW_LEGACY_CHANNEL_RELEASE=1 覆盖。',
     );
   }
@@ -765,7 +765,7 @@ export function verifyMacContactsPermissions(appPath, { keychainAccessGroup, sig
 const IOS_SIMULATOR_HELPER_RELATIVE_PATH = path.join(
   'Contents',
   'Helpers',
-  'Cindy iOS Simulator Helper.app',
+  'Zbot iOS Simulator Helper.app',
 );
 const IOS_SIMULATOR_HELPER_EXECUTABLE = 'ios-simulator-sidecar';
 const IOS_SIMULATOR_SIDECAR_MANIFEST_RELATIVE_PATH = path.join(

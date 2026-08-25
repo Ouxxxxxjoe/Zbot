@@ -10,11 +10,16 @@
  * 使用。本仓构建从此产出 Cindy 身份的包(新装用户直装);存量 xdt-maker 用户
  * 停留在冻结渠道,待后续独立设计的自动迁移方案接走。
  *
+ * Zbot 改造(2026-08):本 fork 将品牌身份整体切换为 Zbot 系(展示名 Zbot,
+ * 可执行名 zagent,深链 zbot://,appId com.zhida.agent 系,更新器 zbot-updater,
+ * 本地库前缀 zbot)。Zbot 为全新私有产品,无存量用户,legacy 数组清空;
+ * 如需从 Cindy 存量数据迁移,再按需把旧值加回 legacy 数组(只增不减)。
+ *
  * ⚠️ 语义边界:
  *  - 这是**构建期单点,不是运行时开关**。区域(cn/global)是唯一的构建期维度,
  *    经打包命令的 CINDY_AUTH_REGION 选择,默认 global。appId / userData 目录名
  *    按区域派生(cn 与 global 是两个可并存的系统身份,appId 与 mobile 的
- *    com.xd.cindycn / com.xd.cindy 同一套);exe 名 cn/global 同值 'Cindy'
+ *    com.zhida.agentcn / com.zhida.agent 同一套);exe 名 cn/global 同值 'zagent'
  *    (2026-07-26 显示名统一决策,文件层双装隔离随之放弃,dev 仍独立)。
  *  - 历史兼容锚点(旧 scheme 解析、旧 userData / DB 文件识别)由
  *    `legacySchemes` / `legacyUserDataDirNames(ByRegion)` / `legacyDbFilePrefixes`
@@ -23,7 +28,7 @@
  *    `xdt-image://` 等进程内 scheme、`.cshare` 扩展名、
  *    localStorage 键等)由各自协议/存储模块维护,
  *    不要试图从这里派生它们。
- *  - `updaterName` = `cindy-updater`(2026-07-17 经 owner 确认随品牌翻转改名,
+ *  - `updaterName` = `zbot-updater`(2026-07-17 经 owner 确认随品牌翻转改名,
  *    docs/dev-rules/cindy-updater.md;老渠道已冻结、新应用未发过版,无自更新兼容包袱)。
  *    消费方:updateService(resources 源名 + %TEMP% 运行名)、forge prePackage
  *    构建/签名/extraResource、notices 脚本登记路径。
@@ -38,20 +43,22 @@
 import { BRAND_NAME } from './branding.js';
 
 /**
- * 构建期区域维度(与 mobile 的 EXPO_PUBLIC_CINDY_AUTH_REGION 同语义)。
- * 2026-07-20 新增第三目标 `dev`:独立系统身份(CindyDev,可与 cn/global 同机
- * 三装),连接独立的 dev 服务器(config/endpoint.dev.json,服务端就绪前为
- * 约定占位域名)。行为语义上 dev 归 cn 系(登录线/文案等运行时按区域分支处
- * 与 cn 同待遇),差异只在端点与身份。注意与「开发模式(未注入区域的本地
- * dev 构建)」区分:那仍默认 global 身份。
+ * 构建期区域维度。2026-07-20 新增第三目标 `dev`:独立系统身份(CindyDev,
+ * 可与 cn/global 同机三装),连接独立的 dev 服务器(config/endpoint.dev.json,
+ * 服务端就绪前为约定占位域名)。行为语义上 dev 归 cn 系(登录线/文案等运行时
+ * 按区域分支处与 cn 同待遇),差异只在端点与身份。
+ *
+ * Zbot 决策(2026-08):产品只保留简体中文版(Windows / macOS 桌面端),
+ * 不发行国际版。默认区域改为 `cn`——未显式注入区域的构建一律产出中文版;
+ * global 区域保留在类型与代码分支中(防未来需要,成本低),但发布链路只配 cn。
  */
 export type CindyRegion = 'cn' | 'global' | 'dev';
 
-/** 默认区域:Global。开发模式 / 未显式注入区域的构建一律落在这里。 */
-export const DEFAULT_CINDY_REGION: CindyRegion = 'global';
+/** 默认区域:中文版(cn)。Zbot 只发行简体中文版,未显式注入区域的构建一律落在这里。 */
+export const DEFAULT_CINDY_REGION: CindyRegion = 'cn';
 
 /**
- * 归一化区域输入(构建脚本 env / 运行时注入值)。空值 → 默认 global;
+ * 归一化区域输入(构建脚本 env / 运行时注入值)。空值 → 默认 cn;
  * 非法值抛错——打包链路宁可失败也不能默默打出身份错误的包。
  */
 export function resolveCindyRegion(raw?: string | null): CindyRegion {
@@ -76,7 +83,7 @@ export interface BrandIdentity {
   readonly executableName: string;
   /**
    * 按区域派生的可执行文件基名(exe / mac .app 包名 / 安装目录 / NSIS
-   * 快捷方式全部跟随)。2026-07-26 owner 决策:cn 与 global 同值 'Cindy',
+   * 快捷方式全部跟随)。2026-07-26 owner 决策:cn 与 global 同值 'zagent',
    * 让 global 包在 Dock / Finder / 菜单栏 / Windows 快捷方式等全部位置显示
    * Cindy——代价是 cn/global 同机双装时安装目录 / .app / .lnk 同名互抢
    * (第二个安装覆盖第一个的文件与快捷方式,更新器按 exe 名杀进程会波及另一
@@ -135,56 +142,53 @@ export interface BrandIdentity {
 }
 
 /**
- * 当前生效的身份档案(Cindy,2026-07-17 翻转)。
- * 旧 xdt-maker 值全部下沉 legacy 数组。
+ * 当前生效的身份档案(Zbot,2026-08 fork 切换)。
+ * 旧 Cindy / xdt-maker 值不再下沉 legacy(全新私有产品,无存量用户)。
  *
  * 区域差异字段:appId、userDataDirName 按区域派生(cn/global 是两个可并存
- * 的系统身份,数据分库);executableName 自 2026-07-26 起 cn/global 同值
- * (显示统一为 Cindy,放弃文件层双装隔离,见 executableNameByRegion doc),
- * 仅 dev 保持独立名;深链 scheme、展示名 BRAND_NAME、cdnPrefix、dbFilePrefix、
- * updaterName 两区共用(scheme 共用是 owner 决策:双装时后注册者赢,单装用户
- * 无感;cdnPrefix 共用因发布渠道靠不同 OSS bucket 区分;db 前缀因 userData
- * 已分目录无需再区分)。
+ * 的系统身份,数据分库);executableName 各区同值 'zagent'(显示统一为 Zbot,
+ * 放弃文件层双装隔离,见 executableNameByRegion doc),仅 dev 保持独立名;
+ * 深链 scheme、展示名 BRAND_NAME、cdnPrefix、dbFilePrefix、updaterName 两区共用。
+ * ⚠️ appId 为占位值(com.zhida.agent 系),上线前须替换为公司实际域名反转,
+ * 全局搜索 "com.zhida.agent" 即可定位全部消费点。
  */
 export const BRAND_IDENTITY: BrandIdentity = Object.freeze({
   displayName: BRAND_NAME,
-  executableName: 'Cindy',
+  executableName: 'zagent',
   executableNameByRegion: Object.freeze({
-    cn: 'Cindy',
-    // 2026-07-26 与 cn 同值(见字段 doc):global 包全部可见位置显示 Cindy,
-    // 放弃 cn/global 同机双装的文件层隔离;appId / userData 仍分区。
-    global: 'Cindy',
-    dev: 'CindyDev',
+    cn: 'zagent',
+    global: 'zagent',
+    dev: 'zagentDev',
   }),
   appIdByRegion: Object.freeze({
-    cn: 'com.xd.cindycn',
-    global: 'com.xd.cindy',
-    dev: 'com.xd.cindydev',
+    // ⚠️ 占位 Bundle ID,待替换为公司真实域名反转(如 com.<company>.zbot)。
+    cn: 'com.zhida.agentcn',
+    global: 'com.zhida.agent',
+    dev: 'com.zhida.agentdev',
   }),
-  primaryScheme: 'cindy',
-  legacySchemes: Object.freeze(['xdt-maker']),
-  userDataDirName: 'Cindy',
+  primaryScheme: 'zbot',
+  legacySchemes: Object.freeze([]),
+  userDataDirName: 'Zbot',
   userDataDirNameByRegion: Object.freeze({
-    cn: 'Cindy',
-    global: 'CindyGlobal',
-    dev: 'CindyDev',
+    cn: 'Zbot',
+    global: 'ZbotGlobal',
+    dev: 'ZbotDev',
   }),
-  legacyUserDataDirNames: Object.freeze(['xdt-maker']),
+  legacyUserDataDirNames: Object.freeze([]),
   legacyUserDataDirNamesByRegion: Object.freeze({
-    cn: Object.freeze(['xdt-maker']),
+    cn: Object.freeze([]),
     global: Object.freeze([]),
     dev: Object.freeze([]),
   }),
   legacyDialogueUserDataDirNamesByRegion: Object.freeze({
-    cn: Object.freeze(['xdt-maker']),
-    // xdt-maker 是旧 CN 渠道的数据来源；Global 不导入或改写 CN 的历史 cwd。
+    cn: Object.freeze([]),
     global: Object.freeze([]),
     dev: Object.freeze([]),
   }),
-  cdnPrefix: 'cindy',
-  updaterName: 'cindy-updater',
-  dbFilePrefix: 'cindy',
-  legacyDbFilePrefixes: Object.freeze(['xdt-maker']),
+  cdnPrefix: 'zbot',
+  updaterName: 'zbot-updater',
+  dbFilePrefix: 'zbot',
+  legacyDbFilePrefixes: Object.freeze([]),
 });
 
 /** 按区域取 appId(AUMID / bundle id);默认 global。 */

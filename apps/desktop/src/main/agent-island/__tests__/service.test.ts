@@ -1632,7 +1632,7 @@ describe('AgentIslandService native publishing', () => {
     // DB 里那个 locale-independent 的英文哨兵(PR #1031 review P1)。此前只有读路径
     // hydrateMeta 做了投影,这条断言正好固化了漏掉的那一半。
     await vi.waitFor(() => expect(publish.mock.calls.at(-1)?.[0].sessions[0]).toMatchObject({
-      title: 'Untitled session',
+      title: '未命名任务',
       projectName: null,
     }));
     // 另一条写路径(metadata patch)同样过投影;权威标题到达后照常原样发布 ——
@@ -1643,11 +1643,11 @@ describe('AgentIslandService native publishing', () => {
     }));
     service.handleSessionMetadataPatch('s1', { title: 'New Maker' });
     await vi.waitFor(() => expect(publish.mock.calls.at(-1)?.[0].sessions[0]).toMatchObject({
-      title: 'Untitled session',
+      title: '未命名任务',
     }));
-    // 切换应用语言后必须**立刻**换语言:投影发生在构建 payload 那一刻,而 state / cache
-    // 存的是原始哨兵,所以 refreshLocalization() 的这次 republish 自然带新语言。若把投影
-    // 固化进 state,这里会一直停在上一语言,直到下一次 metadata 事件(PR #1031 review P1)。
+    // 重新同步主语言后必须**立刻**换语言:投影发生在构建 payload 那一刻,而 state / cache
+    // 存的是原始哨兵,所以 refreshLocalization() 的这次 republish 自然带当前语言(简体中文)。
+    // 若把投影固化进 state,这里会一直停在旧语言,直到下一次 metadata 事件(PR #1031 review P1)。
     {
       const { setMainLocale } = await import('../../i18n.js');
       setMainLocale('zh-CN');
@@ -1655,17 +1655,12 @@ describe('AgentIslandService native publishing', () => {
       await vi.waitFor(() => expect(publish.mock.calls.at(-1)?.[0].sessions[0]).toMatchObject({
         title: '未命名任务',
       }));
-      setMainLocale('en');
-      service.refreshLocalization();
-      await vi.waitFor(() => expect(publish.mock.calls.at(-1)?.[0].sessions[0]).toMatchObject({
-        title: 'Untitled session',
-      }));
     }
     expect(publish.mock.calls.at(-1)?.[0].strings).toMatchObject({
       appName: BRAND_NAME,
-      newMessage: 'New message',
-      needsInput: 'Needs input',
-      running: 'Running',
+      newMessage: '新建消息',
+      needsInput: '需要输入',
+      running: '运行中',
     });
 
     service.handleSessionMetadataPatch('s1', {
@@ -2012,9 +2007,9 @@ describe('AgentIslandService native publishing', () => {
       expect(mocks.showMessageBox).toHaveBeenCalledTimes(1);
       expect(mocks.showMessageBox).toHaveBeenCalledWith(expect.objectContaining({
         type: 'warning',
-        title: 'macOS folder access denied',
-        message: 'Cindy cannot access your Desktop folder',
-        buttons: ['Open System Settings', 'Cancel'],
+        title: 'macOS 文件夹访问被拒绝',
+        message: 'Zbot 无法访问你的“桌面”文件夹',
+        buttons: ['打开系统设置', '取消'],
       }));
       expect(mocks.openExternal).not.toHaveBeenCalled();
     } finally {
@@ -2051,7 +2046,7 @@ describe('AgentIslandService native publishing', () => {
       ));
       expect(mocks.showMessageBox).toHaveBeenCalledWith(
         mainWindow,
-        expect.objectContaining({ message: 'Cindy cannot access your Documents folder' }),
+        expect.objectContaining({ message: 'Zbot 无法访问你的“文稿”文件夹' }),
       );
     } finally {
       platformSpy.mockRestore();

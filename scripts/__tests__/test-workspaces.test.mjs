@@ -129,29 +129,26 @@ test("client CI no longer builds model-access protocol for consumers", () => {
 	assert.doesNotMatch(workflow, /pnpm --filter @cindy\/model-access-protocol build/);
 });
 
-test("help groups copyable desktop, binary, and Mobile workflows", async () => {
+test("help groups copyable desktop and binary workflows", async () => {
 	const { printHelp } = await import("../help.mjs");
 	const lines = [];
 	printHelp((line = "") => lines.push(line));
 	const output = lines.join("\n");
 	const rootScripts = Object.keys(readRootScripts());
 	const documentedWorkflowScripts = rootScripts.filter((name) =>
-		/^(mobile:xcode|mobile:sim:|mobile:build:(ios|android))/.test(name) ||
 		/^(install:(agent-binaries|claude|codex|ripgrep|pi)|update:(vendors|claude|codex|ripgrep|pi))$/.test(name) ||
 		/^release:(claude-code|codex|ripgrep)(:arm64|:x64|:win)?$/.test(name),
 	);
 	assert.deepEqual(
 		documentedWorkflowScripts.filter((name) => !output.includes(`pnpm ${name}`)),
 		[],
-		"pnpm h must include every user-facing Mobile and binary workflow",
+		"pnpm h must include every user-facing binary workflow",
 	);
 
 	for (const command of [
 		"pnpm dev:desktop:remote",
 		"pnpm dev:desktop:remote --region=cn",
 		"pnpm install:agent-binaries",
-		"pnpm mobile:build:ios -- --region cn --execute",
-		"pnpm mobile:build:android -- --region cn --execute",
 	]) {
 		assert.match(output, new RegExp(command.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
 	}
@@ -176,9 +173,6 @@ test("unit workspace concurrency reserves the full worker budget for heavy works
 	const desktop = manifest.workspaces.find(
 		(workspace) => workspace.cwd === "apps/desktop",
 	);
-	const mobile = manifest.workspaces.find(
-		(workspace) => workspace.cwd === "apps/mobile",
-	);
 	const makerCore = manifest.workspaces.find(
 		(workspace) => workspace.cwd === "packages/maker-core",
 	);
@@ -195,13 +189,6 @@ test("unit workspace concurrency reserves the full worker budget for heavy works
 	assert.equal(desktopUnitWorkerCount(4), 4);
 	assert.equal(desktopUnitWorkerCount(32), 8);
 	assert.equal(desktopUnitWorkerCount(Number.NaN), 1);
-	assert.equal(mobile.tiers.unit.execution, "exclusive");
-	assert.deepEqual(mobile.tiers.unit.command.args, [
-		"run",
-		"--pool=threads",
-		"--maxWorkers=4",
-		...unitTestShardArgs(),
-	]);
 	assert.equal(makerCore.tiers.unit.execution, undefined);
 	assert.deepEqual(makerCore.tiers.unit.command, {
 		type: "packageBin",
@@ -279,7 +266,7 @@ test("discoverTestFiles ignores generated and nested non-workspace directories",
 		"packages/orca-workflow/src/__tests__/orca-bridge-mcp.test.ts",
 		"packages/orca-workflow/node_modules/@cindy/maker-core/src/session.test.ts",
 		"apps/server/release/src/__tests__/ignored.test.ts",
-		"apps/desktop/cindy-updater/src/__tests__/ignored.test.ts",
+		"apps/desktop/zbot-updater/src/__tests__/ignored.test.ts",
 		"apps/server/src/__tests__/services/oss.spec.ts",
 		"packages/generated/src/__tests__/ignored.test.ts",
 		"apps/desktop/src/renderer/__tests__/automationGeneratedSessions.test.ts",
@@ -753,13 +740,6 @@ test("filterRunsByWorkspace selects by manifest name or cwd and supports exclude
 			(run) => run.workspace.cwd,
 		),
 		["apps/desktop"],
-	);
-	assert.deepEqual(
-		filterRunsByWorkspace(runs, {
-			workspaces: ["apps/desktop", "mobile"],
-			excludeWorkspaces: ["desktop"],
-		}).map((run) => run.workspace.cwd),
-		["apps/mobile"],
 	);
 });
 

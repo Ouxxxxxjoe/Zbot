@@ -1369,7 +1369,7 @@ describe('SplitGroup', () => {
       types: ['application/x-cindy-session-id', 'application/x-cindy-session-link'],
       dropEffect: 'none',
       getData: (format: string) =>
-        format === 'application/x-cindy-session-id' ? 'session-c' : 'cindy://session/session-c',
+        format === 'application/x-cindy-session-id' ? 'session-c' : 'zbot://session/session-c',
     };
 
     await act(async () => {

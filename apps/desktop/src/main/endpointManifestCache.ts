@@ -218,7 +218,7 @@ export function writeEndpointManifestCache(
  * 上一版的真实漏洞):两份线上清单都**没有** `region` 字段,而 `region` 本身也是清单里
  * 的、未认证的数据。并集 + 缺失 region 的组合意味着——CN 构建下,攻击者只要伪造一份
  * sourceUrl 匹配 CN 的缓存、把 `authApiBaseUrl` 换成 Global 的**真实**服务
- * (`https://auth.cindy.app`),就能通过全部校验;用户点离线启动后,CN 的 token 会被
+ * (`https://auth.zbot.local`),就能通过全部校验;用户点离线启动后,CN 的 token 会被
  * 发到 Global 区域。跨区 token 误发正是 auth-realm 设计里最要防的事。
  *
  * 这些常量是**安全常量**(性质同证书固定),不是"生产端点地址"——shared/endpoints.ts
@@ -229,12 +229,12 @@ export function writeEndpointManifestCache(
  * 绝不会反过来继续信任别的东西。
  */
 export const REGION_ENDPOINT_DOMAIN: Readonly<Record<'cn' | 'global', string>> = {
-  cn: 'cindy.com.cn',
-  global: 'cindy.app',
+  cn: 'zbot.local',
+  global: 'zbot.local',
 };
 
 /**
- * 跨区共享的 hook 服务:两份清单(含 CN)都指向 cindy.app,所以只有这几个 hook key
+ * 跨区共享的 hook 服务:两份清单(含 CN)都指向 zbot.local,所以只有这几个 hook key
  * 允许落在 Global 域。**别往这里加 key** —— 每加一个就等于允许该端点跨区,而这个集合之外
  * 的所有端点(尤其 auth / device-link / oauth-broker / model-access / voice)必须锁在
  * 本构建区域,否则就回到上面说的跨区 token 误发。

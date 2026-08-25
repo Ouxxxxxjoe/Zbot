@@ -4,7 +4,7 @@
 
 # Support
 
-Cindy is an open-source client. The community can help confirm reproducible
+Zbot is a local-first agent client. The community can help confirm reproducible
 issues and discuss improvements, but one-to-one troubleshooting for every
 custom environment or commercial support is not guaranteed.
 

@@ -1,13 +1,13 @@
 /**
  * legacyUserDataMigration — 首登轻量数据迁移(mToc)。
  *
- * 身份翻转(2026-07-17)后 userData 目录从 `xdt-maker` 变为 `Cindy`,老用户的
+ * Zbot fork 基于 Cindy 上游;userData 目录从 Cindy 变为 Zbot,老用户的
  * 主库与媒体总仓留在同级的老目录里。本模块在「用户首次登录成功、db 尚未打开」
  * 时(registerLocalDbIpc 的 beforeEnsureReady 钩子)做一次**只读老目录**的简单
  * 迁移:复制主库(+wal/shm 附属文件)、`cindy-media` 目录、`dialogues` 无文件夹
  * 对话工作目录(agent 可能在里面写过真实文件,必须随迁;DB 里的 working_dir
  * 前缀改写由 db ready 后的 sweepLegacyDialogueWorkingDirs 完成)、agent 浏览器
- * profile(`browser-runtime/browser/XDMaker` → `browser/Cindy`,登录态随迁)到新
+ * profile(browser-runtime/browser/Cindy → browser/Zbot,登录态随迁)到新
  * userData,完成后写 marker 文件 `<userData>/mToc` 防重入。
  *
  * 设计要点:
@@ -61,16 +61,16 @@ const DIALOGUES_DIR_NAME = 'dialogues';
 const DIALOGUE_SKIP_DIR_NAMES: ReadonlySet<string> = new Set(['node_modules']);
 
 /**
- * agent 浏览器登录态的搬运路径:老 `<legacy>/browser-runtime/browser/XDMaker` →
- * 新 `<userData>/browser-runtime/browser/Cindy`(搬运即完成 profile 目录的品牌
+ * agent 浏览器登录态的搬运路径:老 `<legacy>/browser-runtime/browser/Cindy` →
+ * 新 `<userData>/browser-runtime/browser/Zbot`(搬运即完成 profile 目录的品牌
  * 改名;Chrome 窗口显示名由 runtime 启动时的 decoration 自愈刷新)。两端字面量
  * 与 mcp-integrations/browser.ts 的 LEGACY_MANAGED_PROFILE / MANAGED_PROFILE
  * 保持一致(那边的注释交叉引用了这里)。
  */
 const BROWSER_RUNTIME_DIR_NAME = 'browser-runtime';
 const BROWSER_PROFILES_SUBDIR = 'browser';
-const LEGACY_BROWSER_PROFILE_NAME = 'XDMaker';
-const CURRENT_BROWSER_PROFILE_NAME = 'Cindy';
+const LEGACY_BROWSER_PROFILE_NAME = 'Cindy';
+const CURRENT_BROWSER_PROFILE_NAME = 'Zbot';
 
 /**
  * profile 搬运时跳过的目录名(任意层级命中即整棵跳过):Chrome 的重建型缓存,
@@ -403,7 +403,7 @@ export async function runLegacyUserDataMigration(
         dialoguesCopied = true;
       }
 
-      // 3d. agent 浏览器 profile(登录态):老 browser/XDMaker → 新 browser/Cindy,
+      // 3d. agent 浏览器 profile(登录态):老 browser/Cindy → 新 browser/Zbot,
       // 搬运即完成品牌改名。Chrome 重建型缓存目录与 Singleton 锁跳过(登录态在
       // Cookies / Login Data / Local State 等小文件里);老目录没有则跳过。
       let browserProfileCopied = false;
@@ -429,7 +429,7 @@ export async function runLegacyUserDataMigration(
           },
         );
         browserProfileCopied = true;
-        deps.log.info('legacy userData migration: browser profile copied (XDMaker -> Cindy)');
+        deps.log.info('legacy userData migration: browser profile copied (Cindy -> Zbot)');
       }
 
       // 3e. 全部成功 → 写 marker → done。

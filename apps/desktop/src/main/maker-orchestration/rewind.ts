@@ -492,7 +492,7 @@ function toPlannerSavepoint(snapshot: SnapshotEntry): CodexRewindSavepoint {
     commit: snapshot.commit,
     sessionId: snapshot.sessionId,
     kind: snapshot.kind,
-    source: snapshot.source === 'cindy' ? 'shadow' : 'legacy',
+    source: snapshot.source === 'zbot' ? 'shadow' : 'legacy',
     branch: snapshot.branch ?? '',
     parentCount: snapshot.parentCount,
     ...(snapshot.anchor ? { anchor: snapshot.anchor } : {}),

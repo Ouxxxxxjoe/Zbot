@@ -196,7 +196,7 @@ export function registerIOSSimulatorTools(
   register({
     name: "create_instance",
     description:
-      "Create a Cindy-owned embedded simulator from an installed template device, then attach it to this session for display in Cindy's viewer.",
+      "Create a Zbot-owned embedded simulator from an installed template device, then attach it to this session for display in Zbot's viewer.",
     inputShape: {
       templateUdid: z.string().uuid(),
       name: z.string().trim().min(1).max(128),
@@ -247,7 +247,7 @@ export function registerIOSSimulatorTools(
   register({
     name: "start_instance",
     description:
-      "Boot the exact simulator attached to this Cindy embedded-simulator session, invalidate stale generations, and display it in Cindy's viewer without opening Simulator.app.",
+      "Boot the exact simulator attached to this Cindy embedded-simulator session, invalidate stale generations, and display it in Zbot's viewer without opening Simulator.app.",
     inputShape: routeShape,
     handler: async (args) =>
       callHost(deps, "start_instance", args, getContext?.()),

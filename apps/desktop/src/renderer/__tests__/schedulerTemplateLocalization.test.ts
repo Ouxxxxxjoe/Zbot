@@ -1,11 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { BUILTIN_TEMPLATES, TEMPLATE_CATEGORIES } from '@cindy/maker-scheduler/templates';
 
-import enCommon from '../i18n/locales/en/common.json';
 import zhCNCommon from '../i18n/locales/zh-CN/common.json';
-import jaCommon from '../i18n/locales/ja/common.json';
-import koCommon from '../i18n/locales/ko/common.json';
-import zhTWCommon from '../i18n/locales/zh-TW/common.json';
 
 /**
  * 内置模板多语言同步测试。
@@ -35,10 +31,6 @@ interface SchedulerL10n {
 
 const LOCALES: Record<string, SchedulerL10n> = {
   'zh-CN': (zhCNCommon as { scheduler: SchedulerL10n }).scheduler,
-  'zh-TW': (zhTWCommon as { scheduler: SchedulerL10n }).scheduler,
-  en: (enCommon as { scheduler: SchedulerL10n }).scheduler,
-  ja: (jaCommon as { scheduler: SchedulerL10n }).scheduler,
-  ko: (koCommon as { scheduler: SchedulerL10n }).scheduler,
 };
 
 // 正则与运行时替换（maker-scheduler engine/template.ts）完全一致：更宽松的写法

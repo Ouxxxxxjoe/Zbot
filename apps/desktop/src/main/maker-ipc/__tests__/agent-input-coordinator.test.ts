@@ -485,8 +485,8 @@ describe('AgentInputCoordinator trusted session reference snapshots', () => {
 
   it('consumes the controller snapshot without re-resolving it on the controlled device', async () => {
     const h = createHarness();
-    const item = makeItem('quoted-1', 'compare cindy://session/source-session', {
-      persistedContent: JSON.stringify({ text: 'compare cindy://session/source-session' }),
+    const item = makeItem('quoted-1', 'compare zbot://session/source-session', {
+      persistedContent: JSON.stringify({ text: 'compare zbot://session/source-session' }),
       sessionRefs: [{ sessionId: 'source-session', deviceId: 'source-device' }],
       trustedSessionReferenceContexts: [trustedContext],
       sessionReferencesRequireTrustedSnapshot: true,
@@ -509,7 +509,7 @@ describe('AgentInputCoordinator trusted session reference snapshots', () => {
     const h = createHarness();
     h.coordinator.enqueue(
       'target-session',
-      makeItem('quoted-2', 'compare cindy://session/source-session', {
+      makeItem('quoted-2', 'compare zbot://session/source-session', {
         sessionRefs: [{ sessionId: 'source-session', deviceId: 'source-device' }],
         sessionReferencesRequireTrustedSnapshot: true,
       }),
@@ -620,13 +620,13 @@ describe('AgentInputCoordinator trusted session reference snapshots', () => {
     const h = createHarness();
     h.setScreenUserMessage(async () => ({
       action: 'rewrite',
-      text: 'compare cindy://session/replacement',
+      text: 'compare zbot://session/replacement',
       ghostId: 'ghost-1',
       ghostName: 'rewrite-test',
     }));
     h.coordinator.enqueue(
       'target-session',
-      makeItem('quoted-4', 'compare cindy://session/source-session', {
+      makeItem('quoted-4', 'compare zbot://session/source-session', {
         sessionRefs: [{ sessionId: 'source-session', deviceId: 'source-device' }],
         trustedSessionReferenceContexts: [trustedContext],
         sessionReferencesRequireTrustedSnapshot: true,
@@ -644,7 +644,7 @@ describe('AgentInputCoordinator trusted session reference snapshots', () => {
     h.resolveSessionReferences.mockRejectedValueOnce(
       new Error('session belongs to another account'),
     );
-    const text = 'inspect cindy://session/foreign-session';
+    const text = 'inspect zbot://session/foreign-session';
 
     h.coordinator.enqueue(
       'target-session',
@@ -670,7 +670,7 @@ describe('AgentInputCoordinator trusted session reference snapshots', () => {
 
   it('clears a stale trusted snapshot on a full-content rewrite without refs', () => {
     const h = createHarness();
-    const item = makeItem('quoted-content-rewrite', 'compare cindy://session/source-session', {
+    const item = makeItem('quoted-content-rewrite', 'compare zbot://session/source-session', {
       sessionRefs: [{ sessionId: 'source-session', deviceId: 'source-device' }],
       trustedSessionReferenceContexts: [trustedContext],
       sessionReferencesRequireTrustedSnapshot: true,
@@ -680,7 +680,7 @@ describe('AgentInputCoordinator trusted session reference snapshots', () => {
     h.coordinator.updateContent(
       'target-session',
       item.clientId,
-      makeItem(item.clientId, 'compare cindy://session/controller', {
+      makeItem(item.clientId, 'compare zbot://session/controller', {
         sessionRefs: [],
       }),
     );
@@ -7217,7 +7217,7 @@ describe('AgentInputCoordinator queue mutations', () => {
     h.coordinator.updateText(
       sid,
       item.clientId,
-      'see cindy://session/remote?message=client-1',
+      'see zbot://session/remote?message=client-1',
       undefined,
       undefined,
       true,
@@ -7941,7 +7941,7 @@ describe('AgentInputCoordinator enqueue clientId 幂等去重(弱网重发防线
 
 describe('AgentInputCoordinator 意识拦截钩(订阅槽①,will-user-message)', () => {
   it('projects quote markers and structured references for Ghost, turn and steer', async () => {
-    const href = 'cindy://session/session-a?message=message-a';
+    const href = 'zbot://session/session-a?message=message-a';
     const raw = `> <!-- cindy-composer-quote -->\n> selected\n\ninspect ${href}`;
     const item = makeItem('semantic-turn', raw, {
       persistedContent: JSON.stringify({ text: raw, quotesEncoded: true }),
@@ -8151,7 +8151,7 @@ describe('AgentInputCoordinator 意识拦截钩(订阅槽①,will-user-message)'
 
   it('rewrite:clears stale Composer reference offsets from wire and Agent input', async () => {
     const h = createHarness();
-    const href = 'cindy://session/session-a?message=message-a';
+    const href = 'zbot://session/session-a?message=message-a';
     const original = `inspect ${href}`;
     h.setScreenUserMessage(
       async () =>

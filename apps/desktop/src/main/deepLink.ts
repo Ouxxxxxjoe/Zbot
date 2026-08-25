@@ -1,11 +1,11 @@
 /**
- * deepLink — cindy:// (+ 历史 xdt-maker://) custom URL scheme + folder-context-menu handoff
+ * deepLink — zbot:// (+ 历史 xdt-maker://) custom URL scheme + folder-context-menu handoff
  * ---------------------------------------------------------------------------
- * URL 形态(scheme 单点在 shared/deepLinkSchemes.ts:生成一律主 scheme cindy://,
+ * URL 形态(scheme 单点在 shared/deepLinkSchemes.ts:生成一律主 scheme zbot://,
  * 解析主 + 历史 scheme 都认——存量消息里的 xdt-maker:// 老链接不能死):
- *   cindy://session/<sessionId>             —— sessionId 直接是 string id
- *   cindy://project/<urlencoded-workingDir> —— workingDir 全路径 URL-encoded
- *   cindy://settings/providers[?connect=<providerId>] —— 打开设置「模型供应商」页,
+ *   zbot://session/<sessionId>             —— sessionId 直接是 string id
+ *   zbot://project/<urlencoded-workingDir> —— workingDir 全路径 URL-encoded
+ *   zbot://settings/providers[?connect=<providerId>] —— 打开设置「模型供应商」页,
  *     可选 connect 直达指定内置渠道或预设的接入流程(白名单校验,见 parseDeepLink)
  *
  * 命令行参数形态 (右键菜单 / 命令行):
@@ -54,7 +54,7 @@ const log = createLogger('deepLink');
 
 /** 主 scheme(生成 / OS 注册首选)。历史消费点保留此导出名。 */
 export const DEEP_LINK_PROTOCOL = DEEP_LINK_PRIMARY_SCHEME;
-/** 生成侧前缀(cindy://)。解析侧不要用它做 startsWith——走 matchDeepLinkPrefix。 */
+/** 生成侧前缀(zbot://)。解析侧不要用它做 startsWith——走 matchDeepLinkPrefix。 */
 const URL_PREFIX = DEEP_LINK_URL_PREFIX;
 
 /** Windows 右键菜单 / 命令行入口的 flag。值是绝对路径,argv 透传不编解码。 */
@@ -74,7 +74,7 @@ export type DeepLinkPayload =
   /**
    * 设置页导航。两个来源:
    *   1. 主进程内部发起(全局浮层等独立窗口把用户带回主窗口的准确设置页);
-   *   2. cindy://settings/providers[?connect=<providerId>] 深链(外部工具一键拉起
+   *   2. zbot://settings/providers[?connect=<providerId>] 深链(外部工具一键拉起
    *      供应商接入流程)。URL 域只开放 tab=providers;connect 是可选的内置
    *      provider / preset id,经白名单校验后透传给 renderer 已有的消费逻辑。
    */
@@ -87,12 +87,12 @@ export type DeepLinkPayload =
   | { type: 'focus' };
 
 /**
- * 解析 cindy:// / xdt-maker:// URL 为 typed payload(两种 scheme 都认,
+ * 解析 zbot:// / xdt-maker:// URL 为 typed payload(两种 scheme 都认,
  * 按实际命中的前缀长度切片)。
  * 非本协议、格式残缺或 id/workingDir 为空 → null(让调用方静默丢弃)。
  *
  * 不用 `new URL()` 是因为 WHATWG URL 对 non-special scheme 的 host/pathname
- * 切分行为在不同 Node 版本上有差异(`cindy://session/abc` 的 host 可能
+ * 切分行为在不同 Node 版本上有差异(`zbot://session/abc` 的 host 可能
  * 为空、pathname 可能含 `//session/abc`)。手解最稳。
  */
 export function parseDeepLink(url: string): DeepLinkPayload | null {
@@ -248,7 +248,7 @@ export function buildFocusDeepLink(source: string): string {
 // ─── pending buffer:冷启动 / 主窗口未 ready / renderer 未挂 listener 期间暂存 ──
 //
 // 冷启动 case:
-//   1. 用户点 cindy://...(或历史 xdt-maker://...)或右键"通过 Cindy 打开" → OS 启动 app
+//   1. 用户点 zbot://...(或历史 xdt-maker://...)或右键"通过 Cindy 打开" → OS 启动 app
 //      → main 进程跑到 app.on('open-url') 或扫 process.argv
 //   2. 此时 mainWindow 还没 create / ready-to-show,即使 send 出去 renderer 端
 //      MainLayout 也还没 mount + 挂 listener (要等 OAuth 通过 ProtectedRoute)
@@ -375,7 +375,7 @@ export function openMainWindowVoiceSettings(tab: 'voice-input' | 'providers'): v
 
 /**
  * 主进程内部发起的会话聚焦(workspace 槽 focus:true)。复用 deep link 的
- * 前台 + renderer dispatch 通道,行为与用户点 cindy://session/<id> 一致。
+ * 前台 + renderer dispatch 通道,行为与用户点 zbot://session/<id> 一致。
  */
 export function openMainWindowSession(sessionId: string, options?: { focus?: boolean }): void {
   dispatchDeepLink({ type: 'session', id: sessionId }, options?.focus !== false);
@@ -446,7 +446,7 @@ export function takePendingDeepLink(): DeepLinkPayload | null {
 }
 
 /**
- * Windows 第二实例 / 冷启动 argv 解析:从命令行参数末尾找形如 cindy://... /
+ * Windows 第二实例 / 冷启动 argv 解析:从命令行参数末尾找形如 zbot://... /
  * xdt-maker://... 的项(两种 scheme 都认)。
  * Electron 在 Windows 上把协议 URL 作为 argv 最后一项追加;macOS 不走 argv,走
  * app.on('open-url')。Linux 依赖 .desktop 的 Exec 参数传递协议 URL;首版只做

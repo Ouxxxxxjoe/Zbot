@@ -43,7 +43,7 @@ describe('MessageActionBar', () => {
     const onAddToChat = vi.fn();
     const onRewind = vi.fn();
     const onDelete = vi.fn(async () => undefined);
-    const deepLink = 'cindy://session/session-a?message=message-a';
+    const deepLink = 'zbot://session/session-a?message=message-a';
 
     render(
       <MessageActionBar

@@ -173,7 +173,7 @@ describe('MacComputerPermissionGuideNativeHost', () => {
       screenRecordingGranted: false,
       draggedAccessibility: true,
       draggedScreenRecording: false,
-    }, 'ja');
+    }, 'zh-CN');
 
     await vi.advanceTimersByTimeAsync(0);
     expect(h.spawn).toHaveBeenCalledWith(
@@ -185,7 +185,7 @@ describe('MacComputerPermissionGuideNativeHost', () => {
         'computer-permission-guide',
         'xdt-macos-computer-permission-guide-helper',
       ),
-      ['/tmp/Computer Use.app', 'ja'],
+      ['/tmp/Computer Use.app', 'zh-CN'],
       { stdio: ['pipe', 'pipe', 'pipe'] },
     );
     child.stdout.write('{"type":"ready"}\n');

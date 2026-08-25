@@ -65,7 +65,7 @@ interface MessageActionBarProps {
   createdAt?: string;
   /** Plaintext that will hit the clipboard on copy click. */
   copyText: string;
-  /** Message deep link (`cindy://session/<id>?message=<clientId>`) copied by
+  /** Message deep link (`zbot://session/<id>?message=<clientId>`) copied by
    *  the More menu's "copy current conversation link" item. */
   copyLinkText?: string;
   /** Bar alignment + button order: 'left' = assistant, 'right' = user. */

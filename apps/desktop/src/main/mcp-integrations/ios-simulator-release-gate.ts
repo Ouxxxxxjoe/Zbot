@@ -182,7 +182,7 @@ async function runNativeProbe(
 
   try {
     const created = await lifecycle.createExact({
-      name: `Cindy Packaged Native Gate ${Date.now()}`,
+      name: `Zbot Packaged Native Gate ${Date.now()}`,
       deviceTypeIdentifier: template.deviceTypeIdentifier,
       runtimeIdentifier: input.runtime.identifier,
     });

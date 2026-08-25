@@ -5,6 +5,7 @@ import { cindyLight } from '../builtin/cindy-light';
 import { colorRegistry } from '../color-registry';
 import '../colors';
 import { DEFAULT_FAMILY_ID, getThemeFamilies } from '../families';
+import { BRAND_NAME } from '@cindy/maker-shared/branding';
 import { builtinThemes } from '../registry';
 import {
   CINDY_EXPECTED_VALUES,
@@ -350,7 +351,7 @@ describe('CINDY · ⑥ family(cindy 默认且置顶 / Classic 文案 / 9 主题�
     const families = getThemeFamilies();
     const fam = families.find((f) => f.id === 'cindy');
     expect(fam, 'cindy family 未注册').toBeTruthy();
-    expect(fam?.name).toBe('Cindy');
+    expect(fam?.name).toBe(BRAND_NAME);
     expect(fam?.light?.id).toBe('cindy-light');
     expect(fam?.dark?.id).toBe('cindy-dark');
     expect(families[0]?.id).toBe('cindy');

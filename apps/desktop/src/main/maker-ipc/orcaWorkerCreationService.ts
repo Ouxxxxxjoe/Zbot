@@ -519,7 +519,7 @@ export function budgetModelRequiresApiKey(agent: AgentKind, model: string, hasAp
 }
 
 export function budgetModelRequiresApiKeyMessage(model: string): string {
-  return `模型 "${model}"（codex/ 路由）需要先在设置里连接 Cindy AI 才能使用。`;
+  return `模型 "${model}"（codex/ 路由）需要先在设置里连接 Zbot AI 才能使用。`;
 }
 
 /** agent 的人类可读名,用于 preflight 失败信息。 */
@@ -807,7 +807,7 @@ export function createOrcaWorkerCreationService(deps: OrcaWorkerCreationDeps): O
       // Worker session 必须保存实际生效的来源身份，凭证层才能把官方订阅解析为
       // oauth-bearer。显式来源优先；否则先保留仍提供目标模型的 Lead 来源，再看 defaults；
       // Lead 已绑定但当前断连时保留其意图交给下方 preflight 明确拒绝，不能静默改走
-      // Cindy AI；仅 defaults 失效或来源不提供目标模型时回落当前默认来源。
+      // Zbot AI；仅 defaults 失效或来源不提供目标模型时回落当前默认来源。
       providerId: explicitSourceId
         ?? inheritedProvider?.id
         ?? (inheritedLeadProviderUnusable ? leadProviderId : defaultProviderId),
@@ -856,7 +856,7 @@ export function createOrcaWorkerCreationService(deps: OrcaWorkerCreationDeps): O
     }
     const budgetRouteProviderId = resolved.providerId;
 
-    // codex/ 预算模型依赖 Cindy AI API key；XD/default 路由即使因 provider 缺失，
+    // codex/ 预算模型依赖 Zbot AI API key；XD/default 路由即使因 provider 缺失，
     // 也要先返回这条可操作的凭证错误，避免被下方通用的精确路由失败遮蔽。
     if (
       budgetModelRequiresApiKey(params.agent, resolved.model, deps.readClaudeApiKey() != null)

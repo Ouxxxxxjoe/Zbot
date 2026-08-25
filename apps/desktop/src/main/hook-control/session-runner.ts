@@ -1034,8 +1034,8 @@ export function createMakerHookSessionRunner(deps: {
           }
           if (handoffMessages.length > 0) {
             replacementHandoff = buildHandoffText(handoffMessages, {
-              fromLabel: 'Cindy',
-              toLabel: 'Cindy',
+              fromLabel: 'Zbot',
+              toLabel: 'Zbot',
             });
           }
         } catch (err) {
@@ -1048,7 +1048,7 @@ export function createMakerHookSessionRunner(deps: {
                   createdAt: startedAt,
                 },
               ],
-              { fromLabel: 'Cindy', toLabel: 'Cindy' },
+              { fromLabel: 'Zbot', toLabel: 'Zbot' },
             );
           }
           log.warn(

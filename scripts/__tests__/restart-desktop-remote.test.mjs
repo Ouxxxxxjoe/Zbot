@@ -94,7 +94,7 @@ test("desktop restart no longer depends on the retired Feishu build app id", () 
 });
 
 test("desktop restart clears only desktop Vite dev caches", () => {
-	const repo = fs.mkdtempSync(path.join(os.tmpdir(), "cindy-dev-cache-"));
+	const repo = fs.mkdtempSync(path.join(os.tmpdir(), "zbot-dev-cache-"));
 	const desktopCacheDirs = desktopDevCacheDirs(repo);
 	const preservedDirs = [
 		path.join(repo, "node_modules", ".vite"),
@@ -127,8 +127,8 @@ test("desktop restart clears only desktop Vite dev caches", () => {
 });
 
 test("desktop restart recognizes dev processes from sibling repository worktrees", () => {
-	const mainRoot = path.resolve("/repo/cindy");
-	const featureRoot = path.resolve("/repo/cindy-feature");
+	const mainRoot = path.resolve("/repo/zbot");
+	const featureRoot = path.resolve("/repo/zbot-feature");
 	const unrelatedRoot = path.resolve("/repo/unrelated");
 	const worktrees = parseWorktreePaths([
 		`worktree ${mainRoot}`,
@@ -152,7 +152,7 @@ test("desktop restart recognizes dev processes from sibling repository worktrees
 });
 
 test("desktop restart preserves durable PI Subagent runners", () => {
-	const checkoutRoot = path.resolve("/repo/cindy-feature");
+	const checkoutRoot = path.resolve("/repo/zbot-feature");
 	const electron = path.join(checkoutRoot, "node_modules/electron/dist/Electron");
 	const runner = path.resolve(
 		"/user-data/owners/owner/runtime/pi-subagent-runs/session/run/runner.cjs",
@@ -172,8 +172,8 @@ test("desktop restart preserves durable PI Subagent runners", () => {
 });
 
 test("restart kill scope only targets the checkout that runs the script", () => {
-	const ownRoot = path.resolve("/repo/cindy-feature");
-	const otherRoot = path.resolve("/repo/cindy-pi-sandbox");
+	const ownRoot = path.resolve("/repo/zbot-feature");
+	const otherRoot = path.resolve("/repo/zbot-pi-sandbox");
 	const processes = [
 		{ pid: 1, command: `node ${path.join(ownRoot, "node_modules/@electron-forge/cli")} start` },
 		{ pid: 2, command: `${path.join(otherRoot, "node_modules/electron/dist/Electron.app/Contents/MacOS/Electron")} .` },
@@ -187,49 +187,49 @@ test("restart kill scope only targets the checkout that runs the script", () => 
 
 test("userData conflict detection matches exact sandbox dirs only", () => {
 	const helper =
-		"/repo/cindy-pi-sandbox/node_modules/electron/dist/Electron Helper (Renderer).app/Contents/MacOS/Electron Helper (Renderer) " +
-		"--type=renderer --user-data-dir=/Users/dev/Library/Application Support/Cindy-dev-pi-latest --standard-schemes=xdt-image";
+		"/repo/zbot-pi-sandbox/node_modules/electron/dist/Electron Helper (Renderer).app/Contents/MacOS/Electron Helper (Renderer) " +
+		"--type=renderer --user-data-dir=/Users/dev/Library/Application Support/Zbot-dev-pi-latest --standard-schemes=xdt-image";
 
 	// 精确同名沙箱命中(路径含空格,值后面跟空格+下一个 flag)。
 	assert.equal(
-		commandUsesUserDataDir(helper, "/Users/dev/Library/Application Support/Cindy-dev-pi-latest"),
+		commandUsesUserDataDir(helper, "/Users/dev/Library/Application Support/Zbot-dev-pi-latest"),
 		true,
 	);
-	// 前缀同名不许误命中: Cindy-dev ≠ Cindy-dev-pi-latest, Cindy ≠ Cindy-dev-*。
+	// 前缀同名不许误命中: Zbot-dev ≠ Zbot-dev-pi-latest, Zbot ≠ Zbot-dev-*。
 	assert.equal(
-		commandUsesUserDataDir(helper, "/Users/dev/Library/Application Support/Cindy-dev"),
+		commandUsesUserDataDir(helper, "/Users/dev/Library/Application Support/Zbot-dev"),
 		false,
 	);
 	assert.equal(
-		commandUsesUserDataDir(helper, "/Users/dev/Library/Application Support/Cindy"),
+		commandUsesUserDataDir(helper, "/Users/dev/Library/Application Support/Zbot"),
 		false,
 	);
 	// 行尾结束与尾斜杠归一。
 	assert.equal(
 		commandUsesUserDataDir(
-			"electron --user-data-dir=/Users/dev/Library/Application Support/Cindy-dev-a",
-			"/Users/dev/Library/Application Support/Cindy-dev-a/",
+			"electron --user-data-dir=/Users/dev/Library/Application Support/Zbot-dev-a",
+			"/Users/dev/Library/Application Support/Zbot-dev-a/",
 		),
 		true,
 	);
 	// 完全无关的命令行不命中。
 	assert.equal(
-		commandUsesUserDataDir("node scripts/dev.mjs", "/Users/dev/Library/Application Support/Cindy-dev"),
+		commandUsesUserDataDir("node scripts/dev.mjs", "/Users/dev/Library/Application Support/Zbot-dev"),
 		false,
 	);
 });
 
 test("shared production userData path is region-aware", () => {
-	assert.equal(path.basename(productionUserDataDir()), "CindyGlobal");
-	assert.equal(path.basename(productionUserDataDir("global")), "CindyGlobal");
-	assert.equal(path.basename(productionUserDataDir("cn")), "Cindy");
-	assert.equal(path.basename(productionUserDataDir("dev")), "CindyDev");
+	assert.equal(path.basename(productionUserDataDir()), "ZbotGlobal");
+	assert.equal(path.basename(productionUserDataDir("global")), "ZbotGlobal");
+	assert.equal(path.basename(productionUserDataDir("cn")), "Zbot");
+	assert.equal(path.basename(productionUserDataDir("dev")), "ZbotDev");
 });
 
 test("default isolated userData path is region-aware", () => {
-	assert.equal(path.basename(defaultIsolatedUserDataDir("", "global")), "CindyGlobal-dev2");
-	assert.equal(path.basename(defaultIsolatedUserDataDir("", "cn")), "Cindy-dev2");
-	assert.equal(path.basename(defaultIsolatedUserDataDir("review", "dev")), "CindyDev-dev2-review");
+	assert.equal(path.basename(defaultIsolatedUserDataDir("", "global")), "ZbotGlobal-dev2");
+	assert.equal(path.basename(defaultIsolatedUserDataDir("", "cn")), "Zbot-dev2");
+	assert.equal(path.basename(defaultIsolatedUserDataDir("review", "dev")), "ZbotDev-dev2-review");
 });
 
 test("hasIsolationIntent sees argv and ambient XDT_ISOLATED=1", () => {
@@ -245,8 +245,8 @@ test("isOfficialProductionUserDataDir matches every official region profile", ()
 	assert.equal(isOfficialProductionUserDataDir(productionUserDataDir("global")), true);
 	assert.equal(isOfficialProductionUserDataDir(productionUserDataDir("dev")), true);
 	assert.equal(isOfficialProductionUserDataDir(defaultIsolatedUserDataDir("", "cn")), false);
-	assert.ok(officialProductionUserDataDirs().some((dir) => path.basename(dir) === "Cindy"));
-	assert.ok(officialProductionUserDataDirs().some((dir) => path.basename(dir) === "CindyGlobal"));
+	assert.ok(officialProductionUserDataDirs().some((dir) => path.basename(dir) === "Zbot"));
+	assert.ok(officialProductionUserDataDirs().some((dir) => path.basename(dir) === "ZbotGlobal"));
 });
 
 test("isolated restart target pointing at the other region's official profile is refused", () => {
@@ -280,7 +280,7 @@ test("env-only XDT_ISOLATED=1 derives the default sandbox, not the official prof
 });
 
 test("isolated=@worktree derives the named sandbox from the checkout directory", () => {
-	const root = path.join("/repo", "cindy-local-ollama-models");
+	const root = path.join("/repo", "zbot-local-ollama-models");
 	const name = isolationNameFromWorktree(root);
 	const target = resolveRestartTargetUserDataDir({
 		isolatedArg: "--isolated=@worktree",
@@ -292,11 +292,11 @@ test("isolated=@worktree derives the named sandbox from the checkout directory",
 });
 
 test("invalid env isolation name falls back to the default sandbox", () => {
-	assert.equal(sanitizeIsolationName("../Cindy"), "");
+	assert.equal(sanitizeIsolationName("../Zbot"), "");
 	assert.equal(sanitizeIsolationName("我的沙箱"), "");
 	const target = resolveRestartTargetUserDataDir({
 		isolatedEnv: "1",
-		isolatedName: "../Cindy",
+		isolatedName: "../Zbot",
 		selectedRegion: "cn",
 	});
 	assert.equal(target, defaultIsolatedUserDataDir("", "cn"));
@@ -304,14 +304,14 @@ test("invalid env isolation name falls back to the default sandbox", () => {
 });
 
 test("canonicalizeUserDataDir follows symlink parents when the leaf does not exist yet", () => {
-	const root = fs.mkdtempSync(path.join(os.tmpdir(), "cindy-canon-"));
+	const root = fs.mkdtempSync(path.join(os.tmpdir(), "zbot-canon-"));
 	const realParent = path.join(root, "real");
 	const linkParent = path.join(root, "link");
 	try {
 		fs.mkdirSync(realParent);
 		fs.symlinkSync(realParent, linkParent, process.platform === "win32" ? "junction" : "dir");
-		const viaLink = canonicalizeUserDataDir(path.join(linkParent, "Cindy"));
-		const viaReal = canonicalizeUserDataDir(path.join(realParent, "Cindy"));
+		const viaLink = canonicalizeUserDataDir(path.join(linkParent, "Zbot"));
+		const viaReal = canonicalizeUserDataDir(path.join(realParent, "Zbot"));
 		assert.equal(viaLink, viaReal);
 	} finally {
 		fs.rmSync(root, { recursive: true, force: true });
@@ -327,9 +327,9 @@ test("isolated official-profile refuse happens before mkdir in the restart main 
 });
 
 test("preserve-running only shares a target with live records from the same region", () => {
-	const userData = fs.mkdtempSync(path.join(os.tmpdir(), "cindy-shared-region-"));
+	const userData = fs.mkdtempSync(path.join(os.tmpdir(), "zbot-shared-region-"));
 	const records = path.join(userData, ".dev-instances");
-	const knownRoot = path.resolve("/repo/cindy-global");
+	const knownRoot = path.resolve("/repo/zbot-global");
 	fs.mkdirSync(records);
 	try {
 		fs.writeFileSync(
@@ -376,7 +376,7 @@ test("preserve-running only shares a target with live records from the same regi
 });
 
 test("desktop restart runner forwards user args (incl. --isolated) into the kill stage", () => {
-	const root = "/repo/cindy";
+	const root = "/repo/zbot";
 	const steps = buildDesktopRestartSteps(
 		["--region=global", "--isolated=tgbot-review", "--wait-ready"],
 		root,
@@ -396,7 +396,7 @@ test("desktop restart runner forwards user args (incl. --isolated) into the kill
 });
 
 test("desktop restart runner keeps the kill-before-deps order by default", () => {
-	const root = "/repo/cindy";
+	const root = "/repo/zbot";
 	const steps = buildDesktopRestartSteps(["--wait-ready"], root);
 	assert.deepEqual(steps.map((step) => step.args), [
 		[stepScript(root, "restart-desktop-remote.mjs"), "--kill-only"],
@@ -439,7 +439,7 @@ test("desktop restart process-control phase does not initialize startup configur
 });
 
 test("desktop restart rejects an unmerged migration before the kill step", () => {
-	const repo = fs.mkdtempSync(path.join(os.tmpdir(), "cindy-restart-policy-"));
+	const repo = fs.mkdtempSync(path.join(os.tmpdir(), "zbot-restart-policy-"));
 	const calls = [];
 	try {
 		fs.mkdirSync(path.join(repo, "apps", "desktop", "drizzle"), { recursive: true });
@@ -460,7 +460,7 @@ test("desktop restart rejects an unmerged migration before the kill step", () =>
 
 		assert.throws(
 			() => runDesktopRestart(["--wait-ready"], repo, (step) => calls.push(step)),
-			/Shared Cindy userData cannot run migration artifacts/,
+			/Shared Zbot userData cannot run migration artifacts/,
 		);
 		assert.deepEqual(calls, []);
 	} finally {
@@ -469,7 +469,7 @@ test("desktop restart rejects an unmerged migration before the kill step", () =>
 });
 
 test("preserve-running skips every kill stage and reaches the readiness start", () => {
-	const root = "/repo/cindy";
+	const root = "/repo/zbot";
 	const steps = buildDesktopRestartSteps(
 		["--wait-ready", "--", "--preserve-running"],
 		root,
@@ -486,7 +486,7 @@ test("preserve-running skips every kill stage and reaches the readiness start", 
 });
 
 test("precise replacement stays in the preserve-running pipeline", () => {
-	const root = "/repo/cindy";
+	const root = "/repo/zbot";
 	const steps = buildDesktopRestartSteps(
 		["--wait-ready", "--", "--preserve-running", "--replace-running-root=/repo/old-preview"],
 		root,
@@ -504,7 +504,7 @@ test("precise replacement stays in the preserve-running pipeline", () => {
 });
 
 test("local restart keeps --local on both process-control stages", () => {
-	const root = "/repo/cindy";
+	const root = "/repo/zbot";
 	const steps = buildDesktopRestartSteps(["--local", "--wait-ready"], root);
 	assert.deepEqual(steps[0].args, [
 		stepScript(root, "restart-desktop-remote.mjs"),
@@ -578,17 +578,17 @@ test("structured startup failures keep their actionable reason", () => {
 		formatDesktopStartupFailure({
 			state: "failed",
 			code: "SINGLE_INSTANCE_OWNED",
-			message: "Another Cindy instance owns the primary slot.",
-			detail: { userDataDir: "/tmp/Cindy" },
+			message: "Another Zbot instance owns the primary slot.",
+			detail: { userDataDir: "/tmp/Zbot" },
 		}),
-		"[SINGLE_INSTANCE_OWNED] Another Cindy instance owns the primary slot. (userDataDir=/tmp/Cindy)",
+		"[SINGLE_INSTANCE_OWNED] Another Zbot instance owns the primary slot. (userDataDir=/tmp/Zbot)",
 	);
 });
 
 test("desktop whoami identifies multiple passive previews sharing one userData", () => {
-	const previewRoot = path.resolve("/repo/cindy-preview");
-	const previewRootTwo = path.resolve("/repo/cindy-preview-two");
-	const userData = path.resolve("/tmp/Cindy");
+	const previewRoot = path.resolve("/repo/zbot-preview");
+	const previewRootTwo = path.resolve("/repo/zbot-preview-two");
+	const userData = path.resolve("/tmp/Zbot");
 	const worktrees = parseWorktreeEntries([
 		`worktree ${previewRoot}`,
 		"HEAD abc123",
@@ -658,30 +658,30 @@ test("passive previews do not use a one-slot userData lock", () => {
 });
 
 test("desktop whoami prefers launch-time commit metadata over process inference", () => {
-	const worktrees = [{ rootDir: "/repo/cindy-preview", branch: "carol/preview/example" }];
+	const worktrees = [{ rootDir: "/repo/zbot-preview", branch: "carol/preview/example" }];
 	const scanned = [{
 		pid: 10,
-		rootDir: "/repo/cindy-preview",
+		rootDir: "/repo/zbot-preview",
 		branch: "carol/preview/example",
 		state: "ready",
 		ready: true,
 		mode: "unknown",
 		passive: false,
 		isolated: null,
-		userDataDir: "/tmp/Cindy",
+		userDataDir: "/tmp/Zbot",
 		commit: null,
 		commitVerified: false,
 		source: "process-scan",
 	}];
 	const merged = mergeDesktopInstanceRecords(scanned, [{
 		pid: 10,
-		rootDir: "/repo/cindy-preview",
+		rootDir: "/repo/zbot-preview",
 		state: "ready",
 		mode: "remote",
 		region: "global",
 		passive: true,
 		isolated: false,
-		userDataDir: "/tmp/Cindy",
+		userDataDir: "/tmp/Zbot",
 		commit: "abc123",
 		startedAtMs: 1,
 		updatedAtMs: 2,
@@ -768,7 +768,7 @@ test("formatDesktopDevVerdict prints a grepable ready block", () => {
 		state: "ready",
 		mode: "isolated",
 		sandbox: "local-ollama",
-		root: "/repo/cindy-local-ollama",
+		root: "/repo/zbot-local-ollama",
 		commit: "abc123",
 		pid: 42,
 		region: "global",
@@ -779,7 +779,7 @@ test("formatDesktopDevVerdict prints a grepable ready block", () => {
 			`${DESKTOP_DEV_VERDICT_PREFIX}=ready`,
 			"mode=isolated",
 			"sandbox=local-ollama",
-			"root=/repo/cindy-local-ollama",
+			"root=/repo/zbot-local-ollama",
 			"commit=abc123",
 			"pid=42",
 			"region=global",
@@ -792,33 +792,33 @@ test("formatDesktopDevVerdict flattens failed messages and keeps next", () => {
 	const text = formatDesktopDevVerdict({
 		state: "failed",
 		code: "MIGRATION_POLICY",
-		message: "Shared Cindy userData cannot run\nmigration artifacts",
+		message: "Shared Zbot userData cannot run\nmigration artifacts",
 		next: ISOLATED_RESTART_NEXT,
 	});
 	assert.match(text, new RegExp(`^${DESKTOP_DEV_VERDICT_PREFIX}=failed\\n`));
 	assert.match(text, /code=MIGRATION_POLICY/);
-	assert.match(text, /message=Shared Cindy userData cannot run migration artifacts/);
+	assert.match(text, /message=Shared Zbot userData cannot run migration artifacts/);
 	assert.match(text, /next=pnpm restart:desktop:remote -- --isolated=@worktree/);
 });
 
-test("isolationNameFromWorktree strips cindy-, adds a path digest, and stays within 32 chars", () => {
-	const named = isolationNameFromWorktree("/Users/dash/Code/Cindy/cindy-local-ollama-models");
+test("isolationNameFromWorktree strips zbot-, adds a path digest, and stays within 32 chars", () => {
+	const named = isolationNameFromWorktree("/Users/dash/Code/Zbot/zbot-local-ollama-models");
 	assert.match(named, /^local-ollama-models-[0-9a-f]{6}$/);
 	assert.notEqual(
 		named,
-		isolationNameFromWorktree("/tmp/cindy-local-ollama-models"),
+		isolationNameFromWorktree("/tmp/zbot-local-ollama-models"),
 	);
 	assert.match(
-		isolationNameFromWorktree("/tmp/cindy-desktop-dev-startup-verdict"),
+		isolationNameFromWorktree("/tmp/zbot-desktop-dev-startup-verdict"),
 		/^desktop-dev-startup-verdi-[0-9a-f]{6}$/,
 	);
 	assert.match(isolationNameFromWorktree("/tmp/!!!"), /^worktree-[0-9a-f]{6}$/);
-	assert.ok(isolationNameFromWorktree(`/tmp/cindy-${"a".repeat(80)}`).length <= 32);
+	assert.ok(isolationNameFromWorktree(`/tmp/zbot-${"a".repeat(80)}`).length <= 32);
 });
 
 test("resolveIsolatedArg expands @worktree to a named sandbox", () => {
 	assert.match(
-		resolveIsolatedArg(WORKTREE_ISOLATED_ARG, "/repo/cindy-local-ollama-models"),
+		resolveIsolatedArg(WORKTREE_ISOLATED_ARG, "/repo/zbot-local-ollama-models"),
 		/^--isolated=local-ollama-models-[0-9a-f]{6}$/,
 	);
 	assert.equal(resolveIsolatedArg("--isolated=feature-a", "/repo/x"), "--isolated=feature-a");
@@ -826,8 +826,8 @@ test("resolveIsolatedArg expands @worktree to a named sandbox", () => {
 });
 
 test("shouldRefuseHostedRestart blocks same-checkout hosts and other-checkout shared starts", () => {
-	const own = "/repo/cindy-feature";
-	const other = "/repo/cindy-other";
+	const own = "/repo/zbot-feature";
+	const other = "/repo/zbot-other";
 	assert.equal(
 		shouldRefuseHostedRestart(
 			{ pid: 10, command: `electron-forge start ${own}` },
@@ -863,7 +863,7 @@ test("shouldRefuseHostedRestart blocks same-checkout hosts and other-checkout sh
 });
 
 test("whoami match becomes a ready verdict", () => {
-	const root = path.resolve("/repo/cindy-preview");
+	const root = path.resolve("/repo/zbot-preview");
 	const verdict = buildDesktopDevVerdictFromWhoami({
 		match: true,
 		expected: { rootDir: root, commit: "abc123" },
@@ -889,7 +889,7 @@ test("whoami match becomes a ready verdict", () => {
 });
 
 test("whoami mismatch on shared start suggests isolated retry", () => {
-	const root = path.resolve("/repo/cindy-preview");
+	const root = path.resolve("/repo/zbot-preview");
 	const verdict = buildDesktopDevVerdictFromWhoami({
 		match: false,
 		expected: { rootDir: root, commit: "abc123" },
@@ -902,13 +902,13 @@ test("whoami mismatch on shared start suggests isolated retry", () => {
 
 test("shared migration policy failure keeps an isolated next command", () => {
 	const verdict = buildDesktopDevVerdictFromFailure(
-		new Error("Shared Cindy userData cannot run migration artifacts that are not canonical on origin/main."),
-		{ isolated: false, rootDir: "/repo/cindy-feature" },
+		new Error("Shared Zbot userData cannot run migration artifacts that are not canonical on origin/main."),
+		{ isolated: false, rootDir: "/repo/zbot-feature" },
 	);
 	assert.equal(verdict.state, "failed");
 	assert.equal(verdict.code, "MIGRATION_POLICY");
 	assert.equal(verdict.next, ISOLATED_RESTART_NEXT);
-	assert.equal(verdict.root, "/repo/cindy-feature");
+	assert.equal(verdict.root, "/repo/zbot-feature");
 });
 
 test("isolated failures do not suggest another isolated start", () => {
@@ -933,7 +933,7 @@ test("inferDesktopDevFailureCode reads tagged startup failures", () => {
 });
 
 test("collectDesktopWhoamiReport can be built from injected process facts", () => {
-	const root = path.resolve("/repo/cindy-preview");
+	const root = path.resolve("/repo/zbot-preview");
 	const report = collectDesktopWhoamiReport({
 		rootDir: root,
 		commit: "abc123",
@@ -948,7 +948,7 @@ test("collectDesktopWhoamiReport can be built from injected process facts", () =
 			mode: "remote",
 			passive: true,
 			isolated: null,
-			userDataDir: "/tmp/Cindy",
+			userDataDir: "/tmp/Zbot",
 			commit: null,
 			commitVerified: false,
 			source: "process-scan",
@@ -962,7 +962,7 @@ test("collectDesktopWhoamiReport can be built from injected process facts", () =
 			region: "global",
 			passive: true,
 			isolated: false,
-			userDataDir: "/tmp/Cindy",
+			userDataDir: "/tmp/Zbot",
 			commit: "abc123",
 			startedAtMs: 1,
 			updatedAtMs: 2,
@@ -983,14 +983,14 @@ test("isolatedRestartNextCommand keeps region and local mode", () => {
 		"pnpm restart:desktop:local -- --isolated=@worktree",
 	);
 	const verdict = buildDesktopDevVerdictFromFailure(
-		new Error("Shared Cindy userData cannot run migration artifacts that are not canonical on origin/main."),
+		new Error("Shared Zbot userData cannot run migration artifacts that are not canonical on origin/main."),
 		{ isolated: false, region: "cn" },
 	);
 	assert.equal(verdict.next, "pnpm restart:desktop:remote --region=cn -- --isolated=@worktree");
 });
 
 test("host identity uses the same conservative path match as kill", () => {
-	const own = "/repo/cindy-feature";
+	const own = "/repo/zbot-feature";
 	assert.equal(commandContainsPath(`electron-forge start ${own} --isolated=feature`, own), false);
 	assert.equal(commandContainsPath(`${own}/node_modules/electron`, own), true);
 	assert.equal(
@@ -1010,8 +1010,8 @@ test("host identity uses the same conservative path match as kill", () => {
 });
 
 test("hosted restart sees XDT_ISOLATED as isolation intent", () => {
-	const own = "/repo/cindy-feature";
-	const other = "/repo/cindy-other/node_modules/electron";
+	const own = "/repo/zbot-feature";
+	const other = "/repo/zbot-other/node_modules/electron";
 	assert.equal(
 		shouldRefuseHostedRestart(
 			{ pid: 10, command: other },
@@ -1034,12 +1034,12 @@ test("restartContextFromArgv reads --region cn and XDT_ISOLATED", () => {
 
 test("worktree sandbox hash follows the foldCase option from the volume", () => {
 	assert.equal(
-		isolationNameFromWorktree("/repo/Foo/cindy-feature", { foldCase: true }),
-		isolationNameFromWorktree("/repo/foo/cindy-feature", { foldCase: true }),
+		isolationNameFromWorktree("/repo/Foo/zbot-feature", { foldCase: true }),
+		isolationNameFromWorktree("/repo/foo/zbot-feature", { foldCase: true }),
 	);
 	assert.notEqual(
-		isolationNameFromWorktree("/repo/Foo/cindy-feature", { foldCase: false }),
-		isolationNameFromWorktree("/repo/foo/cindy-feature", { foldCase: false }),
+		isolationNameFromWorktree("/repo/Foo/zbot-feature", { foldCase: false }),
+		isolationNameFromWorktree("/repo/foo/zbot-feature", { foldCase: false }),
 	);
 });
 

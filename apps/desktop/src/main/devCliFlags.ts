@@ -115,7 +115,7 @@ const ISOLATION_NAME_RE = /^[A-Za-z0-9_-]{1,32}$/;
  * 同机所有正式区域 profile 的目录名。当前构建区域只决定默认目录和沙箱派生，
  * 不能缩小保护集合：Global 启动指到 CN 的 Cindy、反向同理，都仍是正式 profile。
  */
-export const OFFICIAL_USER_DATA_DIR_NAMES = ['Cindy', 'CindyGlobal', 'CindyDev'] as const;
+export const OFFICIAL_USER_DATA_DIR_NAMES = ['Zbot', 'ZbotGlobal', 'ZbotDev'] as const;
 
 export interface DevCliFlagsInput {
   argv: readonly string[];

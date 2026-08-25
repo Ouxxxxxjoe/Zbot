@@ -121,7 +121,7 @@ export const CINDY_OFFICIAL_GHOST_TRUST: GhostTrustInfo = Object.freeze({
   publisherSigned: true,
   publisherVerified: true,
   reviewed: true,
-  publisherName: 'Cindy Plugin Market',
+  publisherName: 'Zbot Plugin Market',
 });
 
 export type GhostHostTrustOverride = 'cindy-official';

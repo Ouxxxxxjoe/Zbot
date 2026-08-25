@@ -315,7 +315,7 @@ describe('agent process discovery', () => {
       `  101  ${selfPid} ${codexCmd}`,
       `  102  9999 ${claudeCmd}`, // 别的进程的孩子(如另一个 Cindy 实例)
       `  103  ${selfPid} ${externalClaudeCmd}`,
-      `  104  ${selfPid} /applications/cindy.app/contents/macos/cindy helper`,
+      `  104  ${selfPid} /applications/zbot.app/contents/macos/zagent helper`,
       'garbage line',
     ].join('\n');
     expect(parsePosixAgentProcesses(psOutput, selfPid)).toEqual([

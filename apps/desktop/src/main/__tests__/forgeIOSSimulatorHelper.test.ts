@@ -33,7 +33,7 @@ async function createFixture(result: Record<string, unknown>, includeExecutable:
   const helperRoot = path.join(resourceRoot, 'helper');
   const executablePath = path.join(
     helperRoot,
-    'Cindy iOS Simulator Helper.app',
+    'Zbot iOS Simulator Helper.app',
     'Contents',
     'MacOS',
     'ios-simulator-sidecar',
@@ -75,7 +75,7 @@ describe('stageMacIOSSimulatorHelper', () => {
     const executable = path.join(
       fixture.appContents,
       'Helpers',
-      'Cindy iOS Simulator Helper.app',
+      'Zbot iOS Simulator Helper.app',
       'Contents',
       'MacOS',
       'ios-simulator-sidecar',
@@ -104,7 +104,7 @@ describe('stageMacIOSSimulatorHelper', () => {
     const staleDestination = path.join(
       fixture.appContents,
       'Helpers',
-      'Cindy iOS Simulator Helper.app',
+      'Zbot iOS Simulator Helper.app',
     );
     await mkdir(staleDestination, { recursive: true });
 

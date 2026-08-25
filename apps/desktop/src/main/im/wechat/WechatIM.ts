@@ -1251,7 +1251,7 @@ export class WechatIM extends BaseIM implements RichChannelIM {
       case '/status':
         await this.#commitSimpleReply(
           task,
-          `Cindy 微信连接正常，当前队列 ${this.#state.queuedTasks} 条。`,
+          `Zbot 微信连接正常，当前队列 ${this.#state.queuedTasks} 条。`,
         );
         return;
       case '/stop':

@@ -28,11 +28,7 @@
       "dark"
     ],
     "langs": [
-      "zh-CN",
-      "zh-TW",
-      "en",
-      "ja",
-      "ko"
+      "zh-CN"
     ]
   },
   "states": [
@@ -2053,46 +2049,6 @@
           "os": "mac",
           "mode": "light",
           "lang": "zh-CN"
-        }
-      },
-      {
-        "id": "desk-global-mac-dark-en",
-        "prefs": {
-          "plat": "desk",
-          "region": "global",
-          "os": "mac",
-          "mode": "dark",
-          "lang": "en"
-        }
-      },
-      {
-        "id": "phone-cn-android-light-ja",
-        "prefs": {
-          "plat": "phone",
-          "region": "cn",
-          "os": "android",
-          "mode": "light",
-          "lang": "ja"
-        }
-      },
-      {
-        "id": "phone-global-ios-dark-ko",
-        "prefs": {
-          "plat": "phone",
-          "region": "global",
-          "os": "ios",
-          "mode": "dark",
-          "lang": "ko"
-        }
-      },
-      {
-        "id": "pad-global-android-light-zh-TW",
-        "prefs": {
-          "plat": "pad",
-          "region": "global",
-          "os": "android",
-          "mode": "light",
-          "lang": "zh-TW"
         }
       },
       {

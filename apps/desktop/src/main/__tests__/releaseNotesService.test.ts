@@ -121,15 +121,15 @@ describe('releaseNotesService', () => {
       date: '2026-08-06',
       githash: '0123456789abcdef0123456789abcdef01234567',
       contentByLocale: {
-        en: {
-          topics: [{ id: 'voice-input', title: 'Voice input', text: 'More reliable.' }],
+        'zh-CN': {
+          topics: [{ id: 'voice-input', title: '语音输入', text: '更可靠。' }],
         },
       },
     }), 'utf8'));
     response.emit('end');
 
     const notes = await first;
-    expect(notes?.contentByLocale?.en?.topics?.[0]?.id).toBe('voice-input');
+    expect(notes?.contentByLocale?.['zh-CN']?.topics?.[0]?.id).toBe('voice-input');
     expect(await fetchReleaseNotes('0.1.23')).toBe(notes);
     expect(requestMock).toHaveBeenCalledTimes(1);
   });
@@ -164,7 +164,6 @@ describe('releaseNotesService', () => {
       date: '2026-08-06',
       contentByLocale: {
         'zh-CN': { topics: [{ title: '   ', text: '' }] },
-        en: { topics: [] },
       },
     });
 

@@ -22,7 +22,7 @@ pnpm --filter desktop preview:island-mascots
 放大档位只做 `scaleEffect` 视觉缩放、不改渲染尺寸，所以放大后看到的几何比例仍是真实的。
 调角色参数时**不要**靠放大后的观感下结论，最终一定要回到 1× 看。
 
-这条分支只创建普通窗口，不读 stdin、不创建刘海面板，因此不会干扰正在运行的 Cindy。
+这条分支只创建普通窗口，不读 stdin、不创建刘海面板，因此不会干扰正在运行的 Zbot。
 
 另有一个更早的单状态 harness：`XDT_AGENT_ISLAND_DEBUG=idle|completion|interaction`
 （见 `AgentIslandDebugHarness`），用来在真实刘海面板里看整块 UI，与角色预览互补。

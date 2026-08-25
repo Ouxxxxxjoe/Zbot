@@ -1032,7 +1032,7 @@ export class ClaudeCodeAgent extends BaseAgent {
     const log = this.deps.logger.child(sid ? `s:${sid}/claude-code` : 'claude-code');
     const reviewMode = opts.reviewMode === true;
     if (reviewMode && opts.remoteHostId) {
-      throw new Error('Cindy Review currently supports local Claude Code sessions only');
+      throw new Error('Zbot Review currently supports local Claude Code sessions only');
     }
     const reviewReadGrants = reviewMode
       ? await buildReviewReadGrants(opts.workingDir, opts.reviewReadPaths ?? [])
@@ -1540,7 +1540,7 @@ export class ClaudeCodeAgent extends BaseAgent {
           hookEventName: 'PreToolUse',
           permissionDecision: 'deny',
           permissionDecisionReason:
-            'Cindy Review only permits read-only access to this task and its explicit artifacts.',
+            'Zbot Review only permits read-only access to this task and its explicit artifacts.',
         },
       };
     };
@@ -1929,7 +1929,7 @@ export class ClaudeCodeAgent extends BaseAgent {
         return {
           behavior: 'deny',
           message: capabilityRoute.replacement
-            ? `This downstream source was not selected. Use Cindy capability ${capabilityRoute.replacement.id}.`
+            ? `This downstream source was not selected. Use Zbot capability ${capabilityRoute.replacement.id}.`
             : 'This downstream source was not selected.',
         };
       }
@@ -1989,7 +1989,7 @@ export class ClaudeCodeAgent extends BaseAgent {
           // (审阅器故障已在 resolveAutoReviewDecision 降级成 ask,不会走到这条分支。)
           return {
             behavior: 'deny',
-            message: autoDecision.reason ?? 'Cindy Auto Review blocked this action. Choose a safer alternative.',
+            message: autoDecision.reason ?? 'Zbot Auto Review blocked this action. Choose a safer alternative.',
           };
         } else {
           // AI `ask` and deterministic red-line verdicts are never persisted.
@@ -3075,7 +3075,7 @@ export class ClaudeCodeAgent extends BaseAgent {
                 kind: 'permission',
                 behavior: 'deny',
                 reason: capabilityRoute.replacement
-                  ? `This downstream source was not selected. Use Cindy capability ${capabilityRoute.replacement.id}.`
+                  ? `This downstream source was not selected. Use Zbot capability ${capabilityRoute.replacement.id}.`
                   : 'This downstream source was not selected.',
               };
             }
@@ -3132,7 +3132,7 @@ export class ClaudeCodeAgent extends BaseAgent {
                 return {
                   kind: 'permission',
                   behavior: 'deny',
-                  reason: autoDecision.reason ?? 'Cindy Auto Review blocked this action. Choose a safer alternative.',
+                  reason: autoDecision.reason ?? 'Zbot Auto Review blocked this action. Choose a safer alternative.',
                 };
               }
               // 与本地分支同口径:故障降级来的 ask 提示一次,让用户知道为何开始被问。

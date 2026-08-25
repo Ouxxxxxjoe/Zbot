@@ -37,7 +37,7 @@ const desktopDevCacheRelativeDirs = Object.freeze([
  * 一致——.mjs 无法 import TS 单点,只能镜像字面量;
  * 一致性由 scripts/__tests__/brand-identity-sync.test.mjs 断言兜底。
  */
-export const BRAND_USER_DATA_DIR_NAME = 'Cindy';
+export const BRAND_USER_DATA_DIR_NAME = 'Zbot';
 
 // 桌面端 .env 默认值。2026-07 端点清单重构后 .env 不再承载任何端点 URL
 // (运行期端点全部来自清单:remote restart 按 region 读 config/endpoint*.json,
@@ -132,8 +132,8 @@ export function commandContainsPath(command, candidatePath) {
 
 /**
  * 判断进程命令行是否带 `--user-data-dir=<userDataDir>`(Electron helper 进程携带)。
- * 结束边界必须是行尾 / 空白 / 引号 / 斜杠 —— `Cindy-dev` 不得命中
- * `Cindy-dev-pi-latest` 这类前缀同名沙箱。路径本身可含空格(macOS 的
+ * 结束边界必须是行尾 / 空白 / 引号 / 斜杠 —— `Zbot-dev` 不得命中
+ * `Zbot-dev-pi-latest` 这类前缀同名沙箱。路径本身可含空格(macOS 的
  * "Application Support"),所以整段 needle 精确匹配、只对尾部做边界判定。
  */
 export function commandUsesUserDataDir(command, userDataDir) {
@@ -332,7 +332,7 @@ function hasRepositoryCheckoutPath(command, checkoutPaths = repositoryWorktreePa
   return checkoutPaths.some((checkoutPath) => commandContainsPath(command, checkoutPath));
 }
 
-// 沿 ppid 链向上找祖先里有没有 Cindy desktop dev 进程。
+// 沿 ppid 链向上找祖先里有没有 Zbot desktop dev 进程。
 // 用途：拦住"agent 跑在【当前 checkout】的 desktop dev 里还调 restart"这种自杀场景——
 // kill 作用域虽已限本 checkout，但祖先就是这份 checkout 时仍会把本脚本一起收掉。
 // 宿主是正式版或另一个 worktree 时不拦：杀不到那份祖先，隔离启动可以继续。
@@ -527,10 +527,10 @@ export function sanitizeIsolationName(raw) {
 
 export function looksLikeCindyManagedUserDataDir(dir) {
   const base = path.basename(path.resolve(dir));
-  return /^(Cindy|CindyGlobal|CindyDev)(?:-dev2(?:-[A-Za-z0-9_-]+)?)?$/i.test(base);
+  return /^(Zbot|ZbotGlobal|ZbotDev)(?:-dev2(?:-[A-Za-z0-9_-]+)?)?$/i.test(base);
 }
 
-/** Named `--isolated=<name>` must not inherit another Cindy profile. Custom dirs stay. */
+/** Named `--isolated=<name>` must not inherit another Zbot profile. Custom dirs stay. */
 export function inheritedUserDataBlocksNamedIsolation(isolatedArg, envUserDataDir, derivedDir) {
   if (!envUserDataDir || !isolatedArg || !isolatedArg.includes('=')) return false;
   if (!looksLikeCindyManagedUserDataDir(envUserDataDir)) return false;
@@ -655,7 +655,7 @@ export function hostedRestartRefusal(ancestor, { ownRootDir }) {
 
 export function defaultIsolatedUserDataDir(isolationName, region = 'global') {
   // 目录纪元 v2(-dev2),与 devCliFlags.ts 的派生保持一字不差:#871 起隔离沙箱用
-  // CindyDev 钥匙串身份,旧 -dev 目录留给旧 checkout(#912 review)。
+  // zagentDev 钥匙串身份,旧 -dev 目录留给旧 checkout(#912 review)。
   const baseName = desktopUserDataDirNameForRegion(region);
   return userDataDirNamed(`${baseName}-dev2${isolationName ? `-${isolationName}` : ''}`);
 }
@@ -1004,7 +1004,7 @@ async function main() {
       delete process.env.XDT_USER_DATA_DIR_EPOCH;
       delete process.env.XDT_DEVICE_ID_OVERRIDE;
       delete process.env.XDT_ISOLATED_NAME;
-      console.log(`==> Ignoring inherited Cindy profile so --isolated=${parseIsolationName(isolatedArg)} can use its own sandbox.`);
+      console.log(`==> Ignoring inherited Zbot profile so --isolated=${parseIsolationName(isolatedArg)} can use its own sandbox.`);
     }
   }
   const isolationName = isolatedArg ? parseIsolationName(isolatedArg) : '';
@@ -1048,7 +1048,7 @@ async function main() {
   }
   if (preserveRunning && hasIsolationIntent(argv, process.env)) {
     throw new Error(
-      '--preserve-running reuses the current Cindy login via shared userData and cannot be combined with --isolated or XDT_ISOLATED=1',
+      '--preserve-running reuses the current Zbot login via shared userData and cannot be combined with --isolated or XDT_ISOLATED=1',
     );
   }
   if (startupConfig) {
@@ -1062,7 +1062,7 @@ async function main() {
     process.env.XDT_SCHEDULER_PASSIVE = '1';
     console.log(
       preserveRunning
-        ? '==> Preserve-running preview: existing Cindy processes stay alive; this instance shares login/data and will not auto-fire schedules.'
+        ? '==> Preserve-running preview: existing Zbot processes stay alive; this instance shares login/data and will not auto-fire schedules.'
         : '==> Scheduler passive mode: this instance will not auto-fire schedules.',
     );
   }
@@ -1141,7 +1141,7 @@ async function main() {
         `==> ${refusal.message}`,
         `    ancestor pid ${devAncestor.pid}: ${devAncestor.command.slice(0, 180)}`,
         refusal.code === 'HOSTED_RESTART_REFUSED'
-          ? '==> Ask the user to restart from the official Cindy app, another worktree, or an external terminal.'
+          ? '==> Ask the user to restart from the official Zbot app, another worktree, or an external terminal.'
           : '==> Use --isolated=@worktree, or --preserve-running if you explicitly want shared login.',
       ],
     );
@@ -1158,7 +1158,7 @@ async function main() {
       );
     }
     console.log(
-      `==> Current session is hosted by Cindy desktop dev pid ${devAncestor.pid}; preserving that process tree.`,
+      `==> Current session is hosted by Zbot desktop dev pid ${devAncestor.pid}; preserving that process tree.`,
     );
   }
 
@@ -1180,7 +1180,7 @@ async function main() {
     && isOfficialProductionUserDataDir(targetUserDataDir)
   ) {
     throw new Error(
-      `--isolated cannot use the official Cindy profile (${targetUserDataDir}). ` +
+      `--isolated cannot use the official Zbot profile (${targetUserDataDir}). ` +
         'Omit XDT_USER_DATA_DIR, or point it at a sandbox directory.',
     );
   }
@@ -1236,17 +1236,17 @@ async function main() {
 
   if (!preserveRunning && !replaceRunningRoot && ownScope.preserved.length > 0) {
     console.log(
-      `==> Preserving ${ownScope.preserved.length} Cindy desktop dev process(es) from other checkouts; this restart only touches ${rootDir}.`,
+      `==> Preserving ${ownScope.preserved.length} Zbot desktop dev process(es) from other checkouts; this restart only touches ${rootDir}.`,
     );
   }
 
   if (preserveRunning && !replaceRunningRoot) {
     console.log(
-      `==> Preserving ${allTargets.length} existing Cindy desktop dev process(es); the preview will start alongside them in passive mode.`,
+      `==> Preserving ${allTargets.length} existing Zbot desktop dev process(es); the preview will start alongside them in passive mode.`,
     );
   } else if (replaceRunningRoot) {
     console.log(
-      `==> Preserving ${allTargets.length - targets.length} other Cindy desktop dev process(es); replacing only ${replaceRunningRoot}.`,
+      `==> Preserving ${allTargets.length - targets.length} other Zbot desktop dev process(es); replacing only ${replaceRunningRoot}.`,
     );
     if (targets.length === 0) {
       console.log('==> No running desktop dev processes were found for the requested replacement root.');
@@ -1288,9 +1288,9 @@ async function main() {
       closeDarwinTerminalTtys(darwinTerminalTtys);
     }
   } else if (targets.length === 0) {
-    console.log('==> No existing Cindy desktop dev processes found for this checkout.');
+    console.log('==> No existing Zbot desktop dev processes found for this checkout.');
   } else {
-    console.log(`==> Stopping ${targets.length} existing Cindy desktop dev process(es) from this checkout...`);
+    console.log(`==> Stopping ${targets.length} existing Zbot desktop dev process(es) from this checkout...`);
     for (const target of targets) {
       console.log(`    kill ${target.pid}: ${target.command.slice(0, 180)}`);
       killProcess(target.pid);
@@ -1301,7 +1301,7 @@ async function main() {
     const matchesOwnRoot = (proc) => commandContainsPath(proc.command, rootDir);
     const remainingAfterTerm = await waitForDesktopDevProcessesToExit(gracefulTimeoutMs, matchesOwnRoot);
     if (remainingAfterTerm.length > 0) {
-      console.log(`==> Force stopping ${remainingAfterTerm.length} stubborn Cindy desktop dev process(es)...`);
+      console.log(`==> Force stopping ${remainingAfterTerm.length} stubborn Zbot desktop dev process(es)...`);
       for (const target of remainingAfterTerm) {
         console.log(`    ${forceKillLabel} ${target.pid}: ${target.command.slice(0, 180)}`);
         forceKillProcess(target.pid);
@@ -1312,9 +1312,9 @@ async function main() {
     if (remainingAfterForce.length > 0) {
       exitWithFailure(
         'STARTUP_FAILED',
-        `Failed to stop ${remainingAfterForce.length} Cindy desktop dev process(es); aborting restart.`,
+        `Failed to stop ${remainingAfterForce.length} Zbot desktop dev process(es); aborting restart.`,
         [
-          `==> Failed to stop ${remainingAfterForce.length} Cindy desktop dev process(es); aborting restart.`,
+          `==> Failed to stop ${remainingAfterForce.length} Zbot desktop dev process(es); aborting restart.`,
           ...remainingAfterForce.map((target) => `    still running ${target.pid}: ${target.command.slice(0, 180)}`),
         ],
       );

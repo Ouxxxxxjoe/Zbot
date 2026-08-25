@@ -21,30 +21,17 @@ import {
   type SupportedLocale,
 } from '../shared/locale.js';
 
-import enCommon from '../renderer/i18n/locales/en/common.json';
 import zhCNCommon from '../renderer/i18n/locales/zh-CN/common.json';
-import zhTWCommon from '../renderer/i18n/locales/zh-TW/common.json';
-import jaCommon from '../renderer/i18n/locales/ja/common.json';
-import koCommon from '../renderer/i18n/locales/ko/common.json';
 
 const resources: Record<SupportedLocale, Record<string, unknown>> = {
-  en: enCommon as Record<string, unknown>,
   'zh-CN': zhCNCommon as Record<string, unknown>,
-  'zh-TW': zhTWCommon as Record<string, unknown>,
-  ja: jaCommon as Record<string, unknown>,
-  ko: koCommon as Record<string, unknown>,
 };
 
 /**
- * 与 renderer i18next 的 fallbackLng 对齐:缺 key 先落本 locale 再落 en。
- * 链尾统一由 t() 落回 key 本身。
+ * Zbot 只有简体中文:缺 key 由 t() 落回 key 本身。
  */
 const FALLBACK_CHAIN: Record<SupportedLocale, readonly SupportedLocale[]> = {
-  'zh-CN': ['zh-CN', 'en'],
-  'zh-TW': ['zh-TW', 'zh-CN', 'en'],
-  en: ['en'],
-  ja: ['ja', 'en'],
-  ko: ['ko', 'en'],
+  'zh-CN': ['zh-CN'],
 };
 
 let cachedLocale: SupportedLocale | null = null;
@@ -105,7 +92,7 @@ function lookup(bundle: Record<string, unknown>, key: string): string | null {
 /**
  * Translate a dot-path key (e.g. 'update.moveToApplications.title') using
  * the OS-resolved main-side locale, walking the locale's FALLBACK_CHAIN
- * (zh-TW → zh-CN → en; others → en), then falling back to the key itself.
+ * (仅 zh-CN),then falling back to the key itself.
  *
  * 与 renderer i18next 的 interpolation.defaultVariables 对齐:locale 文案里的
  * {{appName}} 由品牌常量注入(本迷你 i18n 不支持其它变量,main 消费的 key 若

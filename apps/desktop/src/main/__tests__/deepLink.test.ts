@@ -107,7 +107,7 @@ describe('internal main-window navigation', () => {
 
 describe('parseDeepLink', () => {
   it('parses session payload', () => {
-    expect(parseDeepLink('xdt-maker://session/abc-123')).toEqual({
+    expect(parseDeepLink('zbot://session/abc-123')).toEqual({
       type: 'session',
       id: 'abc-123',
     });
@@ -115,7 +115,7 @@ describe('parseDeepLink', () => {
 
   it('parses project payload with URL-encoded workingDir', () => {
     const encoded = encodeURIComponent('C:\\Some Path\\proj');
-    expect(parseDeepLink(`xdt-maker://project/${encoded}`)).toEqual({
+    expect(parseDeepLink(`zbot://project/${encoded}`)).toEqual({
       type: 'project',
       workingDir: 'C:\\Some Path\\proj',
     });
@@ -138,15 +138,15 @@ describe('parseDeepLink', () => {
   });
 
   it('returns null for unknown type', () => {
-    expect(parseDeepLink('xdt-maker://unknown/x')).toBeNull();
+    expect(parseDeepLink('zbot://unknown/x')).toBeNull();
   });
 
   it('returns null when value is empty', () => {
-    expect(parseDeepLink('xdt-maker://session/')).toBeNull();
+    expect(parseDeepLink('zbot://session/')).toBeNull();
   });
 
   it('parses session payload with message anchor', () => {
-    expect(parseDeepLink('xdt-maker://session/abc-123?message=client-9')).toEqual({
+    expect(parseDeepLink('zbot://session/abc-123?message=client-9')).toEqual({
       type: 'session',
       id: 'abc-123',
       messageClientId: 'client-9',
@@ -175,17 +175,17 @@ describe('parseDeepLink', () => {
   });
 
   it('ignores empty or malformed message anchor but keeps session id', () => {
-    expect(parseDeepLink('xdt-maker://session/abc-123?message=')).toEqual({
+    expect(parseDeepLink('zbot://session/abc-123?message=')).toEqual({
       type: 'session',
       id: 'abc-123',
     });
     // 非法 % 序列:锚点作废,sessionId 不受拖累
-    expect(parseDeepLink('xdt-maker://session/abc-123?message=%E4%ZZ')).toEqual({
+    expect(parseDeepLink('zbot://session/abc-123?message=%E4%ZZ')).toEqual({
       type: 'session',
       id: 'abc-123',
     });
     // 其它 query 参数忽略(向前兼容)
-    expect(parseDeepLink('xdt-maker://session/abc-123?foo=bar&message=m1')).toEqual({
+    expect(parseDeepLink('zbot://session/abc-123?foo=bar&message=m1')).toEqual({
       type: 'session',
       id: 'abc-123',
       messageClientId: 'm1',
@@ -193,43 +193,43 @@ describe('parseDeepLink', () => {
   });
 
   it('keeps project query-stripping behavior unchanged', () => {
-    expect(parseDeepLink('xdt-maker://project/dir?message=x')).toEqual({
+    expect(parseDeepLink('zbot://project/dir?message=x')).toEqual({
       type: 'project',
       workingDir: 'dir',
     });
   });
 
   it('parses focus payload regardless of source value', () => {
-    expect(parseDeepLink('xdt-maker://focus/google-auth')).toEqual({ type: 'focus' });
+    expect(parseDeepLink('zbot://focus/google-auth')).toEqual({ type: 'focus' });
     expect(parseDeepLink(buildFocusDeepLink('google-auth'))).toEqual({ type: 'focus' });
   });
 
   it('returns null for focus without a source value', () => {
-    expect(parseDeepLink('xdt-maker://focus/')).toBeNull();
+    expect(parseDeepLink('zbot://focus/')).toBeNull();
   });
 
   it('parses settings/providers payload with and without a connect target', () => {
-    expect(parseDeepLink('cindy://settings/providers')).toEqual({
+    expect(parseDeepLink('zbot://settings/providers')).toEqual({
       type: 'settings',
       tab: 'providers',
     });
-    expect(parseDeepLink('cindy://settings/providers/')).toEqual({
+    expect(parseDeepLink('zbot://settings/providers/')).toEqual({
       type: 'settings',
       tab: 'providers',
     });
-    expect(parseDeepLink('cindy://settings/providers?connect=openrouter')).toEqual({
+    expect(parseDeepLink('zbot://settings/providers?connect=openrouter')).toEqual({
       type: 'settings',
       tab: 'providers',
       connect: 'openrouter',
     });
     // connect 同时覆盖 provider id 与 preset id 的字符契约;其它 query 参数忽略。
-    expect(parseDeepLink('cindy://settings/providers?foo=bar&connect=Vendor_2')).toEqual({
+    expect(parseDeepLink('zbot://settings/providers?foo=bar&connect=Vendor_2')).toEqual({
       type: 'settings',
       tab: 'providers',
       connect: 'Vendor_2',
     });
     // 历史 scheme 同样可用
-    expect(parseDeepLink('xdt-maker://settings/providers?connect=deepseek')).toEqual({
+    expect(parseDeepLink('zbot://settings/providers?connect=deepseek')).toEqual({
       type: 'settings',
       tab: 'providers',
       connect: 'deepseek',
@@ -238,63 +238,63 @@ describe('parseDeepLink', () => {
 
   it('rejects settings deep links outside the providers tab', () => {
     // voice-input 仍是主进程内部专用 payload,不开放给外部 URL 注入
-    expect(parseDeepLink('cindy://settings/voice-input')).toBeNull();
-    expect(parseDeepLink('cindy://settings/anything-else')).toBeNull();
-    expect(parseDeepLink('cindy://settings/providers/anything-else')).toBeNull();
-    expect(parseDeepLink('cindy://settings/')).toBeNull();
+    expect(parseDeepLink('zbot://settings/voice-input')).toBeNull();
+    expect(parseDeepLink('zbot://settings/anything-else')).toBeNull();
+    expect(parseDeepLink('zbot://settings/providers/anything-else')).toBeNull();
+    expect(parseDeepLink('zbot://settings/')).toBeNull();
   });
 
   it('rejects settings deep links whose connect value fails the shared id whitelist', () => {
     // 深链是不可信输入:非法 connect 整条拒绝,不做"半执行"。
-    expect(parseDeepLink('cindy://settings/providers?connect=')).toBeNull();
-    expect(parseDeepLink('cindy://settings/providers?connect=a.b')).toBeNull();
-    expect(parseDeepLink('cindy://settings/providers?connect=a%20b')).toBeNull();
-    expect(parseDeepLink('cindy://settings/providers?connect=%3Cscript%3E')).toBeNull();
-    expect(parseDeepLink('cindy://settings/providers?connect=%E4%ZZ')).toBeNull();
+    expect(parseDeepLink('zbot://settings/providers?connect=')).toBeNull();
+    expect(parseDeepLink('zbot://settings/providers?connect=a.b')).toBeNull();
+    expect(parseDeepLink('zbot://settings/providers?connect=a%20b')).toBeNull();
+    expect(parseDeepLink('zbot://settings/providers?connect=%3Cscript%3E')).toBeNull();
+    expect(parseDeepLink('zbot://settings/providers?connect=%E4%ZZ')).toBeNull();
     expect(
-      parseDeepLink(`cindy://settings/providers?connect=${'a'.repeat(129)}`),
+      parseDeepLink(`zbot://settings/providers?connect=${'a'.repeat(129)}`),
     ).toBeNull();
   });
 });
 
 // 双 scheme 收敛(2026-07 品牌翻转):解析 cindy 主 + 历史 xdt-maker 都认,
-// 生成一律主 scheme cindy://。上面的 xdt-maker:// 用例即历史 scheme 回归。
+// 生成一律主 scheme zbot://。上面的 zbot:// 用例即历史 scheme 回归。
 describe('dual scheme (cindy primary + legacy xdt-maker)', () => {
-  it('parses primary-scheme cindy:// links for every payload type', () => {
-    expect(parseDeepLink('cindy://session/abc-123')).toEqual({
+  it('parses primary-scheme zbot:// links for every payload type', () => {
+    expect(parseDeepLink('zbot://session/abc-123')).toEqual({
       type: 'session',
       id: 'abc-123',
     });
-    expect(parseDeepLink('cindy://session/abc-123?message=client-9')).toEqual({
+    expect(parseDeepLink('zbot://session/abc-123?message=client-9')).toEqual({
       type: 'session',
       id: 'abc-123',
       messageClientId: 'client-9',
     });
-    expect(parseDeepLink(`cindy://project/${encodeURIComponent('C:\\Some Path\\proj')}`)).toEqual({
+    expect(parseDeepLink(`zbot://project/${encodeURIComponent('C:\\Some Path\\proj')}`)).toEqual({
       type: 'project',
       workingDir: 'C:\\Some Path\\proj',
     });
-    expect(parseDeepLink('cindy://focus/google-auth')).toEqual({ type: 'focus' });
-    expect(parseDeepLink('cindy://unknown/x')).toBeNull();
-    expect(parseDeepLink('cindy://session/')).toBeNull();
+    expect(parseDeepLink('zbot://focus/google-auth')).toEqual({ type: 'focus' });
+    expect(parseDeepLink('zbot://unknown/x')).toBeNull();
+    expect(parseDeepLink('zbot://session/')).toBeNull();
   });
 
-  it('generates all builders with the primary cindy:// scheme', () => {
+  it('generates all builders with the primary zbot:// scheme', () => {
     expect(DEEP_LINK_PROTOCOL).toBe('cindy');
-    expect(buildSessionDeepLink('abc-123')).toBe('cindy://session/abc-123');
+    expect(buildSessionDeepLink('abc-123')).toBe('zbot://session/abc-123');
     expect(buildSessionMessageDeepLink('abc-123', 'm1')).toBe(
-      'cindy://session/abc-123?message=m1',
+      'zbot://session/abc-123?message=m1',
     );
-    expect(buildProjectDeepLink('/tmp/x')).toBe('cindy://project/%2Ftmp%2Fx');
-    expect(buildFocusDeepLink('google-auth')).toBe('cindy://focus/google-auth');
+    expect(buildProjectDeepLink('/tmp/x')).toBe('zbot://project/%2Ftmp%2Fx');
+    expect(buildFocusDeepLink('google-auth')).toBe('zbot://focus/google-auth');
   });
 });
 
 describe('findDeepLinkInArgv', () => {
   it('returns the last xdt-maker URL in argv', () => {
     expect(
-      findDeepLinkInArgv(['electron.exe', '--flag', 'xdt-maker://session/a']),
-    ).toBe('xdt-maker://session/a');
+      findDeepLinkInArgv(['electron.exe', '--flag', 'zbot://session/a']),
+    ).toBe('zbot://session/a');
   });
 
   it('returns null when no xdt-maker URL present', () => {
@@ -302,9 +302,9 @@ describe('findDeepLinkInArgv', () => {
   });
 
   it('accepts both cindy and legacy xdt-maker schemes in argv', () => {
-    expect(findDeepLinkInArgv(['electron.exe', 'cindy://session/a'])).toBe('cindy://session/a');
-    expect(findDeepLinkInArgv(['electron.exe', 'xdt-maker://session/a'])).toBe(
-      'xdt-maker://session/a',
+    expect(findDeepLinkInArgv(['electron.exe', 'zbot://session/a'])).toBe('zbot://session/a');
+    expect(findDeepLinkInArgv(['electron.exe', 'zbot://session/a'])).toBe(
+      'zbot://session/a',
     );
   });
 });

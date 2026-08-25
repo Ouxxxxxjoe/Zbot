@@ -21,7 +21,7 @@
  * Ordering: must run AFTER every plugin that creates image / link nodes with
  * local destinations — remarkHtmlImages (single <img> HTML → mdast image) and
  * remarkLocalPathLinks (bare prose paths → link). Keep it last in the remark
- * plugin lists. remarkSessionLinks emits cindy:// deep links, which the
+ * plugin lists. remarkSessionLinks emits zbot:// deep links, which the
  * scheme check below skips regardless of order.
  */
 
