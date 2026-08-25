@@ -1,0 +1,125 @@
+# release-desktop.yml — Zbot 内部使用:打未签名安装包,不做 OSS 分发。
+#
+# 与 ci.yml(client-ci,只管测试/静态检查)不同,本 workflow 真正产出可分发安装包:
+#   - 用真实 Electron 二进制(不设 ci.yml 的 ELECTRON_SKIP_BINARY_DOWNLOAD / stub);
+#   - 显式 --version(避免读线上 CDN manifest 取基线,内部无更新源);
+#   - --no-sign:跳过 Windows / macOS 签名(内部使用,无需签名/公证);
+#   - ZBOT_DISABLE_AUTO_UPDATE=1:构建期经 vite define 烘焙,整体关闭应用内自动更新
+#     (手动分发安装包,不依赖 OSS/CDN 更新源)。
+#
+# ⚠️ 这是给内部使用的起点,首次在 GitHub 上跑可能需要微调:
+#   - 原生模块(better-sqlite3 / node-pty / sharp)在 runner 上重建较慢,个别需
+#     pnpm approve-builds / rebuild; macOS 首次还要装 Xcode 工具链。
+#   - 若需 macOS 公证 / Windows 签名,再加对应 secrets(本 workflow 刻意不加)。
+#   - agent 二进制(claude/codex/ripgrep/pi)由 postinstall 按需拉取;若被网络拦截
+#     可改用 `pnpm install:agent-binaries` 显式安装或缓存。
+
+name: release-desktop-installers
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Build version (e.g. 0.1.0). Explicit version => no CDN baseline read.'
+        required: true
+        default: '0.1.0'
+      region:
+        description: 'Build region'
+        required: true
+        default: 'cn'
+
+permissions:
+  contents: read
+
+env:
+  CINDY_AUTH_REGION: ${{ inputs.region }}
+  ZBOT_DISABLE_AUTO_UPDATE: '1'
+
+jobs:
+  build-macos:
+    name: Build macOS (.dmg, unsigned)
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+        with:
+          fetch-depth: 0
+          lfs: true
+
+      - uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: Install dependencies (full — real Electron + native modules)
+        run: pnpm install
+
+      - name: Prepare release-regions config (empty OSS/signing — internal only)
+        run: |
+          mkdir -p apps/desktop/scripts
+          cat > apps/desktop/scripts/release-regions.json <<'EOF'
+          {
+            "cn": {
+              "oss": { "cdnBaseUrl": "", "bucket": "", "prefix": "", "ossRegion": "" },
+              "macSigning": { "appleId": "", "teamId": "", "signIdentity": "", "appPasswordEnv": "" }
+            }
+          }
+          EOF
+
+      - name: Package (.dmg, unsigned, versioned, auto-update off)
+        run: pnpm release:package --region=${{ inputs.region }} --no-sign --version=${{ inputs.version }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: zbot-installers-macos-${{ inputs.version }}
+          path: release/artifacts/${{ inputs.region }}/${{ inputs.version }}/darwin-arm64/**
+          if-no-files-found: error
+
+  build-windows:
+    name: Build Windows (.exe, unsigned)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+        with:
+          fetch-depth: 0
+          lfs: true
+
+      - uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: Install dependencies (full — real Electron + native modules)
+        run: pnpm install
+
+      - name: Prepare release-regions config (empty OSS/signing — internal only)
+        shell: bash
+        run: |
+          mkdir -p apps/desktop/scripts
+          cat > apps/desktop/scripts/release-regions.json <<'EOF'
+          {
+            "cn": {
+              "oss": { "cdnBaseUrl": "", "bucket": "", "prefix": "", "ossRegion": "" },
+              "macSigning": { "appleId": "", "teamId": "", "signIdentity": "", "appPasswordEnv": "" }
+            }
+          }
+          EOF
+
+      - name: Package (.exe, unsigned, versioned, auto-update off)
+        shell: bash
+        run: pnpm release:package --region=${{ inputs.region }} --no-sign --version=${{ inputs.version }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: zbot-installers-windows-${{ inputs.version }}
+          path: release/artifacts/${{ inputs.region }}/${{ inputs.version }}/win32-x64/**
+          if-no-files-found: error

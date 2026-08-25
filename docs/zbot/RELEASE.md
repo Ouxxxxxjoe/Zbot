@@ -55,6 +55,12 @@
 - 分发：CDN / OSS 一级路径前缀 = `cdnPrefix`（`zbot`）；更新 manifest 在 publish 侧。
 - ⚠️ **改动更新链路前必须先与维护者确认**（见 `docs/dev-rules/cindy-updater.md`）；该链路
   一处改错会无差别影响所有已装用户，禁止在普通功能 PR 里「顺带」改。
+- **关闭自动更新**（内部使用、手动分发、无 OSS/CDN 更新源）：
+  - 构建期设 `ZBOT_DISABLE_AUTO_UPDATE=1` → 经 vite define 烘焙，`updateService.ts` 的
+    `update-check-startup`、`doCheckForUpdate`、后台轮询整体短路（即使显式 `--version` 也不再
+    检查/下载）。
+  - 无版本打包（占位 0.0.0）本身也豁免更新链（`isVersionlessAppVersion`），但与 `--version`
+    显式构建互斥。
 
 ## 4. 签名 / 公证
 
@@ -64,10 +70,27 @@
   `--allow-unsigned`。
 - 相关脚本：`generate-win-ico.mjs`、`notarize-mac-app` 相关测试、`forge-ios-simulator-helper.ts`。
 
+### 4.1 内部使用构建（无 OSS、无签名）
+
+内部使用**不做 OSS 分发、不做 Windows / macOS 签名**（本地/私有使用无需过签名与公证），
+打包命令：
+
+```bash
+ZBOT_DISABLE_AUTO_UPDATE=1 pnpm release:package --region=cn --no-sign --version=0.1.0
+```
+
+- `--no-sign`：跳过 Windows/macOS 签名（`release-regions.json` 缺失时会静默跳过签名身份注入）。
+- 显式 `--version`：不再读线上 CDN manifest 取基线（内部无 OSS/CDN 更新源）。
+- `ZBOT_DISABLE_AUTO_UPDATE=1`：烘焙关闭应用内自动更新（见 §3）。
+- 产物：`release/artifacts/cn/<version>/...`（未签名 .exe / .dmg），手动分发、不依赖自动更新。
+- CI 侧：`.github/workflows/release-desktop.yml`（`workflow_dispatch` 手动触发，产出未签名安装包
+  并作为构建产物上传）。
+
 ## 5. CI 与发布流程
 
 - `.github/workflows/ci.yml`：单测 / 门禁（`pnpm test:unit`、`check:brand-terminology`、
   `check:endpoints`、`check:i18n`、`brand-identity-sync`、`check:dco` 等）。
+- `.github/workflows/release-desktop.yml`：内部打包（未签名安装包构建产物），手动触发。
 - 发布以 `build-info.json` 为唯一输入；**本仓只打包，不写 OSS / CDN**，上传与 canary/promote
   由维护者侧发布链路负责。
 

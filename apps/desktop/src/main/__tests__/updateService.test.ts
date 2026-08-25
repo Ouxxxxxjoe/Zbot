@@ -406,6 +406,42 @@ describe('checkForUpdate 版本无关(占位 0.0.0)打包豁免', () => {
   });
 });
 
+describe('ZBOT_DISABLE_AUTO_UPDATE 构建期关闭自动更新链(内部手动分发无更新源)', () => {
+  it('置 1 时 checkForUpdate 直接 idle,不拉 manifest 不下载(即便显式 --version)', async () => {
+    const previous = process.env.ZBOT_DISABLE_AUTO_UPDATE;
+    process.env.ZBOT_DISABLE_AUTO_UPDATE = '1';
+    try {
+      // 用真实版本(1.0.0)而非 versionless:证明关闭开关独立于 0.0.0 短路生效。
+      appGetVersion.mockReturnValue('1.0.0');
+      const { checkForUpdate, getUpdateStatus, isAutoUpdateDisabled } =
+        await freshUpdateService('darwin');
+
+      expect(isAutoUpdateDisabled()).toBe(true);
+      const result = await checkForUpdate(updateManifest('9.9.9'));
+
+      expect(result).toBe('idle');
+      expect(getUpdateStatus()).toBe('idle');
+      expect(fetchManifest).not.toHaveBeenCalled();
+      expect(download).not.toHaveBeenCalled();
+    } finally {
+      if (previous === undefined) delete process.env.ZBOT_DISABLE_AUTO_UPDATE;
+      else process.env.ZBOT_DISABLE_AUTO_UPDATE = previous;
+    }
+  });
+
+  it('未置 1(默认)不受影响,更新链照常', async () => {
+    const previous = process.env.ZBOT_DISABLE_AUTO_UPDATE;
+    delete process.env.ZBOT_DISABLE_AUTO_UPDATE;
+    try {
+      appGetVersion.mockReturnValue('1.0.0');
+      const { isAutoUpdateDisabled } = await freshUpdateService('darwin');
+      expect(isAutoUpdateDisabled()).toBe(false);
+    } finally {
+      if (previous !== undefined) process.env.ZBOT_DISABLE_AUTO_UPDATE = previous;
+    }
+  });
+});
+
 describe('startup update relaunch safety', () => {
   // Startup/splash auto-applies a staged patch as soon as it is ready — the
   // historic behavior restored deliberately (owner-approved). A fresh launch has

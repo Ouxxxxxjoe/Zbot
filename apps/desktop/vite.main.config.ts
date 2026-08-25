@@ -55,6 +55,13 @@ export default defineConfig(({ mode }) => {
       // ⚠️ main 侧必须写成完整的 `process.env.XDT_LOG_UPLOAD_TARGET` 才能被本 define 文本替换,
       // 见 main/log-upload/logUploadTarget.ts 的 injectedRaw()。
       'process.env.XDT_LOG_UPLOAD_TARGET': JSON.stringify(readMainEnv('XDT_LOG_UPLOAD_TARGET')),
+      // Zbot 内部使用(手动分发、无 OSS/CDN 更新源):构建期置 1 可整体关闭自动更新链,
+      // 即使打包时显式 --version 也不再检查/下载。置空(默认)⇒ 更新链照常。
+      // ⚠️ main 侧必须写成完整的 `process.env.ZBOT_DISABLE_AUTO_UPDATE` 才能被本 define 文本替换,
+      // 见 updateService.ts 的 isAutoUpdateDisabled()。
+      'process.env.ZBOT_DISABLE_AUTO_UPDATE': JSON.stringify(
+        readMainEnv('ZBOT_DISABLE_AUTO_UPDATE'),
+      ),
       // Triage bot token (dev only — production 留空，BotTokenStore 走 safeStorage)
       'process.env.TRIAGE_BOT_TOKEN': JSON.stringify(readMainEnv('TRIAGE_BOT_TOKEN')),
       // Filo Google OAuth desktop client（main-only，仓库不保存实际值）。

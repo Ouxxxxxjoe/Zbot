@@ -979,6 +979,16 @@ export function isVersionlessAppVersion(version: string): boolean {
   return version === '0.0.0' || version.startsWith('0.0.0-');
 }
 
+/**
+ * Zbot 内部使用(手动分发、无 OSS/CDN 更新源):构建期经 vite define 注入
+ * `process.env.ZBOT_DISABLE_AUTO_UPDATE === '1'` 时整体关闭自动更新链。
+ * 与 versionless(0.0.0)短路互补——即使打包时显式 --version 也不再检查/下载。
+ * 置空(默认)⇒ 更新链照常。
+ */
+export function isAutoUpdateDisabled(): boolean {
+  return process.env.ZBOT_DISABLE_AUTO_UPDATE === '1';
+}
+
 async function doCheckForUpdate(manifestOverride?: Manifest | null): Promise<CheckForUpdateResult> {
   log.info('checkForUpdate() called, currentStatus=%s', currentStatus);
   // 先跟共享设置对一次有效渠道:共库另一实例改过开关时,本进程内存代际还停在旧值。
@@ -992,6 +1002,11 @@ async function doCheckForUpdate(manifestOverride?: Manifest | null): Promise<Che
   const channelEpochAtStart = updateChannelEpoch;
   const channelEnableBetaAtStart = observedEnableBeta;
 
+  if (isAutoUpdateDisabled()) {
+    log.info('Auto-update disabled (ZBOT_DISABLE_AUTO_UPDATE=1) — in-app update off');
+    currentStatus = 'idle';
+    return 'idle';
+  }
   if (isVersionlessAppVersion(app.getVersion())) {
     log.info('Versionless build (placeholder %s) — in-app update disabled', app.getVersion());
     currentStatus = 'idle';
@@ -1977,6 +1992,10 @@ export function initUpdateService(): void {
       // 快路径(下方 Step 1/2)。版本无关包与正式版同 userData,一台跑过正式版
       // 的机器 updates/ 里可能残留已下好的 patch,不在这里挡住会把 0.0.0 安装体
       // 启动即替换成线上版本。
+      if (isAutoUpdateDisabled()) {
+        log.info('Auto-update disabled (ZBOT_DISABLE_AUTO_UPDATE=1) — skipping startup update flow');
+        return { hasUpdate: false, action: 'none' as const };
+      }
       if (isVersionlessAppVersion(app.getVersion())) {
         log.info('Versionless build (placeholder %s) — skipping startup update flow', app.getVersion());
         return { hasUpdate: false, action: 'none' as const };
@@ -2091,6 +2110,11 @@ export function initUpdateService(): void {
 
   if (isDev()) {
     log.info('Dev mode — skipping background polling');
+    return;
+  }
+
+  if (isAutoUpdateDisabled()) {
+    log.info('Auto-update disabled (ZBOT_DISABLE_AUTO_UPDATE=1) — skipping background polling');
     return;
   }
 
