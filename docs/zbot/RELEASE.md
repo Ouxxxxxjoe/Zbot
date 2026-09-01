@@ -82,9 +82,25 @@ ZBOT_DISABLE_AUTO_UPDATE=1 pnpm release:package --region=cn --no-sign --version=
 - `--no-sign`：跳过 Windows/macOS 签名（`release-regions.json` 缺失时会静默跳过签名身份注入）。
 - 显式 `--version`：不再读线上 CDN manifest 取基线（内部无 OSS/CDN 更新源）。
 - `ZBOT_DISABLE_AUTO_UPDATE=1`：烘焙关闭应用内自动更新（见 §3）。
-- 产物：`release/artifacts/cn/<version>/...`（未签名 .exe / .dmg），手动分发、不依赖自动更新。
+- 产物：`apps/desktop/release/artifacts/cn/<version>/...`（未签名 .exe / .dmg），手动分发、不依赖自动更新。
 - CI 侧：`.github/workflows/release-desktop.yml`（`workflow_dispatch` 手动触发，产出未签名安装包
   并作为构建产物上传）。
+
+### 4.2 GitHub Actions 打包踩坑记录（2026-09，`release-desktop.yml`）
+
+`release-desktop-installers` 工作流首次跑通时连续踩了四个坑，全是 fork 后「内部打包
+链路没跟上 Zbot」的遗留。改这个工作流前先过一遍：
+
+| # | 症状 | 根因 | 修法 |
+|---|---|---|---|
+| 1 | `ERROR: 未知参数: --region=cn` | `package-desktop.mjs` 的 `parsePackageArgs` 只认 **`--region cn` 空格形式**，工作流传了 `--region=cn` 等号形式 | 工作流参数改空格形式 |
+| 2 | `缺少日志上报配置: config/log-upload.json` | `config/log-upload.json` 被 `.gitignore` 忽略（真值在外部构建仓），`desktopLogUploadBuildEnv` 硬校验缺失即失败 | 工作流打包前生成**内部占位 config**（cn/global 各一个互不相同的 SLS project，不发真实遥测），与已有的 `release-regions.json` 占位 step 同款 |
+| 3 | `FATAL ERROR: JavaScript heap out of memory`（macOS/Windows 都挂） | fork 后仓体变大，desktop 打包（tsc/electron-forge）峰值内存突破 Node 默认 4GB 上限——与 ci.yml 给 typecheck 配 8GB 堆同因 | workflow 顶层 `env` 加 `NODE_OPTIONS: '--max-old-space-size=8192'` |
+| 4 | 打包**成功**但 `upload-artifact: No files were found` | 打包脚本产物在 `apps/desktop/release/artifacts/...`，工作流从 `release/artifacts/...`（仓库根）找，少了 `apps/desktop` 前缀 | upload path 加 `apps/desktop` 前缀 |
+
+> 定位技巧：打包 job 的日志 blob 常拉不到（SAS/EOF），但**完整日志**（`gh run view --log`）
+> 和 `--log-failed` 通常可用；产物路径看打包步骤末尾的 `Artifacts: ...` 行，
+> 那是脚本实际写出的路径，以它为准改 upload path。
 
 ## 5. CI 与发布流程
 
