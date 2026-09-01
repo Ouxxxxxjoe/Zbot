@@ -73,6 +73,12 @@ pnpm --filter desktop run --if-present typecheck
 > `scripts/__tests__/brand-identity-sync.test.mjs` 断言；改 `brandIdentity.ts` 后漏改任何
 > 一处镜像，这里立即红灯。
 
+> ⚠️ **品牌 / locale / 深链 / 区域语义类上游改动，单测断言极易失配**（fork 初期
+> `client-ci` 连续多轮全红即因此）。`test:unit:related` 只按 git 改动文件选测试，
+> **覆盖不到「测试没改但断言过时」的文件**——fork / 大范围合并后必须跑 CI 全量分片。
+> 合并后按 `docs/zbot/UPSTREAM_TEST_SYNC.md` 的可 grep 清单逐项自查，并用 Node 22
+> （仓库钉的版本）本地验证，避免 Node 26 + threads 池的 localStorage 伪故障误报。
+
 ## 6. 合并冲突的通用处理
 
 - **以当前 checkout 的代码为准**解决冲突；发现文档与实现不一致时，修文档而不是凭文档
