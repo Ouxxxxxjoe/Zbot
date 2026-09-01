@@ -43,16 +43,16 @@ jobs:
     name: Build macOS (.dmg, unsigned)
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v4
         with:
           fetch-depth: 0
           lfs: false
 
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6
         with:
           run_install: false
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: pnpm
@@ -99,7 +99,7 @@ jobs:
       - name: Package (.dmg, unsigned, versioned, auto-update off)
         run: pnpm release:package --region ${{ inputs.region }} --no-sign --version ${{ inputs.version }}
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: zbot-installers-macos-${{ inputs.version }}
           path: release/artifacts/${{ inputs.region }}/${{ inputs.version }}/darwin-arm64/**
@@ -109,16 +109,16 @@ jobs:
     name: Build Windows (.exe, unsigned)
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v4
         with:
           fetch-depth: 0
           lfs: false
 
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6
         with:
           run_install: false
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: pnpm
@@ -168,7 +168,7 @@ jobs:
         shell: bash
         run: pnpm release:package --region ${{ inputs.region }} --no-sign --version ${{ inputs.version }}
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: zbot-installers-windows-${{ inputs.version }}
           path: release/artifacts/${{ inputs.region }}/${{ inputs.version }}/win32-x64/**
