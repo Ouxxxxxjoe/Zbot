@@ -634,9 +634,12 @@ describe('AgentInputCoordinator trusted session reference snapshots', () => {
     );
     await flush();
 
-    // rewrite 换掉了引用正文,旧 trusted snapshot 不再适用,引用随之一并清空:
-    // 不会用旧快照解析,消息按改写后的正文照常派发。
-    expect(h.resolveSessionReferences).not.toHaveBeenCalled();
+    // rewrite 换掉了引用正文:旧 trusted snapshot 不再适用,引用按改写后的
+    // 新文本(zbot://session/replacement)重新提取并解析,消息照常派发。
+    expect(h.resolveSessionReferences).toHaveBeenCalledTimes(1);
+    expect(h.resolveSessionReferences.mock.calls[0]?.[0]).toEqual([
+      { sessionId: 'replacement' },
+    ]);
     expect(h.sendToAgent).toHaveBeenCalledTimes(1);
     expect(JSON.stringify(h.sendToAgent.mock.calls[0]?.[1])).not.toContain(
       'authoritative remote history',

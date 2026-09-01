@@ -51,8 +51,8 @@ describe('AskUserQuestionPrompt IME Enter guard', () => {
       onAnswer,
     );
 
-    fireEvent.click(getByText('Type something else…'));
-    const input = getByPlaceholderText('Type your answer…');
+    fireEvent.click(getByText('输入其他回答…'));
+    const input = getByPlaceholderText('请输入回答…');
     fireEvent.change(input, { target: { value: 'hello' } });
 
     fireEvent.keyDown(input, { key: 'Enter', isComposing: true });
@@ -70,7 +70,7 @@ describe('AskUserQuestionPrompt IME Enter guard', () => {
       onAnswer,
     );
 
-    const input = getByPlaceholderText('Type your answer…');
+    const input = getByPlaceholderText('请输入回答…');
     fireEvent.change(input, { target: { value: '你好' } });
 
     fireEvent.keyDown(input, { key: 'Enter', isComposing: true });

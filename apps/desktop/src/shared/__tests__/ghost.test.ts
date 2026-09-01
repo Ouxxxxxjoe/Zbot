@@ -544,9 +544,10 @@ describe('ghost · 清单校验', () => {
     expect(ghostLocalePathFor(parsed.manifest, 'zh-CN')).toBe('locales/en.json');
     expect(ghostLocalePathFor(parsed.manifest, 'zh-TW')).toBe('locales/en.json');
     expect(ghostLocalePathFor(parsed.manifest, 'fr-FR')).toBe('locales/en.json');
-    expect(withGhostResolvedLocale(parsed.manifest, 'ko').resolvedLocale).toBe('ko');
-    expect(withGhostResolvedLocale(parsed.manifest, 'zh-TW').resolvedLocale).toBe('zh-TW');
-    expect(withGhostResolvedLocale(parsed.manifest, 'fr-FR').resolvedLocale).toBe('en');
+    // Zbot 只支持简体中文:resolvedLocale 任何输入都归一为 zh-CN。
+    expect(withGhostResolvedLocale(parsed.manifest, 'ko').resolvedLocale).toBe('zh-CN');
+    expect(withGhostResolvedLocale(parsed.manifest, 'zh-TW').resolvedLocale).toBe('zh-CN');
+    expect(withGhostResolvedLocale(parsed.manifest, 'fr-FR').resolvedLocale).toBe('zh-CN');
   });
 
   it('app-context locale 保持插件协议旧四语，新增宿主语言固定回退英文', () => {

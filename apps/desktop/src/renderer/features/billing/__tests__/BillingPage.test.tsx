@@ -9,8 +9,8 @@ import type {
 } from '../../../../shared/billing';
 
 const i18n = {
-  language: 'en',
-  resolvedLanguage: 'en' as string | undefined,
+  language: 'zh-CN',
+  resolvedLanguage: 'zh-CN' as string | undefined,
 };
 
 const uiMocks = vi.hoisted(() => ({
@@ -129,8 +129,8 @@ async function selectSubscriptionManagementAction(action: string) {
 
 describe('BillingPage remote catalog rendering', () => {
   beforeEach(() => {
-    i18n.language = 'en';
-    i18n.resolvedLanguage = 'en';
+    i18n.language = 'zh-CN';
+    i18n.resolvedLanguage = 'zh-CN';
     Object.assign(checkout.state, {
       open: false,
       kind: null,
@@ -402,7 +402,7 @@ describe('BillingPage remote catalog rendering', () => {
     expect(screen.getByText('billing.balance.promotional')).toBeTruthy();
     expect(
       screen.getByText(
-        new Intl.NumberFormat('en', { style: 'currency', currency: 'CNY' }).format(12.345678901),
+        new Intl.NumberFormat('zh-CN', { style: 'currency', currency: 'CNY' }).format(12.345678901),
       ),
     ).toBeTruthy();
     expect(screen.getByText('billing.usage.detailsUnavailable')).toBeTruthy();
@@ -449,7 +449,7 @@ describe('BillingPage remote catalog rendering', () => {
   });
 
   it('shows current plan price, included credits, status, and renewal date', async () => {
-    i18n.resolvedLanguage = 'ja';
+    i18n.resolvedLanguage = 'zh-CN';
     window.electronAPI.billing.getCurrentSubscription = vi.fn(async () => ({
       subscription: {
         subscriptionId: 'subscription_fixture',
@@ -485,7 +485,7 @@ describe('BillingPage remote catalog rendering', () => {
       ),
     ).toBeTruthy();
     expect(
-      screen.getByText('billing.settings.subscriptionCard.renewsAt:{"date":"2026/08/01"}'),
+      screen.getByText('billing.settings.subscriptionCard.renewsAt:{"date":"2026年8月1日"}'),
     ).toBeTruthy();
     await openSubscriptionManagementMenu();
     expect(
@@ -549,11 +549,11 @@ describe('BillingPage remote catalog rendering', () => {
 
     const offerNames = await screen.findAllByText('Ordered top-up');
     const offerButtons = offerNames.map((name) => name.closest('button')!);
-    const twenty = new Intl.NumberFormat('en', {
+    const twenty = new Intl.NumberFormat('zh-CN', {
       style: 'currency',
       currency: 'CNY',
     }).format(20);
-    const hundred = new Intl.NumberFormat('en', {
+    const hundred = new Intl.NumberFormat('zh-CN', {
       style: 'currency',
       currency: 'CNY',
     }).format(100);
@@ -671,7 +671,7 @@ describe('BillingPage remote catalog rendering', () => {
     expect(screen.getByText('billing.usage.promotionalDetails.states.voided')).toBeTruthy();
 
     const grantRows = within(screen.getByRole('list')).getAllByRole('listitem');
-    const formatter = new Intl.NumberFormat('en', { style: 'currency', currency: 'CNY' });
+    const formatter = new Intl.NumberFormat('zh-CN', { style: 'currency', currency: 'CNY' });
     for (const [row, usedAmount] of [
       [grantRows[0], 4],
       [grantRows[1], 2],
@@ -821,7 +821,7 @@ describe('BillingPage remote catalog rendering', () => {
     expect(await screen.findByText('billing.balance.notProvisioned')).toBeTruthy();
     expect(
       screen.queryByText(
-        new Intl.NumberFormat('en', { style: 'currency', currency: 'CNY' }).format(0),
+        new Intl.NumberFormat('zh-CN', { style: 'currency', currency: 'CNY' }).format(0),
       ),
     ).toBeNull();
     await waitFor(() =>
@@ -1048,9 +1048,10 @@ describe('BillingPage remote catalog rendering', () => {
     expect(product).toHaveProperty('disabled', false);
     const currentPlan = within(dialog).getByText('billing.catalog.currentPlan').closest('button')!;
     const alternativeOffer = within(dialog).getByText('$20.00').closest('button')!;
-    const alternativeCredits = new Intl.NumberFormat('en', {
+    const alternativeCredits = new Intl.NumberFormat('zh-CN', {
       style: 'currency',
       currency: 'USD',
+      currencyDisplay: 'narrowSymbol',
     }).format(250);
     expect(
       within(alternativeOffer).getByText(
@@ -1163,9 +1164,10 @@ describe('BillingPage remote catalog rendering', () => {
     ).toBeTruthy();
 
     const secondOffer = within(dialog).getByText('$20.00').closest('button')!;
-    const defaultCredits = new Intl.NumberFormat('en', {
+    const defaultCredits = new Intl.NumberFormat('zh-CN', {
       style: 'currency',
       currency: 'USD',
+      currencyDisplay: 'narrowSymbol',
     }).format(100);
     expect(
       within(defaultOffer).getByText(`billing.credits:{"amount":"${defaultCredits}"}`),
@@ -1480,7 +1482,7 @@ describe('BillingPage remote catalog rendering', () => {
     ]);
     expect(within(planButtons[0]).getByText(/1\.00/)).toBeTruthy();
     expect(within(planButtons[0]).queryByText(/billing\.amount\.startingAt/)).toBeNull();
-    const firstPlanCredits = new Intl.NumberFormat('en', {
+    const firstPlanCredits = new Intl.NumberFormat('zh-CN', {
       style: 'currency',
       currency: 'CNY',
     }).format(100);
@@ -1921,7 +1923,7 @@ describe('BillingPage plan change', () => {
     );
     expect(billing.getBalance).toHaveBeenCalledTimes(1);
     expect(uiMocks.toastSuccess).toHaveBeenCalledWith(
-      expect.stringContaining('"date":"Sep 1, 2026"'),
+      expect.stringContaining('"date":"2026年9月1日"'),
     );
     expect(
       screen.getByText((text) => text.startsWith('billing.settings.subscriptionCard.endsAt')),
@@ -2799,7 +2801,7 @@ describe('BillingPage order history', () => {
     expect(orderIdButton.querySelector('svg')).toBeTruthy();
     expect(
       screen.getByText(
-        new Intl.NumberFormat('en', { style: 'currency', currency: 'CNY' }).format(33),
+        new Intl.NumberFormat('zh-CN', { style: 'currency', currency: 'CNY' }).format(33),
       ),
     ).toBeTruthy();
     expect(screen.getByText('billing.orders.states.completed')).toBeTruthy();

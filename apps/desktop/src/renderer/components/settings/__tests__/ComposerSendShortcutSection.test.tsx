@@ -12,16 +12,16 @@ vi.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string, options?: { shortcut?: string }) => {
       const translations: Record<string, string> = {
-        'settings.composer.title': 'Message input',
-        'settings.composer.sendShortcut.label': 'Use {{shortcut}} to send',
+        'settings.composer.title': '消息输入',
+        'settings.composer.sendShortcut.label': '使用 {{shortcut}} 发送',
         'settings.composer.sendShortcut.hint':
-          'When enabled, {{shortcut}} sends messages. When disabled, Enter sends messages and Shift+Enter inserts a new line.',
-        'settings.composer.sendShortcut.ariaLabel': 'Use {{shortcut}} to send messages',
-        'settings.defaults.customizedBadge': 'Customized',
-        'settings.defaults.restore': 'Restore default',
-        'settings.defaults.restored': 'Restored default',
+          '开启后按 {{shortcut}} 发送消息；关闭后按 Enter 发送消息，按 Shift+Enter 换行。',
+        'settings.composer.sendShortcut.ariaLabel': '使用 {{shortcut}} 发送消息',
+        'settings.defaults.customizedBadge': '已自定义',
+        'settings.defaults.restore': '恢复默认',
+        'settings.defaults.restored': '已恢复默认设置',
         'settings.shortcuts.errors.composerVoiceConflict':
-          'Conflicts with the voice input shortcut. Change either shortcut.',
+          '与语音输入快捷键冲突，请修改发送或语音输入快捷键。',
       };
       return (translations[key] ?? key).replace('{{shortcut}}', options?.shortcut ?? '');
     },
@@ -76,12 +76,12 @@ describe('ComposerSendShortcutSection', () => {
     render(<ComposerSendShortcutSection />);
 
     expect(
-      screen.getByRole('switch', { name: 'Use ⌘+Enter to send messages' }).getAttribute('data-state'),
+      screen.getByRole('switch', { name: '使用 ⌘+Enter 发送消息' }).getAttribute('data-state'),
     ).toBe('unchecked');
-    expect(screen.queryByText('Use ⌘+Enter to send')).not.toBeNull();
+    expect(screen.queryByText('使用 ⌘+Enter 发送')).not.toBeNull();
     expect(
       screen.queryByText(
-        'When enabled, ⌘+Enter sends messages. When disabled, Enter sends messages and Shift+Enter inserts a new line.',
+        '开启后按 ⌘+Enter 发送消息；关闭后按 Enter 发送消息，按 Shift+Enter 换行。',
       ),
     ).not.toBeNull();
   });
@@ -94,20 +94,20 @@ describe('ComposerSendShortcutSection', () => {
       </>,
     );
 
-    const switches = screen.getAllByRole('switch', { name: 'Use Ctrl+Enter to send messages' });
+    const switches = screen.getAllByRole('switch', { name: '使用 Ctrl+Enter 发送消息' });
     fireEvent.click(switches[0]);
 
     expect(localStorage.getItem(COMPOSER_SEND_SHORTCUT_STORAGE_KEY)).toBe('modifier-enter');
     expect(switches[0].getAttribute('data-state')).toBe('checked');
     expect(switches[1].getAttribute('data-state')).toBe('checked');
-    expect(screen.getAllByText('Customized')).toHaveLength(2);
+    expect(screen.getAllByText('已自定义')).toHaveLength(2);
 
-    fireEvent.click(screen.getAllByRole('button', { name: 'Restore default' })[0]);
+    fireEvent.click(screen.getAllByRole('button', { name: '恢复默认' })[0]);
 
     expect(localStorage.getItem(COMPOSER_SEND_SHORTCUT_STORAGE_KEY)).toBeNull();
     expect(switches[0].getAttribute('data-state')).toBe('unchecked');
     expect(switches[1].getAttribute('data-state')).toBe('unchecked');
-    expect(toastMocks.success).toHaveBeenCalledWith('Restored default');
+    expect(toastMocks.success).toHaveBeenCalledWith('已恢复默认设置');
   });
 
   it('rejects a Composer shortcut that is already used by Voice Input', () => {
@@ -120,13 +120,13 @@ describe('ComposerSendShortcutSection', () => {
 
     render(<ComposerSendShortcutSection />);
 
-    const switchControl = screen.getByRole('switch', { name: 'Use ⌘+Enter to send messages' });
+    const switchControl = screen.getByRole('switch', { name: '使用 ⌘+Enter 发送消息' });
     fireEvent.click(switchControl);
 
     expect(localStorage.getItem(COMPOSER_SEND_SHORTCUT_STORAGE_KEY)).toBeNull();
     expect(switchControl.getAttribute('data-state')).toBe('unchecked');
     expect(toastMocks.error).toHaveBeenCalledWith(
-      'Conflicts with the voice input shortcut. Change either shortcut.',
+      '与语音输入快捷键冲突，请修改发送或语音输入快捷键。',
     );
   });
 });
