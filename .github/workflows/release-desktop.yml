@@ -70,6 +70,29 @@ jobs:
           }
           EOF
 
+      # config/log-upload.json 被 .gitignore 忽略(真值在外部构建仓),内部测试包
+      # 不打真实日志;放占位目标满足 log-upload-build-env 的硬校验(project/logstore
+      # 跨区互不相同),烘焙进包的地址指向内部占位 SLS。
+      - name: Prepare log-upload config (internal placeholder — no real telemetry)
+        run: |
+          mkdir -p config
+          cat > config/log-upload.json <<'EOF'
+          {
+            "schemaVersion": 1,
+            "cn": {
+              "project": "zbot-internal-cn",
+              "logstore": "zbot-internal-cn-client-log",
+              "slsRegion": "cn-shanghai"
+            },
+            "global": {
+              "project": "zbot-internal-global",
+              "logstore": "zbot-internal-global-client-log",
+              "slsRegion": "ap-southeast-1"
+            },
+            "dev": null
+          }
+          EOF
+
       - name: Package (.dmg, unsigned, versioned, auto-update off)
         run: pnpm release:package --region ${{ inputs.region }} --no-sign --version ${{ inputs.version }}
 
@@ -111,6 +134,30 @@ jobs:
               "oss": { "cdnBaseUrl": "", "bucket": "", "prefix": "", "ossRegion": "" },
               "macSigning": { "appleId": "", "teamId": "", "signIdentity": "", "appPasswordEnv": "" }
             }
+          }
+          EOF
+
+      # config/log-upload.json 被 .gitignore 忽略(真值在外部构建仓),内部测试包
+      # 不打真实日志;放占位目标满足 log-upload-build-env 的硬校验(project/logstore
+      # 跨区互不相同),烘焙进包的地址指向内部占位 SLS。
+      - name: Prepare log-upload config (internal placeholder — no real telemetry)
+        shell: bash
+        run: |
+          mkdir -p config
+          cat > config/log-upload.json <<'EOF'
+          {
+            "schemaVersion": 1,
+            "cn": {
+              "project": "zbot-internal-cn",
+              "logstore": "zbot-internal-cn-client-log",
+              "slsRegion": "cn-shanghai"
+            },
+            "global": {
+              "project": "zbot-internal-global",
+              "logstore": "zbot-internal-global-client-log",
+              "slsRegion": "ap-southeast-1"
+            },
+            "dev": null
           }
           EOF
 
