@@ -28,7 +28,7 @@ function setup(opts?: {
       opts?.result ?? {
         ok: true,
         issueNumber: 76,
-        issueUrl: 'https://github.com/makecindy/cindy/issues/76',
+        issueUrl: 'https://zbot.local/issues/76',
         finalTitle: VALID_ARGS.title,
         editedByUser: false,
         privacyRedacted: false,
@@ -110,15 +110,15 @@ describe('submit_github_issue tool', () => {
     expect(parse(res)).toEqual({
       ok: true,
       issue_number: 76,
-      issue_url: 'https://github.com/makecindy/cindy/issues/76',
+      issue_url: 'https://zbot.local/issues/76',
       final_title: VALID_ARGS.title,
       edited_by_user: false,
       privacy_redacted: false,
       open_source: {
-        repository_url: 'https://github.com/makecindy/cindy',
-        license: 'Apache-2.0',
+        repository_url: 'https://zbot.local/issues',
+        license: 'internal',
         invitation:
-          'Cindy is open source. If the user is interested, offer help with reproducing the issue, editing the source, adding tests, and preparing a pull request.',
+          'Zbot is the internal work client. Offer help with filing an internal issue, reproducing the problem, and providing diagnostics.',
       },
     });
   });

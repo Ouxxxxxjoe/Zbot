@@ -17,17 +17,17 @@ vi.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string, params?: { permission?: string; current?: number; total?: number }) =>
       ({
-        'settings.computerUse.directControl.permissions.accessibilityLabel': 'Accessibility',
-        'settings.computerUse.directControl.permissions.screenRecordingLabel': 'Screen Recording',
-        'settings.computerUse.directControl.permissionGuide.step': 'Open computer automation',
-        'settings.computerUse.directControl.permissionGuide.dragTitle': `Drag Computer Use into ${params?.permission}`,
-        'settings.computerUse.directControl.permissionGuide.turnOnAppTitle': `Turn on Computer Use in ${params?.permission}`,
-        'settings.computerUse.directControl.permissionGuide.dragHint': 'Drag',
-        'settings.computerUse.directControl.permissionGuide.draggingTitle': 'Dragging Computer Use',
-        'settings.computerUse.directControl.permissionGuide.draggingHint': `Drop into ${params?.permission}`,
-        'settings.computerUse.directControl.permissionGuide.appName': 'Computer Use',
-        'settings.computerUse.directControl.permissionGuide.waiting': 'Waiting for you',
-        'commonUi.confirmDialog.cancel': 'Cancel',
+        'settings.computerUse.directControl.permissions.accessibilityLabel': '辅助功能',
+        'settings.computerUse.directControl.permissions.screenRecordingLabel': '屏幕录制',
+        'settings.computerUse.directControl.permissionGuide.step': '打开自动操作电脑',
+        'settings.computerUse.directControl.permissionGuide.dragTitle': `将 CuaDriver 拖入「${params?.permission}」`,
+        'settings.computerUse.directControl.permissionGuide.turnOnAppTitle': `在「${params?.permission}」中打开 CuaDriver`,
+        'settings.computerUse.directControl.permissionGuide.dragHint': '拖拽',
+        'settings.computerUse.directControl.permissionGuide.draggingTitle': '正在拖拽 CuaDriver',
+        'settings.computerUse.directControl.permissionGuide.draggingHint': `放入「${params?.permission}」列表`,
+        'settings.computerUse.directControl.permissionGuide.appName': 'CuaDriver',
+        'settings.computerUse.directControl.permissionGuide.waiting': '等待你开启',
+        'commonUi.confirmDialog.cancel': '取消',
       })[key] ?? key,
   }),
 }));
@@ -95,8 +95,8 @@ describe('ComputerPermissionGuideWindow native drag fallback', () => {
 
     render(createElement(ComputerPermissionGuideWindow));
 
-    expect(await screen.findByText('Drag Computer Use into Accessibility')).toBeTruthy();
-    expect(screen.queryByText('Turn on Computer Use in Accessibility')).toBeNull();
+    expect(await screen.findByText('将 CuaDriver 拖入「辅助功能」')).toBeTruthy();
+    expect(screen.queryByText('在「辅助功能」中打开 CuaDriver')).toBeNull();
   });
 
   it('initializes from the guide preflight snapshot without probing permissions again', async () => {
@@ -131,7 +131,7 @@ describe('ComputerPermissionGuideWindow native drag fallback', () => {
 
     render(createElement(ComputerPermissionGuideWindow));
 
-    expect(await screen.findByText('Drag Computer Use into Screen Recording')).toBeTruthy();
+    expect(await screen.findByText('将 CuaDriver 拖入「屏幕录制」')).toBeTruthy();
     expect(permissionGuideStatus).toHaveBeenCalledOnce();
     expect(status).not.toHaveBeenCalled();
   });
@@ -162,7 +162,7 @@ describe('ComputerPermissionGuideWindow native drag fallback', () => {
     vi.spyOn(HTMLCanvasElement.prototype, 'toDataURL').mockReturnValue('data:image/png;base64,test');
 
     render(createElement(ComputerPermissionGuideWindow));
-    expect(screen.getByText('Open computer automation')).toBeTruthy();
+    expect(screen.getByText('打开自动操作电脑')).toBeTruthy();
     const image = document.querySelector('img');
     expect(image).not.toBeNull();
     Object.defineProperties(image!, {
@@ -171,31 +171,31 @@ describe('ComputerPermissionGuideWindow native drag fallback', () => {
       naturalHeight: { configurable: true, value: 96 },
     });
 
-    fireEvent.dragStart(screen.getByRole('button', { name: 'Computer Use' }), {
+    fireEvent.dragStart(screen.getByRole('button', { name: 'CuaDriver' }), {
       dataTransfer: { effectAllowed: 'none' },
     });
     expect(startPermissionAppDrag).toHaveBeenCalledOnce();
-    expect(screen.getByText('Dragging Computer Use')).toBeTruthy();
+    expect(screen.getByText('正在拖拽 CuaDriver')).toBeTruthy();
 
     act(() => vi.advanceTimersByTime(PERMISSION_APP_DRAG_UI_FALLBACK_MS));
 
-    expect(screen.queryByText('Dragging Computer Use')).toBeNull();
-    expect(screen.getByText('Drag Computer Use into Accessibility')).toBeTruthy();
+    expect(screen.queryByText('正在拖拽 CuaDriver')).toBeNull();
+    expect(screen.getByText('将 CuaDriver 拖入「辅助功能」')).toBeTruthy();
 
-    const retryButton = screen.getByRole('button', { name: /Computer Use/ });
+    const retryButton = screen.getByRole('button', { name: /CuaDriver/ });
     expect(retryButton).toHaveProperty('draggable', true);
     fireEvent.dragStart(retryButton, {
       dataTransfer: { effectAllowed: 'none' },
     });
 
     expect(startPermissionAppDrag).toHaveBeenCalledTimes(2);
-    expect(screen.getByText('Dragging Computer Use')).toBeTruthy();
+    expect(screen.getByText('正在拖拽 CuaDriver')).toBeTruthy();
 
     fireEvent.dragEnd(retryButton, {
       dataTransfer: { dropEffect: 'none' },
     });
     expect(finishPermissionAppDrag).toHaveBeenLastCalledWith(false);
-    expect(screen.getByText('Drag Computer Use into Accessibility')).toBeTruthy();
+    expect(screen.getByText('将 CuaDriver 拖入「辅助功能」')).toBeTruthy();
 
     fireEvent.dragStart(retryButton, {
       dataTransfer: { effectAllowed: 'none' },
@@ -205,7 +205,7 @@ describe('ComputerPermissionGuideWindow native drag fallback', () => {
     });
     expect(finishPermissionAppDrag).toHaveBeenLastCalledWith(true);
     await act(async () => Promise.resolve());
-    expect(screen.getByText('Drag Computer Use into Accessibility')).toBeTruthy();
+    expect(screen.getByText('将 CuaDriver 拖入「辅助功能」')).toBeTruthy();
 
     fireEvent.dragStart(retryButton, {
       dataTransfer: { effectAllowed: 'none' },
@@ -214,7 +214,7 @@ describe('ComputerPermissionGuideWindow native drag fallback', () => {
       dataTransfer: { dropEffect: 'copy' },
     });
     await act(async () => Promise.resolve());
-    expect(screen.getByText('Turn on Computer Use in Accessibility')).toBeTruthy();
+    expect(screen.getByText('在「辅助功能」中打开 CuaDriver')).toBeTruthy();
   });
 });
 

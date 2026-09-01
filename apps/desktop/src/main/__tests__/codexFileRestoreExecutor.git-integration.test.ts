@@ -243,7 +243,7 @@ describe('executeCodexFileRestorePlan', () => {
     expect(await chainTip()).toBe(result?.rollbackCommit);
     const parsed = parseSnapshotCommit(await commitMessageOf(result?.rollbackCommit as string));
     expect(parsed).toMatchObject({
-      source: 'cindy',
+      source: 'zbot',
       sessionId: SESSION,
       kind: 'rollback',
       rollbackId: 'rb-marker',
@@ -438,7 +438,7 @@ describe('executeCodexFileRestorePlan', () => {
     const tip = await chainTip();
     const parsedTip = parseSnapshotCommit(await commitMessageOf(tip as string));
     expect(parsedTip).toMatchObject({
-      source: 'cindy',
+      source: 'zbot',
       sessionId: SESSION,
       kind: 'rollback-undo',
     });

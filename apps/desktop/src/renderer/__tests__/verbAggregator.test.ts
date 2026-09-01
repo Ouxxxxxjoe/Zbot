@@ -4,9 +4,9 @@
  * Unit tests for cc-agent-compact-blocks M1 — verb mapping, aggregation,
  * truncation, and summary formatting.
  *
- * formatSummary 已 i18n 化(issue #450):测试用真实 en locale JSON 实现一个
+ * formatSummary 已 i18n 化(issue #450):测试用真实 zh-CN locale JSON 实现一个
  * 最小 t(带 _one/_other 复数解析),既验证组合逻辑(顺序 / 分隔符 / 截断),
- * 也顺带钉住 en 文案与旧版输出完全一致。
+ * 也顺带钉住 zh-CN 文案与旧版输出完全一致。
  */
 
 import { describe, it, expect } from 'vitest';
@@ -23,20 +23,25 @@ import {
 } from '@/lib/agent-actions/verbAggregator';
 import type { ChatMessage } from '@/lib/makerChatStore';
 
-const enLocale = JSON.parse(
-  readFileSync(resolve(__dirname, '..', 'i18n', 'locales', 'en', 'common.json'), 'utf8'),
+const zhCNLocale = JSON.parse(
+  readFileSync(resolve(__dirname, '..', 'i18n', 'locales', 'zh-CN', 'common.json'), 'utf8'),
 ) as Record<string, unknown>;
 
-/** 最小 en t:嵌套 key 解析 + i18next 风格 _one/_other 复数 + {{count}} 插值。 */
+/** 最小 zh-CN t:嵌套 key 解析 + i18next 风格 _one/_other 复数 + {{count}} 插值。 */
 const enT = ((key: string, opts?: { count?: number }) => {
   const lookup = (k: string): unknown =>
     k.split('.').reduce<unknown>(
       (node, seg) => (node && typeof node === 'object' ? (node as Record<string, unknown>)[seg] : undefined),
-      enLocale,
+      zhCNLocale,
     );
   let value: unknown;
   if (typeof opts?.count === 'number') {
-    value = lookup(`${key}_${opts.count === 1 ? 'one' : 'other'}`) ?? lookup(key);
+    // i18next 复数解析:zh-CN 只有 other 类别,count=1 也落 _other;
+    // 逐级回退 _one → _other → 裸 key。
+    value =
+      lookup(`${key}_one`) ??
+      lookup(`${key}_other`) ??
+      lookup(key);
   } else {
     value = lookup(key);
   }
@@ -88,27 +93,27 @@ describe('verbForTool', () => {
 });
 
 describe('verbLabelKeyForRow', () => {
-  it('returns per-verb i18n keys that resolve to the capitalized en form', () => {
-    expect(enT(verbLabelKeyForRow('edited'))).toBe('Edited');
-    expect(enT(verbLabelKeyForRow('ran'))).toBe('Ran');
-    expect(enT(verbLabelKeyForRow('updated'))).toBe('Updated');
+  it('returns per-verb i18n keys that resolve to the localized form', () => {
+    expect(enT(verbLabelKeyForRow('edited'))).toBe('编辑');
+    expect(enT(verbLabelKeyForRow('ran'))).toBe('运行');
+    expect(enT(verbLabelKeyForRow('updated'))).toBe('更新');
   });
 });
 
 describe('verbLabelKeyForIntent', () => {
-  it('reuses existing verb keys for read/search/fetch and resolves new keys in en', () => {
+  it('reuses existing verb keys for read/search/fetch and resolves new keys in zh-CN', () => {
     expect(verbLabelKeyForIntent('read')).toBe('chat.agentActionRow.verb.read');
     expect(verbLabelKeyForIntent('search')).toBe('chat.agentActionRow.verb.searched');
     expect(verbLabelKeyForIntent('fetch')).toBe('chat.agentActionRow.verb.fetched');
-    expect(enT(verbLabelKeyForIntent('list'))).toBe('Listed');
-    expect(enT(verbLabelKeyForIntent('inspect'))).toBe('Inspect content');
-    expect(enT(verbLabelKeyForIntent('inspectRepository'))).toBe('Inspect repository');
-    expect(enT(verbLabelKeyForIntent('verify'))).toBe('Run checks');
-    expect(enT(verbLabelKeyForIntent('install'))).toBe('Installed deps');
-    expect(enT(verbLabelKeyForIntent('test'))).toBe('Ran tests');
-    expect(enT(verbLabelKeyForIntent('build'))).toBe('Built');
-    expect(enT(verbLabelKeyForIntent('lint'))).toBe('Linted');
-    expect(enT(verbLabelKeyForIntent('typecheck'))).toBe('Type-checked');
+    expect(enT(verbLabelKeyForIntent('list'))).toBe('列出');
+    expect(enT(verbLabelKeyForIntent('inspect'))).toBe('查阅内容');
+    expect(enT(verbLabelKeyForIntent('inspectRepository'))).toBe('检查仓库');
+    expect(enT(verbLabelKeyForIntent('verify'))).toBe('运行验证');
+    expect(enT(verbLabelKeyForIntent('install'))).toBe('安装依赖');
+    expect(enT(verbLabelKeyForIntent('test'))).toBe('运行测试');
+    expect(enT(verbLabelKeyForIntent('build'))).toBe('构建');
+    expect(enT(verbLabelKeyForIntent('lint'))).toBe('代码检查');
+    expect(enT(verbLabelKeyForIntent('typecheck'))).toBe('类型检查');
   });
 });
 
@@ -158,7 +163,7 @@ describe('aggregateVerbs', () => {
 describe('formatSummary', () => {
   it('formats a single Edit call', () => {
     const s = aggregateVerbs([tc('Edit')]);
-    expect(formatSummary(s, enT)).toBe('Edited a file');
+    expect(formatSummary(s, enT)).toBe('编辑 1 个文件');
   });
 
   it('formats 3 Edit + 2 Bash + 1 Read in canonical order', () => {
@@ -170,7 +175,7 @@ describe('formatSummary', () => {
     ];
     const s = aggregateVerbs(calls);
     expect(formatSummary(s, enT)).toBe(
-      'Edited 3 files, ran 3 commands and read a file',
+      '编辑 3 个文件、运行 3 条命令和读取 1 个文件',
     );
   });
 
@@ -187,7 +192,7 @@ describe('formatSummary', () => {
     ];
     const s = aggregateVerbs(calls);
     expect(formatSummary(s, enT)).toBe(
-      'Edited a file, ran a command, read a file, updated todos, created a file and 3 more',
+      '编辑 1 个文件、运行 1 条命令、读取 1 个文件、更新待办、创建 1 个文件和另外 3 项',
     );
   });
 
@@ -196,9 +201,9 @@ describe('formatSummary', () => {
     expect(formatSummary(s, enT)).toBe('');
   });
 
-  it('uses lowercase for non-leading verbs', () => {
-    // Sanity: leading is capitalized, followups lowercase.
+  it('joins multiple verbs with separator and lastSeparator', () => {
+    // CJK 短语无大小写概念,capitalizeFirst 是 no-op;这里验证顺序与连接符。
     const s = aggregateVerbs([tc('Edit', 0), tc('Bash', 1)]);
-    expect(formatSummary(s, enT)).toBe('Edited a file and ran a command');
+    expect(formatSummary(s, enT)).toBe('编辑 1 个文件和运行 1 条命令');
   });
 });

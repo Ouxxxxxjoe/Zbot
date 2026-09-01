@@ -336,7 +336,7 @@ describe('computer use platform copy invariants', () => {
     expect(macPermissionBlockStart).toBeGreaterThanOrEqual(0);
     expect(permissionTitle).toBeGreaterThan(macPermissionBlockStart);
 
-    for (const locale of ['en', 'ja', 'ko', 'zh-CN']) {
+    for (const locale of ['zh-CN']) {
       const messages = JSON.parse(
         fs.readFileSync(
           path.resolve(__dirname, `../../renderer/i18n/locales/${locale}/common.json`),

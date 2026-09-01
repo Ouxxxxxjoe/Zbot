@@ -33,7 +33,7 @@ const base = {
   argv: ['electron', '.'] as readonly string[],
   isPackaged: false,
   envUserDataDir: undefined as string | undefined,
-  defaultUserDataDir: '/AppData/Cindy',
+  defaultUserDataDir: '/AppData/Zbot',
   appDataDir: '/AppData',
   envIsolated: undefined as string | undefined,
   envIsolationName: undefined as string | undefined,
@@ -76,7 +76,7 @@ describe('resolveDevCliFlags', () => {
         defaultUserDataDir: '/tmp/custom-profile',
         appDataDir: '/AppData',
         argv: [...base.argv, '--isolated'],
-        envUserDataDir: '/AppData/Cindy',
+        envUserDataDir: '/AppData/Zbot',
       });
       expect(flags.profileKind).toBe('production-shared');
       expect(flags.isolatedOnProductionProfile).toBe(true);
@@ -109,7 +109,7 @@ describe('resolveDevCliFlags', () => {
     const viaEnvSame = resolveDevCliFlags({
       ...base,
       envIsolated: '1',
-      envUserDataDir: '/AppData/Cindy-dev2',
+      envUserDataDir: '/AppData/Zbot-dev2',
       envUserDataDirEpoch: '1',
     });
     expect(viaEnvSame.isolatedDirIsEpochDerived).toBe(true);
@@ -119,7 +119,7 @@ describe('resolveDevCliFlags', () => {
     const viaEnvUntrusted = resolveDevCliFlags({
       ...base,
       envIsolated: '1',
-      envUserDataDir: '/AppData/Cindy-dev2',
+      envUserDataDir: '/AppData/Zbot-dev2',
     });
     expect(viaEnvUntrusted.isolatedDirIsEpochDerived).toBe(false);
     const custom = resolveDevCliFlags({
@@ -129,7 +129,7 @@ describe('resolveDevCliFlags', () => {
     });
     expect(custom.isolated).toBe(true);
     expect(custom.isolatedDirIsEpochDerived).toBe(false);
-    const notIsolated = resolveDevCliFlags({ ...base, envUserDataDir: '/AppData/Cindy-dev2' });
+    const notIsolated = resolveDevCliFlags({ ...base, envUserDataDir: '/AppData/Zbot-dev2' });
     expect(notIsolated.isolatedDirIsEpochDerived).toBe(false);
   });
 
@@ -137,9 +137,9 @@ describe('resolveDevCliFlags', () => {
     // 字符串全等会把标准纪元目录的等价写法误判成"其它目录"→ 观察模式给空沙箱
     // 抢注默认身份标记,该沙箱永久回到共享 Cindy 钥匙串。
     for (const dir of [
-      '/AppData/Cindy-dev2/',
-      '/AppData/./Cindy-dev2',
-      '/AppData/other/../Cindy-dev2',
+      '/AppData/Zbot-dev2/',
+      '/AppData/./Zbot-dev2',
+      '/AppData/other/../Zbot-dev2',
     ]) {
       const flags = resolveDevCliFlags({
         ...base,
@@ -155,7 +155,7 @@ describe('resolveDevCliFlags', () => {
     const sibling = resolveDevCliFlags({
       ...base,
       envIsolated: '1',
-      envUserDataDir: '/AppData/Cindy-dev2-extra',
+      envUserDataDir: '/AppData/Zbot-dev2-extra',
       envUserDataDirEpoch: '1',
     });
     expect(sibling.isolatedDirIsEpochDerived).toBe(false);
@@ -169,7 +169,7 @@ describe('resolveDevCliFlags', () => {
     const hit = resolveDevCliFlags({
       ...base,
       envIsolated: '1',
-      envUserDataDir: '/AppData/CINDY-DEV2',
+      envUserDataDir: '/AppData/ZBOT-DEV2',
       envUserDataDirEpoch: '1',
       canonicalizePath: insensitiveVolume,
     });
@@ -178,7 +178,7 @@ describe('resolveDevCliFlags', () => {
     const miss = resolveDevCliFlags({
       ...base,
       envIsolated: '1',
-      envUserDataDir: '/AppData/CINDY-DEV2',
+      envUserDataDir: '/AppData/ZBOT-DEV2',
       envUserDataDirEpoch: '1',
       canonicalizePath: sensitiveVolume,
     });
@@ -188,7 +188,7 @@ describe('resolveDevCliFlags', () => {
     const unprobeable = resolveDevCliFlags({
       ...base,
       envIsolated: '1',
-      envUserDataDir: '/AppData/CINDY-DEV2',
+      envUserDataDir: '/AppData/ZBOT-DEV2',
       envUserDataDirEpoch: '1',
     });
     expect(unprobeable.isolatedDirIsEpochDerived).toBe(false);
@@ -277,7 +277,7 @@ describe('resolveDevCliFlags', () => {
 
   it('--isolated 默认沙箱:目录 <userData>-dev2,要求派生设备标识,无名字', () => {
     const flags = resolveDevCliFlags({ ...base, argv: [...base.argv, '--isolated'] });
-    expect(flags.userDataDirOverride).toBe('/AppData/Cindy-dev2');
+    expect(flags.userDataDirOverride).toBe('/AppData/Zbot-dev2');
     expect(flags.isolated).toBe(true);
     expect(flags.needsIsolatedDeviceId).toBe(true);
     expect(flags.isolationName).toBeNull();
@@ -285,7 +285,7 @@ describe('resolveDevCliFlags', () => {
 
   it('--isolated=<名字> 命名沙箱:目录 <userData>-dev2-<名字>,带出名字', () => {
     const flags = resolveDevCliFlags({ ...base, argv: [...base.argv, '--isolated=feature-a'] });
-    expect(flags.userDataDirOverride).toBe('/AppData/Cindy-dev2-feature-a');
+    expect(flags.userDataDirOverride).toBe('/AppData/Zbot-dev2-feature-a');
     expect(flags.needsIsolatedDeviceId).toBe(true);
     expect(flags.isolationName).toBe('feature-a');
     expect(flags.invalidIsolationName).toBeNull();
@@ -293,7 +293,7 @@ describe('resolveDevCliFlags', () => {
 
   it('--isolated=<非法名字> 回落默认沙箱并带出非法名(不回落到不隔离)', () => {
     const bad = resolveDevCliFlags({ ...base, argv: [...base.argv, '--isolated=我的沙箱'] });
-    expect(bad.userDataDirOverride).toBe('/AppData/Cindy-dev2');
+    expect(bad.userDataDirOverride).toBe('/AppData/Zbot-dev2');
     expect(bad.needsIsolatedDeviceId).toBe(true);
     expect(bad.isolationName).toBeNull();
     expect(bad.invalidIsolationName).toBe('我的沙箱');
@@ -303,19 +303,19 @@ describe('resolveDevCliFlags', () => {
       argv: [...base.argv, `--isolated=${'a'.repeat(33)}`],
     });
     expect(long.invalidIsolationName).toBe('a'.repeat(33));
-    expect(long.userDataDirOverride).toBe('/AppData/Cindy-dev2');
+    expect(long.userDataDirOverride).toBe('/AppData/Zbot-dev2');
   });
 
   it('XDT_ISOLATED=1(restart 脚本默认沙箱路径)等价 --isolated', () => {
     const flags = resolveDevCliFlags({ ...base, envIsolated: '1' });
-    expect(flags.userDataDirOverride).toBe('/AppData/Cindy-dev2');
+    expect(flags.userDataDirOverride).toBe('/AppData/Zbot-dev2');
     expect(flags.needsIsolatedDeviceId).toBe(true);
     expect(flags.isolationName).toBeNull();
   });
 
   it('XDT_ISOLATED=1 + XDT_ISOLATED_NAME(restart 脚本命名沙箱路径)等价 --isolated=<名字>', () => {
     const flags = resolveDevCliFlags({ ...base, envIsolated: '1', envIsolationName: 'feature-b' });
-    expect(flags.userDataDirOverride).toBe('/AppData/Cindy-dev2-feature-b');
+    expect(flags.userDataDirOverride).toBe('/AppData/Zbot-dev2-feature-b');
     expect(flags.isolationName).toBe('feature-b');
   });
 
@@ -323,11 +323,11 @@ describe('resolveDevCliFlags', () => {
     // argv 路径
     const viaArgv = resolveDevCliFlags({ ...base, argv: [...base.argv, '--isolated=1'] });
     expect(viaArgv.isolationName).toBe('1');
-    expect(viaArgv.userDataDirOverride).toBe('/AppData/Cindy-dev2-1');
+    expect(viaArgv.userDataDirOverride).toBe('/AppData/Zbot-dev2-1');
     // restart env 路径:开关与名字分离,名字 '1' 原样生效
     const viaEnv = resolveDevCliFlags({ ...base, envIsolated: '1', envIsolationName: '1' });
     expect(viaEnv.isolationName).toBe('1');
-    expect(viaEnv.userDataDirOverride).toBe('/AppData/Cindy-dev2-1');
+    expect(viaEnv.userDataDirOverride).toBe('/AppData/Zbot-dev2-1');
   });
 
   it('XDT_ISOLATED 开关严格等于 "1" 才生效("0"/"false"/名字串都视为关)', () => {
@@ -340,7 +340,7 @@ describe('resolveDevCliFlags', () => {
 
   it('env 名字非法时回落默认沙箱并带出非法名', () => {
     const flags = resolveDevCliFlags({ ...base, envIsolated: '1', envIsolationName: '我的沙箱' });
-    expect(flags.userDataDirOverride).toBe('/AppData/Cindy-dev2');
+    expect(flags.userDataDirOverride).toBe('/AppData/Zbot-dev2');
     expect(flags.invalidIsolationName).toBe('我的沙箱');
   });
 
@@ -360,7 +360,7 @@ describe('resolveDevCliFlags', () => {
       argv: [...base.argv, '--isolated'],
       envUserDataDir: '   ',
     });
-    expect(flags.userDataDirOverride).toBe('/AppData/Cindy-dev2');
+    expect(flags.userDataDirOverride).toBe('/AppData/Zbot-dev2');
   });
 
   it('显式 XDT_DEVICE_ID_OVERRIDE 时隔离模式不再派生设备标识', () => {
@@ -395,7 +395,7 @@ describe('resolveDevCliFlags', () => {
     const flags = resolveDevCliFlags({
       ...base,
       argv: [...base.argv, '--isolated'],
-      envUserDataDir: '/AppData/Cindy',
+      envUserDataDir: '/AppData/Zbot',
     });
     expect(flags.isolated).toBe(true);
     expect(flags.needsIsolatedDeviceId).toBe(true);
@@ -408,7 +408,7 @@ describe('resolveDevCliFlags', () => {
     const toCn = resolveDevCliFlags({
       ...base,
       argv: [...base.argv, '--isolated'],
-      envUserDataDir: '/AppData/Cindy',
+      envUserDataDir: '/AppData/Zbot',
     });
     expect(toCn.profileKind).toBe('production-shared');
     expect(toCn.isolatedOnProductionProfile).toBe(true);
@@ -417,7 +417,7 @@ describe('resolveDevCliFlags', () => {
     const toGlobal = resolveDevCliFlags({
       ...base,
       argv: [...base.argv, '--isolated'],
-      envUserDataDir: '/AppData/CindyGlobal',
+      envUserDataDir: '/AppData/ZbotGlobal',
     });
     expect(toGlobal.profileKind).toBe('production-shared');
     expect(toGlobal.isolatedOnProductionProfile).toBe(true);
@@ -485,7 +485,7 @@ describe('resolveDevCliFlags', () => {
     expect(flags.schedulerPassive).toBe(true);
     expect(flags.isolated).toBe(true);
     expect(flags.profileKind).toBe('isolated-sandbox');
-    expect(flags.userDataDirOverride).toBe('/AppData/Cindy-dev2-feature-a');
+    expect(flags.userDataDirOverride).toBe('/AppData/Zbot-dev2-feature-a');
     expect(flags.isolationName).toBe('feature-a');
   });
 });
@@ -495,15 +495,15 @@ describe('resolveDevProfileKind / isIsolatedIdentityOnProductionProfile', () => 
     expect(
       resolveDevProfileKind({
         isolatedDirIsEpochDerived: false,
-        effectiveUserDataDir: '/AppData/Cindy',
-        productionUserDataDir: '/AppData/Cindy',
+        effectiveUserDataDir: '/AppData/Zbot',
+        productionUserDataDir: '/AppData/Zbot',
       }),
     ).toBe('production-shared');
     expect(
       isIsolatedIdentityOnProductionProfile({
         isolated: true,
-        effectiveUserDataDir: '/AppData/Cindy',
-        productionUserDataDir: '/AppData/Cindy',
+        effectiveUserDataDir: '/AppData/Zbot',
+        productionUserDataDir: '/AppData/Zbot',
       }),
     ).toBe(true);
   });
@@ -512,22 +512,22 @@ describe('resolveDevProfileKind / isIsolatedIdentityOnProductionProfile', () => 
     expect(
       resolveDevProfileKind({
         isolatedDirIsEpochDerived: false,
-        effectiveUserDataDir: '/AppData/Cindy',
-        productionUserDataDir: '/AppData/CindyGlobal',
+        effectiveUserDataDir: '/AppData/Zbot',
+        productionUserDataDir: '/AppData/ZbotGlobal',
       }),
     ).toBe('production-shared');
     expect(
       resolveDevProfileKind({
         isolatedDirIsEpochDerived: false,
-        effectiveUserDataDir: '/AppData/CindyGlobal',
-        productionUserDataDir: '/AppData/Cindy',
+        effectiveUserDataDir: '/AppData/ZbotGlobal',
+        productionUserDataDir: '/AppData/Zbot',
       }),
     ).toBe('production-shared');
     expect(
       isIsolatedIdentityOnProductionProfile({
         isolated: true,
-        effectiveUserDataDir: '/AppData/Cindy',
-        productionUserDataDir: '/AppData/CindyGlobal',
+        effectiveUserDataDir: '/AppData/Zbot',
+        productionUserDataDir: '/AppData/ZbotGlobal',
       }),
     ).toBe(true);
   });
@@ -589,7 +589,7 @@ describe('shouldRequestSingleInstanceLock', () => {
 });
 
 describe('resolveSingleInstanceLockUserDataDir', () => {
-  const userDataDir = join('/AppData', 'Cindy');
+  const userDataDir = join('/AppData', 'Zbot');
 
   it('packaged 锁真实 userData(release 之间单实例)', () => {
     expect(resolveSingleInstanceLockUserDataDir({ isPackaged: true, userDataDir })).toBe(
@@ -615,9 +615,9 @@ describe('resolveSingleInstanceLockUserDataDir', () => {
   it('isolated 沙箱 userData 独立,锁域随之独立', () => {
     const sandbox = resolveSingleInstanceLockUserDataDir({
       isPackaged: false,
-      userDataDir: join('/AppData', 'Cindy-dev-foo'),
+      userDataDir: join('/AppData', 'Zbot-dev-foo'),
     });
-    expect(sandbox).toBe(join('/AppData', 'Cindy-dev-foo', 'dev-single-instance-lock'));
+    expect(sandbox).toBe(join('/AppData', 'Zbot-dev-foo', 'dev-single-instance-lock'));
     expect(sandbox).not.toBe(resolveSingleInstanceLockUserDataDir({ isPackaged: false, userDataDir }));
   });
 });

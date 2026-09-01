@@ -72,8 +72,8 @@ describe('reapClaudeOrphansSync', () => {
       if (file === 'taskkill') return '';
       return [
         `${selfChildPid}|${process.pid}|C:\\tools\\claude.exe`,
-        `${historicalPid}|99999|C:\\Users\\me\\AppData\\Roaming\\CindyGlobal\\claude-code\\claude.exe`,
-        `${livePeerPid}|88888|C:\\Users\\me\\AppData\\Roaming\\CindyGlobal\\claude-code\\claude.exe`,
+        `${historicalPid}|99999|C:\\Users\\me\\AppData\\Roaming\\Zbot\\claude-code\\claude.exe`,
+        `${livePeerPid}|88888|C:\\Users\\me\\AppData\\Roaming\\Zbot\\claude-code\\claude.exe`,
         `${externalPid}|77777|C:\\Users\\me\\.local\\bin\\claude.exe`,
       ].join('\n');
     });
@@ -122,8 +122,8 @@ describe('reapClaudeOrphansSync', () => {
     const execFileSync = vi.fn((file: string) => {
       if (file === 'taskkill') return '';
       return [
-        `${systemOrphanPid}|4|C:\\Users\\me\\AppData\\Roaming\\CindyGlobal\\claude-code\\claude.exe`,
-        `${selfChildPid}|${process.pid}|C:\\Users\\me\\AppData\\Roaming\\CindyGlobal\\claude-code\\claude.exe`,
+        `${systemOrphanPid}|4|C:\\Users\\me\\AppData\\Roaming\\Zbot\\claude-code\\claude.exe`,
+        `${selfChildPid}|${process.pid}|C:\\Users\\me\\AppData\\Roaming\\Zbot\\claude-code\\claude.exe`,
       ].join('\n');
     });
     const killSpy = vi.spyOn(process, 'kill').mockImplementation((() => true) as typeof process.kill);
@@ -141,9 +141,9 @@ describe('reapClaudeOrphansSync', () => {
     const execFileSync = vi.fn((file: string) => {
       if (file === 'taskkill') return '';
       return [
-        `${pids[0]}|4|C:\\Users\\me\\AppData\\Roaming\\CindyGlobal\\claude-code\\claude.exe`,
-        `${pids[1]}|4|C:/Users/me/AppData/Roaming/CindyGlobal/claude-code/claude.exe`,
-        `${pids[2]}|4|/Users/me/Library/Application Support/CindyGlobal/claude-code/claude`,
+        `${pids[0]}|4|C:\\Users\\me\\AppData\\Roaming\\Zbot\\claude-code\\claude.exe`,
+        `${pids[1]}|4|C:/Users/me/AppData/Roaming/Zbot/claude-code/claude.exe`,
+        `${pids[2]}|4|/Users/me/Library/Application Support/Zbot/claude-code/claude`,
       ].join('\n');
     });
     const { reapClaudeOrphansSync } = await importReaper({ platform: 'win32', execFileSync });
@@ -202,18 +202,15 @@ describe('reapClaudeOrphansSync', () => {
     expect(logger.debug).toHaveBeenCalled();
   });
 
-  it('buildClaudePathMarkers 为每个 userData 目录名(含历史值)生成三种路径形态', async () => {
-    // 品牌改名迁移窗口期,老安装 spawn 的 claude 命令行里仍是旧目录名——
-    // 标记表必须同时覆盖 brand-identity 的当前值与 legacyUserDataDirNames。
+  it('buildClaudePathMarkers 为每个 userData 目录名生成三种路径形态', async () => {
+    // Zbot 只发行 cn,allUserDataDirNames('cn') 只含当前目录名 Zbot(legacy 为空);
+    // 三种路径形态(win32 反斜杠 / win32 正斜杠 / macOS)都要能认领。
     const { buildClaudePathMarkers } = await importReaper({ platform: 'win32' });
-    const markers = buildClaudePathMarkers(['Cindy', 'xdt-maker']);
+    const markers = buildClaudePathMarkers(['Zbot']);
     expect(markers).toEqual([
-      'appdata\\roaming\\cindy\\claude-code\\',
-      'appdata/roaming/cindy/claude-code/',
-      '/library/application support/cindy/claude-code/',
-      'appdata\\roaming\\xdt-maker\\claude-code\\',
-      'appdata/roaming/xdt-maker/claude-code/',
-      '/library/application support/xdt-maker/claude-code/',
+      'appdata\\roaming\\zbot\\claude-code\\',
+      'appdata/roaming/zbot/claude-code/',
+      '/library/application support/zbot/claude-code/',
     ]);
   });
 
@@ -299,7 +296,7 @@ describe('reapClaudeOrphansSync', () => {
     const lowercasePid = 801;
     const execFileSync = vi.fn((file: string) => {
       if (file === 'taskkill') return '';
-      return `${lowercasePid}|4|C:\\users\\me\\appdata\\roaming\\cindyglobal\\claude-code\\claude.exe`;
+      return `${lowercasePid}|4|C:\\users\\me\\appdata\\roaming\\zbot\\claude-code\\claude.exe`;
     });
     const { reapClaudeOrphansSync } = await importReaper({ platform: 'win32', execFileSync });
 

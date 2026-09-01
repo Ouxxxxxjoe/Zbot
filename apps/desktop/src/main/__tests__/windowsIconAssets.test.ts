@@ -96,25 +96,26 @@ describe('Windows icon assets', () => {
       const taskbarEntry = entries.find(({ size }) => size === 24);
       expect(taskbarEntry).toBeDefined();
       expect(alphaBounds(taskbarEntry!.rgba, 24, 24)).toEqual({
-        x: 0,
-        y: 0,
-        width: 24,
-        height: 24,
+        x: 3,
+        y: 2,
+        width: 18,
+        height: 20,
       });
       expect(alphaAt(taskbarEntry!.rgba, 24, 0, 0)).toBeLessThan(128);
-      expect(alphaAt(taskbarEntry!.rgba, 24, 12, 0)).toBeGreaterThanOrEqual(128);
+      expect(alphaAt(taskbarEntry!.rgba, 24, 12, 0)).toBeLessThan(128);
+      expect(alphaAt(taskbarEntry!.rgba, 24, 5, 6)).toBeGreaterThanOrEqual(128);
 
       const png = await sharp(mainPngPath).ensureAlpha().raw().toBuffer({
         resolveWithObject: true,
       });
       expect(alphaBounds(png.data, png.info.width, png.info.height)).toEqual({
-        x: 0,
-        y: 0,
-        width: 512,
-        height: 512,
+        x: 58,
+        y: 51,
+        width: 396,
+        height: 410,
       });
       expect(alphaAt(png.data, 512, 0, 0)).toBeLessThan(128);
-      expect(alphaAt(png.data, 512, 256, 0)).toBeGreaterThanOrEqual(128);
+      expect(alphaAt(png.data, 512, 256, 256)).toBeGreaterThanOrEqual(128);
     } finally {
       fs.rmSync(fixtureDir, { recursive: true, force: true });
     }

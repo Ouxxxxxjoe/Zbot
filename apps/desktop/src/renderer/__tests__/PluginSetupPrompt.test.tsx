@@ -57,7 +57,7 @@ const inlinePending: PendingPluginSetup = {
               id: 'value',
               type: 'secret',
               label: 'API Key',
-              description: 'Stored securely on this desktop.',
+              description: '已在本机安全存储。',
               placeholder: 'Enter API Key',
               externalLink: {
                 url: 'https://console.example.com/keys',
@@ -133,7 +133,7 @@ const inlineAlternativesPending: PendingPluginSetup = {
 };
 
 beforeEach(async () => {
-  await i18n.changeLanguage('en');
+  await i18n.changeLanguage('zh-CN');
   Object.defineProperty(window, 'electronAPI', {
     configurable: true,
     value: {
@@ -193,14 +193,14 @@ describe('PluginSetupPrompt', () => {
       />,
     );
 
-    expect(screen.getByText('Filo Google Settings')).toBeTruthy();
+    expect(screen.getByText('Filo Google 设置')).toBeTruthy();
     expect(screen.getByText('Authorize Gmail access. <script>not markup</script>')).toBeTruthy();
     expect(document.querySelector('script')).toBeNull();
     const stepList = screen.getByTestId('plugin-setup-step-list');
     expect(stepList.classList.contains('rounded-[12px]')).toBe(false);
-    expect(screen.queryByText('Pending')).toBeNull();
+    expect(screen.queryByText('待设置')).toBeNull();
 
-    fireEvent.click(screen.getByRole('button', { name: 'Authorize' }));
+    fireEvent.click(screen.getByRole('button', { name: '授权' }));
     expect(onCommand).toHaveBeenCalledWith('setup-1', 'run_action', 'oauth-connect:google-account');
   });
 
@@ -219,8 +219,8 @@ describe('PluginSetupPrompt', () => {
     );
 
     expect(screen.getByText('Authorize Gmail access. <script>not markup</script>')).toBeTruthy();
-    expect(screen.queryByRole('button', { name: 'Restore Filo Google settings' })).toBeNull();
-    expect(screen.queryByRole('button', { name: 'Minimize Filo Google settings' })).toBeNull();
+    expect(screen.queryByRole('button', { name: '展开 Filo Google 设置' })).toBeNull();
+    expect(screen.queryByRole('button', { name: '收起 Filo Google 设置' })).toBeNull();
     expect(onViewerStateChange).not.toHaveBeenCalled();
     expect(onCommand).not.toHaveBeenCalled();
   });
@@ -239,13 +239,13 @@ describe('PluginSetupPrompt', () => {
 
     expect(
       screen.getByText(
-        'Complete this setup on the controlled desktop. This card will update automatically.',
+        '请在被控桌面完成设置，本卡片会自动更新状态。',
       ),
     ).toBeTruthy();
-    expect((screen.getByRole('button', { name: 'Authorize' }) as HTMLButtonElement).disabled).toBe(
+    expect((screen.getByRole('button', { name: '授权' }) as HTMLButtonElement).disabled).toBe(
       true,
     );
-    expect((screen.getByRole('button', { name: 'Cancel' }) as HTMLButtonElement).disabled).toBe(
+    expect((screen.getByRole('button', { name: '取消' }) as HTMLButtonElement).disabled).toBe(
       false,
     );
   });
@@ -267,9 +267,9 @@ describe('PluginSetupPrompt', () => {
     );
 
     expect(
-      (screen.getByRole('button', { name: 'In progress…' }) as HTMLButtonElement).disabled,
+      (screen.getByRole('button', { name: '进行中…' }) as HTMLButtonElement).disabled,
     ).toBe(true);
-    expect((screen.getByRole('button', { name: 'Cancel' }) as HTMLButtonElement).disabled).toBe(
+    expect((screen.getByRole('button', { name: '取消' }) as HTMLButtonElement).disabled).toBe(
       true,
     );
   });
@@ -299,7 +299,7 @@ describe('PluginSetupPrompt', () => {
       />,
     );
 
-    const retryButton = screen.getByRole('button', { name: 'Open settings' });
+    const retryButton = screen.getByRole('button', { name: '打开设置' });
     expect((retryButton as HTMLButtonElement).disabled).toBe(false);
     fireEvent.click(retryButton);
     expect(onCommand).toHaveBeenCalledWith(
@@ -331,13 +331,13 @@ describe('PluginSetupPrompt', () => {
       />,
     );
 
-    expect(screen.getByText('Setup timed out. Try again.')).toBeTruthy();
+    expect(screen.getByText('等待设置超时，请重试。')).toBeTruthy();
     expect(screen.queryByText('等待超时')).toBeNull();
   });
 
   it.each([
-    ['AUTH_NETWORK', "Couldn't reach the authorization service. Check your network and try again."],
-    ['AUTH_SERVICE_UNAVAILABLE', 'The authorization service is temporarily unavailable. Try again later.'],
+    ['AUTH_NETWORK', '无法连接授权服务，请检查网络后重试。'],
+    ['AUTH_SERVICE_UNAVAILABLE', '授权服务暂不可用，请稍后重试。'],
   ] as const)('renders an actionable OAuth error for %s', (errorCode, expectedCopy) => {
     render(
       <PluginSetupPrompt
@@ -378,8 +378,8 @@ describe('PluginSetupPrompt', () => {
       />,
     );
 
-    expect(screen.queryByRole('button', { name: 'Authorize' })).toBeNull();
-    expect(screen.queryByRole('button', { name: 'Cancel' })).toBeNull();
+    expect(screen.queryByRole('button', { name: '授权' })).toBeNull();
+    expect(screen.queryByRole('button', { name: '取消' })).toBeNull();
   });
 
   it('renders and submits an inline Secret without keeping it in the input', () => {
@@ -396,12 +396,12 @@ describe('PluginSetupPrompt', () => {
     );
 
     const input = screen.getByLabelText('API Key') as HTMLInputElement;
-    const saveButton = screen.getByRole('button', { name: 'Save Configuration' });
+    const saveButton = screen.getByRole('button', { name: '保存配置' });
     expect(input.type).toBe('password');
     expect(screen.getByText('Art needs an API key.')).toBeTruthy();
     expect(screen.queryByText('Configure API key')).toBeNull();
     expect(screen.queryByText('Enter the key provided by Art.')).toBeNull();
-    expect(screen.getByText('Stored securely on this desktop.')).toBeTruthy();
+    expect(screen.getByText('已在本机安全存储。')).toBeTruthy();
     expect((saveButton as HTMLButtonElement).disabled).toBe(true);
 
     fireEvent.change(input, { target: { value: 'secret-value' } });
@@ -475,8 +475,8 @@ describe('PluginSetupPrompt', () => {
     );
 
     expect(screen.queryByLabelText('API Key')).toBeNull();
-    expect(screen.getByText('Filo Google Settings')).toBeTruthy();
-    fireEvent.click(screen.getByRole('button', { name: 'Authorize' }));
+    expect(screen.getByText('Filo Google 设置')).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: '授权' }));
     expect(onCommand).toHaveBeenCalledWith('setup-2', 'run_action', 'oauth-connect:google-account');
   });
 
@@ -492,7 +492,7 @@ describe('PluginSetupPrompt', () => {
       />,
     );
 
-    fireEvent.click(screen.getByRole('button', { name: 'Get API Key' }));
+    fireEvent.click(screen.getByRole('button', { name: '获取API Key' }));
     expect(window.electronAPI.openExternal).toHaveBeenCalledWith(
       'https://console.example.com/keys',
     );
@@ -536,9 +536,9 @@ describe('PluginSetupPrompt', () => {
 
     expect((screen.getByLabelText('API Key') as HTMLInputElement).disabled).toBe(true);
     expect(
-      (screen.getByRole('button', { name: 'Save Configuration' }) as HTMLButtonElement).disabled,
+      (screen.getByRole('button', { name: '保存配置' }) as HTMLButtonElement).disabled,
     ).toBe(true);
-    expect(screen.queryByRole('button', { name: 'Get API Key' })).toBeNull();
+    expect(screen.queryByRole('button', { name: '获取API Key' })).toBeNull();
   });
 
   it('shows every Host-declared any-of option and submits the selected setup path', () => {
@@ -564,25 +564,25 @@ describe('PluginSetupPrompt', () => {
     const stepList = screen.getByTestId('plugin-setup-step-list');
     expect(stepList.classList.contains('rounded-[12px]')).toBe(false);
     expect(stepList.classList.contains('border')).toBe(false);
-    expect(screen.queryByText('Pending')).toBeNull();
+    expect(screen.queryByText('待设置')).toBeNull();
     expect(screen.getByLabelText('Brave API Key')).toBeTruthy();
     const tavilyInput = screen.getByLabelText('Tavily API Key');
     expect(tavilyInput).toBeTruthy();
     const braveInput = screen.getByLabelText('Brave API Key');
     const braveHint = screen.getByText('Use a Brave Search API key.');
-    const credentialLink = screen.getByRole('button', { name: 'Get Brave API Key' });
+    const credentialLink = screen.getByRole('button', { name: '获取Brave API Key' });
     expect(braveHint.parentElement).toBe(credentialLink.parentElement);
     fireEvent.blur(braveInput);
-    const validationMessage = screen.getByText('Enter Brave API Key');
+    const validationMessage = screen.getByText('请输入Brave API Key');
     expect(validationMessage.parentElement).toBe(credentialLink.parentElement);
     expect(screen.queryByText('Use a Brave Search API key.')).toBeNull();
     expect(
       tavilyInput.parentElement?.contains(
-        screen.getAllByRole('button', { name: 'Save Configuration' })[1],
+        screen.getAllByRole('button', { name: '保存配置' })[1],
       ),
     ).toBe(true);
     fireEvent.change(tavilyInput, { target: { value: 'tvly-secret' } });
-    fireEvent.click(screen.getAllByRole('button', { name: 'Save Configuration' })[1]);
+    fireEvent.click(screen.getAllByRole('button', { name: '保存配置' })[1]);
 
     expect(onCommand).toHaveBeenCalledWith('setup-alternatives', 'submit_form', 'inline:tavily', {
       value: 'tvly-secret',

@@ -45,8 +45,8 @@ describe('AskUserQuestionPrompt long answers', () => {
       vi.fn(),
     );
 
-    fireEvent.click(getByText('Type something else…'));
-    const textarea = getByPlaceholderText('Type your answer…') as HTMLTextAreaElement;
+    fireEvent.click(getByText('输入其他回答…'));
+    const textarea = getByPlaceholderText('请输入回答…') as HTMLTextAreaElement;
     expect(textarea.tagName).toBe('TEXTAREA');
 
     mockScrollHeight(textarea, 96);
@@ -79,7 +79,7 @@ describe('AskUserQuestionPrompt long answers', () => {
       onAnswer,
     );
 
-    const textarea = getByPlaceholderText('Type your answer…') as HTMLTextAreaElement;
+    const textarea = getByPlaceholderText('请输入回答…') as HTMLTextAreaElement;
     expect(textarea.tagName).toBe('TEXTAREA');
     fireEvent.change(textarea, { target: { value: 'First point\nSecond point' } });
 
@@ -109,8 +109,8 @@ describe('AskUserQuestionPrompt long answers', () => {
     );
 
     fireEvent.click(getByText('A'));
-    fireEvent.click(getByText('Type something else…'));
-    const textarea = getByPlaceholderText('Type your answer…');
+    fireEvent.click(getByText('输入其他回答…'));
+    const textarea = getByPlaceholderText('请输入回答…');
     fireEvent.change(textarea, { target: { value: 'Extra\ncontext' } });
 
     fireEvent.keyDown(textarea, { key: 'Enter', shiftKey: true });

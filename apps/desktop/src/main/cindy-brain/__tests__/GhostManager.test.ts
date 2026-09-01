@@ -2268,7 +2268,7 @@ describe('GhostManager · update pre-rename recovery', () => {
 });
 
 describe('GhostManager · install', () => {
-  it('按宿主语言返回本地化清单，切换语言后 list 立即更新，不支持语言固定回退英文', async () => {
+  it('按宿主语言返回本地化清单，切换语言后 list 立即更新，不支持语言固定回退默认语言 zh-CN', async () => {
     const manifest = {
       ...goodManifest(),
       name: 'Base name',
@@ -2304,18 +2304,18 @@ describe('GhostManager · install', () => {
     expect(manager.list()[0].manifest).toMatchObject({
       name: 'English name',
       description: 'English description',
-      resolvedLocale: 'ja',
+      resolvedLocale: 'zh-CN',
       tools: [{ name: 'do_thing', description: 'English tool' }],
     });
     hostLocale = 'fr-FR';
     expect(manager.list()[0].manifest).toMatchObject({
       name: 'English name',
-      resolvedLocale: 'en',
+      resolvedLocale: 'zh-CN',
     });
   });
 
   it('installed locale symlinks cannot replace the Host-approved locale snapshot', async () => {
-    hostLocale = 'en';
+    hostLocale = 'zh-CN';
     const manifest = {
       ...goodManifest(),
       name: 'Base name',
@@ -2342,7 +2342,7 @@ describe('GhostManager · install', () => {
 
     expect(manager.list()[0].manifest).toMatchObject({
       name: 'Packaged name',
-      resolvedLocale: 'en',
+      resolvedLocale: 'zh-CN',
       tools: [{ name: 'do_thing', description: 'Localized tool' }],
     });
 
@@ -2361,7 +2361,7 @@ describe('GhostManager · install', () => {
     );
     expect(manager.list()[0].manifest).toMatchObject({
       name: 'Packaged name',
-      resolvedLocale: 'en',
+      resolvedLocale: 'zh-CN',
     });
   });
 
@@ -2384,7 +2384,7 @@ describe('GhostManager · install', () => {
     await expectRejection(await manager.install(unknownTool), 'file-invalid');
 
     // 部分翻译(只给 name,工具不翻)不再拒装:缺失条目回退原 manifest 文案。
-    hostLocale = 'en';
+    hostLocale = 'zh-CN';
     const partial = await makeCindy('locale-partial.cindy', manifest, {
       'locales/en.json': JSON.stringify({ name: 'English partial' }),
     });
@@ -2392,7 +2392,7 @@ describe('GhostManager · install', () => {
       ghost: {
         manifest: {
           name: 'English partial',
-          resolvedLocale: 'en',
+          resolvedLocale: 'zh-CN',
           tools: [{ name: 'do_thing', description: '做点事' }],
         },
       },

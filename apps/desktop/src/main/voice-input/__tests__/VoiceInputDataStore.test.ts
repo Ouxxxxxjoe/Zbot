@@ -72,18 +72,18 @@ describe('VoiceInputDataStore persistence', () => {
   it('writes the candidate before committing state and broadcasting it', () => {
     const store = new VoiceInputDataStore();
 
-    const next = store.updateSettings({ language: 'en' });
+    const next = store.updateSettings({ language: 'zh-CN' });
     const persisted = JSON.parse(
       fs.readFileSync(path.join(dataDir, 'voice-input-data.v1.json'), 'utf8'),
     ) as { settings: { language: string } };
 
-    expect(next.language).toBe('en');
-    expect(persisted.settings.language).toBe('en');
-    expect(store.getSettings().language).toBe('en');
+    expect(next.language).toBe('zh-CN');
+    expect(persisted.settings.language).toBe('zh-CN');
+    expect(store.getSettings().language).toBe('zh-CN');
     expect(mocks.window.webContents.send).toHaveBeenCalledTimes(1);
     expect(mocks.window.webContents.send).toHaveBeenCalledWith(
       'voice-input:data-changed',
-      expect.objectContaining({ settings: expect.objectContaining({ language: 'en' }) }),
+      expect.objectContaining({ settings: expect.objectContaining({ language: 'zh-CN' }) }),
     );
   });
 
@@ -92,7 +92,7 @@ describe('VoiceInputDataStore persistence', () => {
     ['renameSync', 'rename denied'],
   ])('keeps the previous state and does not broadcast when %s fails', (_operation, message) => {
     const store = new VoiceInputDataStore();
-    store.updateSettings({ language: 'en' });
+    store.updateSettings({ language: 'zh-CN' });
     mocks.window.webContents.send.mockClear();
     const before = store.getSnapshot();
     const failure = new Error(message);
@@ -102,7 +102,7 @@ describe('VoiceInputDataStore persistence', () => {
       throw failure;
     });
 
-    expect(() => store.updateSettings({ language: 'ja' })).toThrow(
+    expect(() => store.updateSettings({ language: 'en' })).toThrow(
       `voice input data write failed: ${message}`,
     );
     expect(store.getSnapshot()).toEqual(before);
@@ -110,7 +110,7 @@ describe('VoiceInputDataStore persistence', () => {
     const persisted = JSON.parse(
       fs.readFileSync(path.join(dataDir, 'voice-input-data.v1.json'), 'utf8'),
     ) as { settings: { language: string } };
-    expect(persisted.settings.language).toBe('en');
+    expect(persisted.settings.language).toBe('zh-CN');
   });
 
   it('always completes sync history update and delete IPC calls', () => {

@@ -39,7 +39,7 @@ const sourcePath = resolve(__dirname, '..', 'components', 'chat', 'UserMessage.t
 // 用例(collabEntryPolicy / controlledBannerPlacement 等)同一约定。
 const source = readFileSync(sourcePath, 'utf8').replace(/\r\n/g, '\n');
 
-const LOCALES = ['zh-CN', 'zh-TW', 'en', 'ja', 'ko'] as const;
+const LOCALES = ['zh-CN'] as const;
 
 /** 440 行日志的最小可测替身:行数足够撞穿收起阈值。 */
 function makeLog(lines: number): string {

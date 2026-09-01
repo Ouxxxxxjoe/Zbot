@@ -70,7 +70,7 @@ async function createFixture(
   temporaryRoots.push(root);
   const appPath = path.join(root, 'Cindy.app');
   const resourcesPath = path.join(appPath, 'Contents', 'Resources');
-  const helperPath = path.join(appPath, 'Contents', 'Helpers', 'Cindy iOS Simulator Helper.app');
+  const helperPath = path.join(appPath, 'Contents', 'Helpers', 'Zbot iOS Simulator Helper.app');
   const executablePath = path.join(helperPath, 'Contents', 'MacOS', 'ios-simulator-sidecar');
   const manifestPath = path.join(resourcesPath, 'ios-simulator', 'native-sidecar-manifest.json');
   const executable = patch.executable ?? 'native-sidecar';

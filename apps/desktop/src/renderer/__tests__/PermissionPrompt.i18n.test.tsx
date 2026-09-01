@@ -73,9 +73,7 @@ describe('PermissionPrompt i18n', () => {
     expect(screen.getByText('允许 Bash？')).toBeTruthy();
   });
 
-  it('keeps the session boundary explicit in the English approval label', async () => {
-    await i18n.changeLanguage('en');
-
+  it('keeps the session boundary explicit in the approval label', () => {
     render(
       <PermissionPrompt
         permission={{
@@ -88,7 +86,8 @@ describe('PermissionPrompt i18n', () => {
       />,
     );
 
-    expect(screen.getByText('Always allow for this session')).toBeTruthy();
+    expect(screen.getByText('本任务总是允许')).toBeTruthy();
+    expect(screen.queryByText('Always allow for this session')).toBeNull();
   });
 
   it('explains that auto-review failed and this click only confirms the current action', () => {

@@ -280,7 +280,7 @@ describe('dual scheme (cindy primary + legacy xdt-maker)', () => {
   });
 
   it('generates all builders with the primary zbot:// scheme', () => {
-    expect(DEEP_LINK_PROTOCOL).toBe('cindy');
+    expect(DEEP_LINK_PROTOCOL).toBe('zbot');
     expect(buildSessionDeepLink('abc-123')).toBe('zbot://session/abc-123');
     expect(buildSessionMessageDeepLink('abc-123', 'm1')).toBe(
       'zbot://session/abc-123?message=m1',

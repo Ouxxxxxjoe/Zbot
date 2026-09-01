@@ -143,7 +143,7 @@ describe('market management copy and errors', () => {
       'skill hub PATCH /api/s2s/v1/skills/lark-calendar returned 404',
       'HUB_404',
       i18n.t,
-    )).toBe('Hub management API is not ready. Please try again later');
+    )).toBe('Hub 管理接口暂未就绪，请稍后再试');
   });
 
   it('does not hide real authorization failures behind missing endpoint copy', () => {
@@ -155,6 +155,6 @@ describe('market management copy and errors', () => {
       'skill hub POST /api/s2s/v1/skills/lark-calendar/set-visibility returned 403: forbidden',
       'HUB_403',
       i18n.t,
-    )).toBe('No permission to operate on this Skill');
+    )).toBe('没有权限操作这个 Skill');
   });
 });

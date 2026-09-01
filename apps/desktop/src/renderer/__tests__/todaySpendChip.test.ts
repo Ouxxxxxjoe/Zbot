@@ -18,7 +18,7 @@ const source = readFileSync(sourcePath, 'utf8').replace(/\r\n/g, '\n');
 const quotaHoverCardSource = readFileSync(quotaHoverCardPath, 'utf8').replace(/\r\n/g, '\n');
 const preloadSource = readFileSync(preloadPath, 'utf8').replace(/\r\n/g, '\n');
 const rendererTypesSource = readFileSync(rendererTypesPath, 'utf8').replace(/\r\n/g, '\n');
-const localeSources = ['en', 'zh-CN', 'zh-TW', 'ja', 'ko'].map((locale) =>
+const localeSources = ['zh-CN'].map((locale) =>
   readFileSync(resolve(__dirname, '..', 'i18n', 'locales', locale, 'common.json'), 'utf8').replace(
     /\r\n/g,
     '\n',

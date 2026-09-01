@@ -23,11 +23,11 @@ describe('selection context menu platform shape', () => {
 
     expect(template.map((item) => item.role ?? item.label ?? item.type)).toEqual([
       'copy',
-      'Add to chat',
+      '添加到对话',
       'separator',
-      'Look Up “selected words”',
+      '查询“selected words”',
     ]);
-    expect(template[0]?.label).toBe('Copy');
+    expect(template[0]?.label).toBe('复制');
     expect(template).not.toEqual(expect.arrayContaining([
       expect.objectContaining({ role: 'reload' }),
       expect.objectContaining({ role: 'toggleDevTools' }),
@@ -50,7 +50,7 @@ describe('selection context menu platform shape', () => {
     expect(template[0]?.label).toBe('复制');
   });
 
-  it('uses Traditional Chinese labels for zh-TW', () => {
+  it('normalizes non-zh-CN locales to the single supported locale', () => {
     const template = buildSelectionContextMenuTemplate('win32', 'zh-TW', params, {
       addToChat: vi.fn(),
       lookUp: vi.fn(),
@@ -59,11 +59,11 @@ describe('selection context menu platform shape', () => {
 
     expect(template.map((item) => item.role ?? item.label ?? item.type)).toEqual([
       'copy',
-      '新增到對話',
+      '添加到对话',
       'separator',
-      '在網頁中搜尋「selected words」',
+      '在网页中搜索“selected words”',
     ]);
-    expect(template[0]?.label).toBe('拷貝');
+    expect(template[0]?.label).toBe('复制');
   });
 
   it('truncates long single-line labels', () => {
@@ -74,7 +74,7 @@ describe('selection context menu platform shape', () => {
       { addToChat: vi.fn(), lookUp: vi.fn(), searchWeb: vi.fn() },
     );
 
-    expect(String(template[3]?.label)).toMatch(/^Search the web for “first x+…”$/);
+    expect(String(template[3]?.label)).toMatch(/^在网页中搜索“first x+…”$/);
     expect(String(template[3]?.label).length).toBeLessThan(80);
   });
 
@@ -88,7 +88,7 @@ describe('selection context menu platform shape', () => {
     expect(template.map((item) => item.role ?? item.label ?? item.type)).toEqual([
       'copy',
       'separator',
-      'Look Up “selected words”',
+      '查询“selected words”',
     ]);
   });
 
@@ -226,7 +226,7 @@ describe('editable context menu shape', () => {
       editableParams({}, ' typo '),
       macActions,
     );
-    expect(mac.at(-1)?.label).toBe('Look Up “typo”');
+    expect(mac.at(-1)?.label).toBe('查询“typo”');
     (mac.at(-1)?.click as () => void)();
     expect(macActions.lookUp).toHaveBeenCalledTimes(1);
 
@@ -255,7 +255,7 @@ describe('editable context menu shape', () => {
       editableActions(),
     );
 
-    expect(selection[0]?.label).toBe('コピー');
-    expect(editable.find((item) => item.role === 'copy')?.label).toBe('コピー');
+    expect(selection[0]?.label).toBe('复制');
+    expect(editable.find((item) => item.role === 'copy')?.label).toBe('复制');
   });
 });
