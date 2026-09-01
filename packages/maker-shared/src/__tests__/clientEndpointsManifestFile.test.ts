@@ -47,6 +47,19 @@ describe.each(MANIFESTS)('config/endpoint*.json 守门($label)', ({ filePath }) 
     expect(parsed.schemaVersion).toBe(CLIENT_ENDPOINTS_SCHEMA_VERSION);
   });
 
+  it('本地优先阶段业务端点留空,仅保留 cdnBaseUrl 自举占位', () => {
+    const result = parseClientEndpointManifest(rawText);
+    expect(result).toMatchObject({ ok: true });
+    if (!result.ok) throw new Error('unreachable');
+    for (const key of CLIENT_ENDPOINT_KEYS) {
+      if (key === 'cdnBaseUrl') {
+        expect(result.endpoints[key]).toMatch(/^https:\/\//);
+      } else {
+        expect(result.endpoints[key]).toBe('');
+      }
+    }
+  });
+
   it('无未知字段(字段名拼错会被客户端当未知字段忽略,静默不生效)', () => {
     const parsed = JSON.parse(rawText) as Record<string, unknown>;
     const keys = Object.keys(parsed).filter(

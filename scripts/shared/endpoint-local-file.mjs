@@ -32,7 +32,7 @@ const LOCAL_PLUGIN_BASE_URL = 'http://localhost:3343';
  * 正本缺失/非法直接抛错(fail closed,不造半截配置)。
  * @param {{ repoRoot: string, region?: 'cn' | 'global' | 'dev' }} options
  */
-export function generateEndpointLocalFile({ repoRoot, region = 'global' }) {
+export function generateEndpointLocalFile({ repoRoot, region = 'cn' }) {
   const fileName = {
     cn: 'endpoint.json',
     global: 'endpoint.global.json',

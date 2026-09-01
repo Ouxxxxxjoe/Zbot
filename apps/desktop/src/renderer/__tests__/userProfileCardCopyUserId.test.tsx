@@ -163,21 +163,15 @@ describe('UserProfileCard copy user ID', () => {
     );
   });
 
-  it('offers sign-in without exposing a logout action in local mode', () => {
+  it('does not offer cloud sign-in or logout in local mode', () => {
     mocks.authState.user = null;
     mocks.authState.mode = 'local';
     renderCard();
 
-    const signInButton = screen.getByRole('button', {
-      name: 'settings.userProfile.local.signIn',
-    });
-    expect(signInButton).toBeTruthy();
+    expect(screen.getByText('settings.userProfile.local.name')).toBeTruthy();
+    expect(screen.queryByRole('button', { name: 'settings.userProfile.local.signIn' })).toBeNull();
     expect(screen.queryByRole('button', { name: 'settings.userProfile.local.exit' })).toBeNull();
     expect(mocks.authState.exitLocalMode).not.toHaveBeenCalled();
-
-    fireEvent.click(signInButton);
-
-    return waitFor(() => expect(mocks.authState.exitLocalMode).toHaveBeenCalledOnce());
   });
 
   it('shows the organization name and role only for an organization membership', () => {

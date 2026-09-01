@@ -27,10 +27,10 @@ const _require = createRequire(__filename);
 const DESKTOP_PACKAGE_VERSION = (_require('./package.json') as { version: string }).version;
 
 // ── 构建期身份(Zbot fork,2026-08 品牌切换) ─────────────────────────────────
-// 区域默认 global;中国大陆包由发布脚本显式注入 CINDY_AUTH_REGION=cn。appId 随区域
-// 派生(com.zhida.agentcn / com.zhida.agent),必须与运行时 shared/brandRegion
-// (经 vite.main.config 的 VITE_CINDY_AUTH_REGION define 烘焙)同源——AUMID
-// 三位一体:NSIS appId = 运行时 setAppUserModelId = 快捷方式 AUMID。
+// 区域默认 cn(简体中文版)。appId 随区域派生(com.zhida.agentcn / com.zhida.agent),
+// 必须与运行时 shared/brandRegion(经 vite.main.config 的 VITE_CINDY_AUTH_REGION
+// define 烘焙)同源——AUMID 三位一体:NSIS appId = 运行时 setAppUserModelId =
+// 快捷方式 AUMID。
 const CINDY_REGION = resolveCindyRegion(
   process.env.CINDY_AUTH_REGION?.trim() || process.env.VITE_CINDY_AUTH_REGION,
 );
@@ -742,6 +742,18 @@ function stageRipgrep(targetPlatform: string, targetArch: string): void {
   console.log(`[forge:prePackage] ripgrep ${key} -> ${dest} (${sizeMb} MB)`);
 }
 
+function stageEndpointManifest(): void {
+  const srcName = CINDY_REGION === 'global' ? 'endpoint.global.json' : 'endpoint.json';
+  const src = path.resolve(__dirname, '..', '..', 'config', srcName);
+  const dest = path.join(__dirname, 'resources', 'endpoint.json');
+  if (!fs.existsSync(src)) {
+    throw new Error(`[forge] missing endpoint manifest: ${src}`);
+  }
+  fs.mkdirSync(path.dirname(dest), { recursive: true });
+  fs.copyFileSync(src, dest);
+  console.log(`[forge:prePackage] endpoint manifest ${srcName} -> ${dest}`);
+}
+
 function extraResourcesForTarget(targetPlatform: string): string[] {
   const base = [
     'resources/icon.png',
@@ -759,6 +771,9 @@ function extraResourcesForTarget(targetPlatform: string): string[] {
     'resources/THIRD-PARTY-NOTICES.txt',
     // 非开源 / source-available / 商业条款组件单列,避免与开源包数量混淆。
     'resources/THIRD-PARTY-RESTRICTED.txt',
+    // 运行期端点清单:packaged 读本地文件,不再拉 CDN。prePackage 按区域从
+    // config/endpoint*.json 拷到这个稳定文件名。
+    'resources/endpoint.json',
   ];
 
   if (targetPlatform === 'win32') {
@@ -1476,6 +1491,7 @@ const config: ForgeConfig = {
     prePackage: async (_forgeConfig, platform, arch) => {
       const targetPlatform = requestedTargetPlatform();
       const targetArch = requestedTargetArch();
+      stageEndpointManifest();
       ensureMacIOSSimulatorWdaArchive(platform);
       if (targetPlatform === 'win32') {
         buildZbotUpdater();

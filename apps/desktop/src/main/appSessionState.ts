@@ -51,7 +51,18 @@ interface PersistedAppSessionSettings {
 }
 
 const log = createLogger('appSessionState');
-const DEFAULTS: PersistedAppSessionSettings = { activeMode: 'signed-out' };
+const DEFAULTS: PersistedAppSessionSettings = { activeMode: 'local' };
+
+/**
+ * Cold-start mode from the last durable write.
+ * Cloud is only an intent until auth verifies a token. With no control plane
+ * yet, signed-out starts as the local workspace instead of the login page.
+ */
+export function resolveStartupAppSessionMode(
+  persistedMode: AppSessionMode,
+): AppSessionMode {
+  return persistedMode === 'cloud' ? 'signed-out' : 'local';
+}
 
 function settingsFilePath(): string {
   return path.join(app.getPath('userData'), 'app-session.json');
@@ -84,9 +95,7 @@ let boundaryDepth = 0;
 function ensureLoaded(): ActiveAppSession {
   if (active) return active;
   const persistedMode = store.read().activeMode;
-  // Cloud is only an intent at process start. It becomes an active session
-  // after auth verifies the persisted refresh token and supplies its owner.
-  const initialMode: AppSessionMode = persistedMode === 'local' ? 'local' : 'signed-out';
+  const initialMode = resolveStartupAppSessionMode(persistedMode);
   active = {
     mode: initialMode,
     dataOwnerId: initialMode === 'local' ? LOCAL_DATA_OWNER_ID : null,

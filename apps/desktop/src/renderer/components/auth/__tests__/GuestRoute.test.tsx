@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 
-import { cleanup, render, screen } from '@testing-library/react';
+import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
@@ -8,6 +8,7 @@ const authState = vi.hoisted(() => ({
   current: {
     mode: 'signed-out' as 'signed-out' | 'local' | 'cloud',
     isInitializing: false,
+    enterLocalMode: vi.fn(async () => undefined),
   },
 }));
 
@@ -36,19 +37,22 @@ describe('GuestRoute', () => {
     authState.current = {
       mode: 'signed-out',
       isInitializing: false,
+      enterLocalMode: vi.fn(async () => undefined),
     };
   });
 
-  it('keeps the login page for a real signed-out session', () => {
+  it('hides cloud login and requests local mode instead', async () => {
     renderAt('/login');
-    expect(screen.getByTestId('login-page')).toBeTruthy();
+    expect(screen.queryByTestId('login-page')).toBeNull();
     expect(screen.queryByTestId('app-shell')).toBeNull();
+    await waitFor(() => expect(authState.current.enterLocalMode).toHaveBeenCalledTimes(1));
   });
 
   it('leaves login once skip-sign-in has committed local mode', () => {
     authState.current = {
       mode: 'local',
       isInitializing: false,
+      enterLocalMode: vi.fn(async () => undefined),
     };
     renderAt('/login');
     expect(screen.getByTestId('app-shell')).toBeTruthy();
@@ -59,6 +63,7 @@ describe('GuestRoute', () => {
     authState.current = {
       mode: 'cloud',
       isInitializing: false,
+      enterLocalMode: vi.fn(async () => undefined),
     };
     renderAt('/login');
     expect(screen.getByTestId('app-shell')).toBeTruthy();

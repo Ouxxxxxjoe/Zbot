@@ -11,7 +11,7 @@ import {
 } from "../shared/desktop-dev-region.mjs";
 
 test("desktop shared userData follows the region identity", () => {
-  assert.equal(desktopUserDataDirNameForRegion(), "ZbotGlobal");
+  assert.equal(desktopUserDataDirNameForRegion(), "Zbot");
   assert.equal(desktopUserDataDirNameForRegion("global"), "ZbotGlobal");
   assert.equal(desktopUserDataDirNameForRegion("cn"), "Zbot");
   assert.equal(desktopUserDataDirNameForRegion("dev"), "ZbotDev");
@@ -38,8 +38,8 @@ test("desktop userData path follows platform appData rules and selected region",
   );
 });
 
-test("desktop dev region defaults to global and keeps the legacy env fallback", () => {
-  assert.equal(resolveDesktopDevRegion([], {}), "global");
+test("desktop dev region defaults to cn and keeps the legacy env fallback", () => {
+  assert.equal(resolveDesktopDevRegion([], {}), "cn");
   assert.equal(
     resolveDesktopDevRegion([], { CINDY_AUTH_REGION: "cn" }),
     "cn",
@@ -79,9 +79,9 @@ test("remote dev selects the repository manifest matching the region", () => {
       mode: "remote",
     }),
     {
-      region: "global",
+      region: "cn",
       endpointsCdn: false,
-      endpointManifestFile: "config/endpoint.global.json",
+      endpointManifestFile: "config/endpoint.json",
     },
   );
   assert.deepEqual(

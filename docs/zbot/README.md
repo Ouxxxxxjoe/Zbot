@@ -19,6 +19,7 @@
 | [`UPSTREAM_SYNC.md`](UPSTREAM_SYNC.md) | 与上游 Cindy 的 fork 关系、remote 配置、拉取/合并策略、品牌分歧与回退保护 | 需要从上游拉取或合并改动 |
 | [`BRANDING.md`](BRANDING.md) | 展示名与标识符层双单点、区域模型、品牌 guard 与测试、可执行名/appId/深链 | 改品牌、改可执行名、改区域 |
 | [`LOCAL_MODE.md`](LOCAL_MODE.md) | 本地优先的无账号会话、云作为未来接入点、端点清单、私隐语义 | 理解默认启动体验、云/本地边界 |
+| [`INTERNAL_INSTALL.md`](INTERNAL_INSTALL.md) | 未签名内部包怎么打开（Windows SmartScreen / macOS 门禁） | 发给同事安装包时一并带上 |
 | [`RELEASE.md`](RELEASE.md) | 桌面打包、更新器、发布区域（仅中文版）、签名/公证、CI | 打正式包、发版、排查打包失败 |
 
 ## 与上游文档的关系

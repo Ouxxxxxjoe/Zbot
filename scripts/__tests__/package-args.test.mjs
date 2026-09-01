@@ -29,9 +29,9 @@ test('PLATFORM_ARCHS: linux 支持 x64 与 arm64', () => {
   assert.deepEqual([...PLATFORM_ARCHS.darwin].sort(), ['arm64', 'x64']);
 });
 
-test('parsePackageArgs: 版本无关本地包默认 global', () => {
+test('parsePackageArgs: 版本无关本地包默认 cn', () => {
   const out = parsePackageArgs([], { platform: 'linux', arch: 'x64' });
-  assert.equal(out.region, 'global');
+  assert.equal(out.region, 'cn');
   assert.equal(out.versionSpec, null);
 });
 

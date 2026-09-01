@@ -85,7 +85,7 @@ describe('UserInfoSection — version label', () => {
 describe('UserInfoSection — Canary avatar badge', () => {
   it('shows only the shield decoration when isCanary is true', () => {
     expect(source).toContain(
-      "import { Flame, Shield, Smartphone, UserRound } from 'lucide-react';",
+      "import { Flame, Shield, UserRound } from 'lucide-react';",
     );
     expect(source).toContain('const { user, mode, isCanary } = useAuth();');
     expect(source).toContain('{isCanary && (');
@@ -130,35 +130,15 @@ describe('UserInfoSection — 未登录态头像兜底', () => {
   });
 });
 
-describe('UserInfoSection — mobile download entry', () => {
-  it('uses the local Lucide Smartphone icon in a matching 22x22 capsule action', () => {
-    expect(source).toContain(
-      "import { Flame, Shield, Smartphone, UserRound } from 'lucide-react';",
-    );
-    expect(source).toMatch(/'mobile-download-btn',\s*\n\s*'flex h-\[22px\] w-\[22px\]/);
-    expect(source).toContain("!isCollapsed && 'mr-1'");
-    expect(source).toContain('<Smartphone className="h-3 w-3" aria-hidden="true" />');
-  });
-
-  it('suppresses capsule hover while the mobile button owns the hover state', () => {
-    expect(source).toContain("'has-[.mobile-download-btn:hover]:bg-[var(--sidebar-user-card-bg)]'");
-  });
-
-  it('opens the mobile download dialog with an accessible label', () => {
-    expect(source).toContain('onClick={() => setMobileDownloadOpen(true)}');
-    expect(source).toContain("aria-label={t('sidebar.user.downloadMobile')}");
-    expect(source).toContain("navigate('/settings?tab=remote-control')");
-    expect(source).toContain("const remoteAvailable = mode === 'cloud';");
-    expect(source).toContain('remoteAvailable={remoteAvailable}');
-    expect(locale.sidebar.user.downloadMobile).toBe('下载 {{appName}} 移动端');
-    expect(locale.sidebar.mobileDownload.title).toBe('远程控制 {{appName}}');
-  });
-
-  it('keeps the same entry and dialog available in the collapsed sidebar', () => {
+describe('UserInfoSection — mobile download entry removed', () => {
+  it('does not render a mobile download action or dialog', () => {
+    expect(source).not.toContain('Smartphone');
+    expect(source).not.toContain('MobileDownloadDialog');
+    expect(source).not.toContain('mobile-download-btn');
+    expect(source).not.toContain('downloadMobile');
     expect(source).toContain(
       'className="mt-auto flex h-[66px] flex-col items-center justify-center gap-1 px-3"',
     );
-    expect(source).toContain('{mobileDownloadEntry}');
   });
 });
 

@@ -4,6 +4,8 @@
  * 「未配置目标时不去读用户授权状态」「读取失败是 unknown 而不是 denied」这两条容易被后人
  * 顺手改掉，所以各有一条独立用例钉住。
  */
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { describe, expect, it, vi } from 'vitest';
 
 import { evaluateGate, isManualUploadAvailable, type ConsentGateDeps } from '../consentGate';
@@ -22,6 +24,11 @@ function gate(overrides: Partial<ConsentGateDeps> = {}): ConsentGateDeps {
 }
 
 describe('evaluateGate', () => {
+  it('host wiring treats local mode as not-configured', () => {
+    const src = readFileSync(resolve(__dirname, '../index.ts'), 'utf8');
+    expect(src).toContain('currentTarget() !== null && !authManager.isLocalMode()');
+  });
+
   it('手动上传：已配置 + 已同意 ⇒ 放行', () => {
     expect(evaluateGate(gate(), 'manual')).toEqual({ kind: 'allowed' });
   });

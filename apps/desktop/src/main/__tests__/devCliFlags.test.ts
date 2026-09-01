@@ -467,7 +467,7 @@ describe('resolveDevCliFlags', () => {
     for (const v of ['0', 'false', 'true', 'yes']) {
       expect(resolveDevCliFlags({ ...base, envEndpointsCdn: v }).endpointsCdn).toBe(false);
     }
-    // packaged 恒 false(packaged 本来就走 CDN,该标志无意义)
+    // packaged 恒 false(安装包读本地清单,该标志无意义)
     const packaged = resolveDevCliFlags({
       ...base,
       isPackaged: true,

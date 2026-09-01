@@ -195,14 +195,28 @@ describe('resolveEndpointSource(清单来源三选一)', () => {
   const DEFAULT_FILE = path.join(REPO_ROOT, 'config', 'endpoint.json');
 
   it.each([
-    ['packaged 恒 CDN', { isPackaged: true, env: {} }, { kind: 'cdn' }],
     [
-      'packaged 下 dev 覆写全部忽略',
+      'packaged 读 extraResource 清单,不拉 CDN',
+      { isPackaged: true, env: {}, packagedManifestPath: path.join('/app', 'Resources', 'endpoint.json') },
+      { kind: 'file', filePath: path.join('/app', 'Resources', 'endpoint.json') },
+    ],
+    [
+      'packaged 下 CDN 开关不再生效',
       {
         isPackaged: true,
-        env: { XDT_ENDPOINTS_CDN: '1', XDT_ENDPOINT_MANIFEST_FILE: '/x/y.json' },
+        env: { XDT_ENDPOINTS_CDN: '1' },
+        packagedManifestPath: path.join('/app', 'Resources', 'endpoint.json'),
       },
-      { kind: 'cdn' },
+      { kind: 'file', filePath: path.join('/app', 'Resources', 'endpoint.json') },
+    ],
+    [
+      'packaged 下文件覆写仍可用',
+      {
+        isPackaged: true,
+        env: { XDT_ENDPOINT_MANIFEST_FILE: path.join('/tmp', 'e.json') },
+        packagedManifestPath: path.join('/app', 'Resources', 'endpoint.json'),
+      },
+      { kind: 'file', filePath: path.resolve(REPO_ROOT, path.join('/tmp', 'e.json')) },
     ],
     [
       'dev 默认读仓内 cn 正本',

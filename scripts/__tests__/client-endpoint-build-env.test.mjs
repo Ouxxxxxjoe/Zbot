@@ -30,9 +30,9 @@ test('desktop/mobile 构建从 region 清单的 cdnBaseUrl 生成自举环境变
   delete process.env.CINDY_AUTH_REGION;
 
   assert.deepEqual(desktopClientBuildEnv({ allowEnvOverride: false, repoRoot }), {
-    VITE_CINDY_AUTH_REGION: 'global',
-    VITE_ENDPOINT_MANIFEST_BASE_URL: 'https://hotfix-global.example.invalid/app',
-    VITE_ENDPOINT_MANIFEST_PEER_BASE_URL: 'https://hotfix-cn.example.invalid/app',
+    VITE_CINDY_AUTH_REGION: 'cn',
+    VITE_ENDPOINT_MANIFEST_BASE_URL: 'https://hotfix-cn.example.invalid/app',
+    VITE_ENDPOINT_MANIFEST_PEER_BASE_URL: 'https://hotfix-global.example.invalid/app',
   });
   assert.equal(
     Object.hasOwn(desktopClientBuildEnv({ allowEnvOverride: false, repoRoot }), 'VITE_FEISHU_APP_ID'),

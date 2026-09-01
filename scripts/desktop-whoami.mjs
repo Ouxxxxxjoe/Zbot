@@ -193,7 +193,7 @@ export function identifyDesktopProcesses(processes, worktrees) {
   return result;
 }
 
-function defaultUserDataDir(region = 'global') {
+function defaultUserDataDir(region = 'cn') {
   const dirName = desktopUserDataDirNameForRegion(region);
   if (process.platform === 'win32') {
     const appData = process.env.APPDATA || path.join(process.env.USERPROFILE || '', 'AppData', 'Roaming');

@@ -220,7 +220,7 @@ test("userData conflict detection matches exact sandbox dirs only", () => {
 });
 
 test("shared production userData path is region-aware", () => {
-	assert.equal(path.basename(productionUserDataDir()), "ZbotGlobal");
+	assert.equal(path.basename(productionUserDataDir()), "Zbot");
 	assert.equal(path.basename(productionUserDataDir("global")), "ZbotGlobal");
 	assert.equal(path.basename(productionUserDataDir("cn")), "Zbot");
 	assert.equal(path.basename(productionUserDataDir("dev")), "ZbotDev");

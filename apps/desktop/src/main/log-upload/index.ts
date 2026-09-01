@@ -122,7 +122,8 @@ function currentTarget(): LogUploadTarget | null {
  * 崩溃开关在本功能自己那份，两者都可能被另一个实例改过。
  */
 const gateDeps: ConsentGateDeps = {
-  isTargetConfigured: () => currentTarget() !== null,
+  // 本地无账号会话不得出站上报。当成「未配置」:不传、也不清崩溃标记。
+  isTargetConfigured: () => currentTarget() !== null && !authManager.isLocalMode(),
   refreshFromDisk: () => {
     refreshAnalyticsSettingsFromDisk();
     refreshLogUploadSettingsFromDisk();

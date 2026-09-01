@@ -29,13 +29,12 @@
  * 只报一个错误码等于没有现场(2026-07 实测:同一 URL curl 与裸 Electron 都是 200,
  * 安装版毫秒级 ERR_FAILED,单看错误码无从下手)。
  *
- * 清单来源按运行形态三选一(resolveEndpointSource,纯函数可单测):
- *  - packaged / dev + --endpoints-cdn:从当前构建区域的烘焙自举基址
- *    ENDPOINT_MANIFEST_BASE_URL 直连拉取；另一物理区域的基址也在构建期注入，
- *    只用于组织区域发现和已绑定会话恢复；
- *  - dev 默认:读仓内 `config/endpoint.json`(XDT_ENDPOINT_MANIFEST_FILE 可
- *    指定其它文件,restart:desktop:local 用它指到 config/endpoint.local.json),
- *    同一条阻断循环,文件缺失 / 非法同样弹框——配置错要炸出来,不静默猜测;
+ * 清单来源(resolveEndpointSource,纯函数可单测):
+ *  - 默认(packaged 与 dev):读本地文件。packaged 读 extraResource
+ *    `endpoint.json`(构建期从 config/endpoint*.json 拷入);dev 读仓内
+ *    `config/endpoint.json`(XDT_ENDPOINT_MANIFEST_FILE 可覆盖)。
+ *    Zbot 尚无中控,安装包不再拉 CDN,避免占位域阻断启动。
+ *  - 仅 unpackaged + XDT_ENDPOINTS_CDN=1:从烘焙自举基址拉取,留给以后接中控。
  *    仅本地文件路径放开 allowHttp(localhost 场景),CDN 路径校验零放松。
  *
  * 共享逻辑(schema / 非空 URL 校验 / 缺省字段归一)在 @cindy/maker-shared/client-endpoints;
@@ -153,28 +152,38 @@ export type EndpointSource = { kind: 'cdn' } | { kind: 'file'; filePath: string 
 export interface ResolveEndpointSourceInput {
   isPackaged: boolean;
   env: {
-    /** '1' = dev 也走完整 CDN 拉取(index.ts 已把 --endpoints-cdn 收敛到该 env)。 */
+    /** '1' = unpackaged 走完整 CDN 拉取(index.ts 已把 --endpoints-cdn 收敛到该 env)。 */
     XDT_ENDPOINTS_CDN?: string;
-    /** dev 本地清单文件覆盖(restart:desktop:local 指到 endpoint.local.json)。 */
+    /** 本地清单文件覆盖(restart:desktop:local 指到 endpoint.local.json)。 */
     XDT_ENDPOINT_MANIFEST_FILE?: string;
   };
   /** 仓库根(dev 下 app.getAppPath() = apps/desktop,向上两级)。 */
   repoRoot: string;
+  /** packaged extraResource 清单路径(`<resources>/endpoint.json`)。 */
+  packagedManifestPath?: string;
 }
 
 /**
- * 决定清单从哪来:packaged 恒 CDN;dev 默认读仓内 config/endpoint.json,
- * XDT_ENDPOINT_MANIFEST_FILE 覆盖文件路径(相对路径以仓根为基准),
- * XDT_ENDPOINTS_CDN='1' 切回完整 CDN 链路。
+ * 决定清单从哪来:默认读本地文件(packaged 读 extraResource,dev 读仓内正本)。
+ * 仅 unpackaged + XDT_ENDPOINTS_CDN='1' 走 CDN,安装包不拉占位域。
  */
 export function resolveEndpointSource(input: ResolveEndpointSourceInput): EndpointSource {
-  if (input.isPackaged) return { kind: 'cdn' };
-  if (input.env.XDT_ENDPOINTS_CDN === '1') return { kind: 'cdn' };
+  if (!input.isPackaged && input.env.XDT_ENDPOINTS_CDN === '1') return { kind: 'cdn' };
   const override = input.env.XDT_ENDPOINT_MANIFEST_FILE?.trim();
-  const filePath = override
-    ? path.resolve(input.repoRoot, override)
-    : path.join(input.repoRoot, 'config', MANIFEST_FILE_NAME);
-  return { kind: 'file', filePath };
+  if (override) {
+    return { kind: 'file', filePath: path.resolve(input.repoRoot, override) };
+  }
+  if (input.isPackaged) {
+    return {
+      kind: 'file',
+      filePath: input.packagedManifestPath?.trim()
+        || path.join(input.repoRoot, 'config', MANIFEST_FILE_NAME),
+    };
+  }
+  return {
+    kind: 'file',
+    filePath: path.join(input.repoRoot, 'config', MANIFEST_FILE_NAME),
+  };
 }
 
 // ── IO:CDN 拉取 / 本地文件读取 ─────────────────────────────────────────────
@@ -1076,8 +1085,8 @@ function cacheResolvedManifest(manifestUrl: string, manifestText: string): void 
 }
 
 /**
- * 启动第一步(先于一切更新检查):阻断式解析清单(packaged=CDN;dev=本地文件,
- * --endpoints-cdn 时同 packaged)。返回 true = 可以继续启动;false = 用户在
+ * 启动第一步(先于一切更新检查):阻断式解析清单(默认本地文件;
+ * unpackaged + --endpoints-cdn 才走 CDN)。返回 true = 可以继续启动;false = 用户在
  * 错误框选择退出(app.exit 已调用,调用方必须立即 return,不再继续启动流程)。
  */
 export async function initClientEndpoints(): Promise<boolean> {
@@ -1087,8 +1096,9 @@ export async function initClientEndpoints(): Promise<boolean> {
       XDT_ENDPOINTS_CDN: process.env.XDT_ENDPOINTS_CDN,
       XDT_ENDPOINT_MANIFEST_FILE: process.env.XDT_ENDPOINT_MANIFEST_FILE,
     },
-    // dev 下 app.getAppPath() = apps/desktop;packaged 不走 file 分支,该值无消费。
+    // dev 下 app.getAppPath() = apps/desktop,向上两级到仓根。
     repoRoot: path.resolve(app.getAppPath(), '..', '..'),
+    packagedManifestPath: path.join(process.resourcesPath, MANIFEST_FILE_NAME),
   });
   const manifestUrl = `${ENDPOINT_MANIFEST_BASE_URL}/${MANIFEST_FILE_NAME}`;
   const sourceLabel = source.kind === 'cdn' ? manifestUrl : source.filePath;

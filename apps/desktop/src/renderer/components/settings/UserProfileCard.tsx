@@ -1,8 +1,6 @@
 import { useEffect, useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Building2, Copy, Pencil, UserRound } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-
 import { cn } from '@/lib/utils';
 import { toast } from '@/lib/toast';
 import { useAuth } from '@/contexts/AuthContext';
@@ -30,8 +28,7 @@ function abbreviateUserId(id: string): string {
 }
 
 export function UserProfileCard() {
-  const { user, mode, exitLocalMode } = useAuth();
-  const navigate = useNavigate();
+  const { user, mode } = useAuth();
   const [avatarError, setAvatarError] = useState(false);
   const [orgLogoError, setOrgLogoError] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
@@ -51,16 +48,6 @@ export function UserProfileCard() {
   useEffect(() => {
     setOrgLogoError(false);
   }, [orgLogoUrl]);
-
-  const handleLocalSignIn = async () => {
-    try {
-      await exitLocalMode();
-    } catch {
-      // Continue to the login recovery surface; main remains fail closed while
-      // the durable owner transition is incomplete.
-    }
-    navigate('/login');
-  };
 
   if (!user && mode === 'local') {
     return (
@@ -83,15 +70,6 @@ export function UserProfileCard() {
           <p className="mt-1 text-12 text-[var(--text-tertiary)]">
             {t('settings.userProfile.local.description')}
           </p>
-        </div>
-        <div className="flex shrink-0 items-center">
-          <button
-            type="button"
-            onClick={() => void handleLocalSignIn()}
-            className="rounded-full border border-[var(--border-default)] px-3 py-1.5 text-12 text-[var(--text-primary)] transition-colors hover:bg-[var(--settings-profile-avatar-bg)]"
-          >
-            {t('settings.userProfile.local.signIn')}
-          </button>
         </div>
       </div>
     );

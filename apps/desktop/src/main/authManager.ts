@@ -1107,8 +1107,10 @@ function commitCloudAppSession(ownerId: string): void {
 }
 
 async function finishColdStartSignedOut(reason: string): Promise<AuthState> {
-  await recoverAccountFreeOwnerAtStartup('signed-out', reason);
-  return snapshotLoggedOutAuthState();
+  // No control plane yet: a cold start without a verified cloud session
+  // becomes the local workspace instead of the login page.
+  await recoverAccountFreeOwnerAtStartup('local', reason);
+  return snapshotAuthState();
 }
 
 export function setAccountSwitchTeardown(teardown: AccountSwitchTeardown | null): void {

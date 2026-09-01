@@ -24,8 +24,9 @@
 --no-sign / --allow-unsigned    # 跳过 / 放行无签名（无签名环境的版本无关包）
 ```
 
-> Zbot 只发行**简体中文版**，打包时显式 `--region=cn`（构建区经 `CINDY_AUTH_REGION` 注入、
-> `VITE_CINDY_AUTH_REGION` 烘焙）；发布链路只配 `cn`。`release-regions.json.example` 展示
+> Zbot 只发行**简体中文版**，打包默认 `--region=cn`（构建区经 `CINDY_AUTH_REGION` 注入、
+> `VITE_CINDY_AUTH_REGION` 烘焙）；发布链路只配 `cn`。安装包把 `config/endpoint.json`
+> 打进 `resources/endpoint.json`，启动读本地文件，不拉 CDN。`release-regions.json.example` 展示
 > cn / dev 两区的 OSS 与 macOS 签名身份（真机密走 env，不入仓）。
 
 ### 产物
@@ -82,7 +83,8 @@ ZBOT_DISABLE_AUTO_UPDATE=1 pnpm release:package --region=cn --no-sign --version=
 - `--no-sign`：跳过 Windows/macOS 签名（`release-regions.json` 缺失时会静默跳过签名身份注入）。
 - 显式 `--version`：不再读线上 CDN manifest 取基线（内部无 OSS/CDN 更新源）。
 - `ZBOT_DISABLE_AUTO_UPDATE=1`：烘焙关闭应用内自动更新（见 §3）。
-- 产物：`release/artifacts/cn/<version>/...`（未签名 .exe / .dmg），手动分发、不依赖自动更新。
+- 产物：`apps/desktop/release/artifacts/cn/<version>/...`（未签名 .exe / .dmg），手动分发、不依赖自动更新。
+- 发给同事时附上 [`INTERNAL_INSTALL.md`](INTERNAL_INSTALL.md)（未签名包会被 SmartScreen / 门禁拦截，按文档打开即可）。
 - CI 侧：`.github/workflows/release-desktop.yml`（`workflow_dispatch` 手动触发，产出未签名安装包
   并作为构建产物上传）。
 

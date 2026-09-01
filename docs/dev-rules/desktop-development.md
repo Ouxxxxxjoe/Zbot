@@ -46,8 +46,8 @@ checkout 占用而中止，不要换命令绕过，应把 verdict 交给用户�
 终端里手跑）。**Agent 例外**见上一节：用户只说启动开发版时必须加
 `--isolated=@worktree`。这些参数只对 dev 生效，不影响用户机器上的正式版。
 
-- `--region=cn|global`（默认 `global`）：切换构建身份与仓内端点清单；中国大陆版
-  必须显式传 `--region=cn`，读取 `config/endpoint.json`。
+- `--region=cn|global`（默认 `cn`）：切换构建身份与仓内端点清单；中国大陆版
+  读 `config/endpoint.json`。
 - `--isolated` / `--isolated=<名字>` / `--isolated=@worktree`：使用独立 userData 沙箱，数据库、登录态、会话、定时
   任务与设备身份都与正式版彻底隔离（首次需重新登录）；命名沙箱每个名字一条独立沙箱，
   名字限 `A-Za-z0-9_-`、≤32 字符。`@worktree` 是保留名，按当前 checkout 目录派生沙箱名。

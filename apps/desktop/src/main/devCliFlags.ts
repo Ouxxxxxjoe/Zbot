@@ -199,8 +199,7 @@ export interface DevCliFlags {
   invalidIsolationName: string | null;
   /**
    * --endpoints-cdn / XDT_ENDPOINTS_CDN=1:dev 下不读本地 config/endpoint.json,
-   * 走与 packaged 完全相同的 CDN 阻断拉取链路(测线上清单用)。packaged 恒 false
-   * (本来就走 CDN,该标志无意义)。
+   * 改走 CDN 阻断拉取(测将来中控清单用)。packaged 恒 false(安装包读本地清单)。
    */
   endpointsCdn: boolean;
 }

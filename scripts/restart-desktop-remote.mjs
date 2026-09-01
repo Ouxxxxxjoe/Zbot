@@ -653,7 +653,7 @@ export function hostedRestartRefusal(ancestor, { ownRootDir }) {
     };
 }
 
-export function defaultIsolatedUserDataDir(isolationName, region = 'global') {
+export function defaultIsolatedUserDataDir(isolationName, region = 'cn') {
   // 目录纪元 v2(-dev2),与 devCliFlags.ts 的派生保持一字不差:#871 起隔离沙箱用
   // zagentDev 钥匙串身份,旧 -dev 目录留给旧 checkout(#912 review)。
   const baseName = desktopUserDataDirNameForRegion(region);
@@ -661,7 +661,7 @@ export function defaultIsolatedUserDataDir(isolationName, region = 'global') {
 }
 
 /** 非隔离 dev 与正式版共用的 userData 目录。 */
-export function productionUserDataDir(region = 'global') {
+export function productionUserDataDir(region = 'cn') {
   return userDataDirNamed(desktopUserDataDirNameForRegion(region));
 }
 

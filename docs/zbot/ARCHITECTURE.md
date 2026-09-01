@@ -56,7 +56,8 @@ Zbot 的核心价值是把多个 harness 收进一个客户端。编排在 main 
 
 - `apps/desktop/src/main/clientEndpointsService.ts`：从运行期端点清单读各服务 base URL
   （auth、device-link、heartbeat、skillhub、plugin、cdn …），供 main 侧跨云服务使用。
-- 端点来自 `config/endpoint*.json`，本身是**纯数据 + 后续中控系统接入点**。
+- 端点来自 `config/endpoint*.json`。安装包读打包进去的本地文件，不拉 CDN；业务云端点
+  当前留空，等中控上线再填。
 
 ## 3. 本地 / 云会话模型（Zbot 关键分歧）
 
@@ -70,8 +71,8 @@ Zbot 的核心价值是把多个 harness 收进一个客户端。编排在 main 
 | `local` | **无账号**的本地会话（`LOCAL_DATA_OWNER_ID` 作为数据 owner） | ❌ 不向云端上报 |
 | `signed-out` | 未登录、未进入应用 | ❌ |
 
-- `ProtectedRoute` 以 `canEnterApp`（`mode !== 'signed-out'`）决定能否进入主界面；
-  `GuestRoute` 对 `cloud` / `local` 一律重定向到首页。
+- `ProtectedRoute` 以 `canEnterApp`（`mode !== 'signed-out'`）决定能否进入主界面。
+  当前阶段冷启动默认 `local`，云登录页隐藏。
 - 本地模式下，服务端支撑的能力（账号级 skillhub、云端心跳、账号数据同步等）不可用，
   但**本机 agent（Claude Code / Codex / 本地模型）、本地库、插件、定时、设备链路**等
   均可用。

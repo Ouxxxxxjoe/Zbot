@@ -14,8 +14,8 @@ export const DESKTOP_USER_DATA_DIR_NAME_BY_REGION = Object.freeze({
   dev: "ZbotDev",
 });
 
-/** 共享 Desktop profile 的区域目录名；省略区域时遵循产品规则默认 Global。 */
-export function desktopUserDataDirNameForRegion(region = "global") {
+/** 共享 Desktop profile 的区域目录名；省略区域时默认 cn。 */
+export function desktopUserDataDirNameForRegion(region = "cn") {
   if (!DESKTOP_DEV_REGIONS.includes(region)) {
     throw new Error(`invalid desktop dev region: ${region}; expected cn, global or dev`);
   }
@@ -24,7 +24,7 @@ export function desktopUserDataDirNameForRegion(region = "global") {
 
 /** 计算与 Electron app.getPath('userData') 对齐的区域 profile 路径。 */
 export function desktopUserDataDirForRegion(
-  region = "global",
+  region = "cn",
   platform = process.platform,
   env = process.env,
   homeDir = os.homedir(),
@@ -51,7 +51,7 @@ export function desktopUserDataDirForRegion(
 
 /**
  * 解析 desktop dev 区域。命令行显式值优先，保留 CINDY_AUTH_REGION 作为
- * CI / 老脚本兼容入口；无配置时默认 Global。
+ * CI / 老脚本兼容入口；无配置时默认 cn。
  */
 export function resolveDesktopDevRegion(argv, env = process.env) {
   let cliRegion;
@@ -78,7 +78,7 @@ export function resolveDesktopDevRegion(argv, env = process.env) {
     cliRegion = value;
   }
 
-  const region = (cliRegion ?? env.CINDY_AUTH_REGION?.trim()) || "global";
+  const region = (cliRegion ?? env.CINDY_AUTH_REGION?.trim()) || "cn";
   if (!DESKTOP_DEV_REGIONS.includes(region)) {
     throw new Error(
       `invalid desktop dev region: ${region}; expected cn, global or dev`,

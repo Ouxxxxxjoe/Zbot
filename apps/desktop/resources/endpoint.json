@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "_comment": "Zbot 本地优先：业务云端点先留空。安装包读这份文件，不再拉 CDN。cdnBaseUrl 仅占构建自举位，运行期不拉取。中控上线后再填真地址。",
+  "_comment": "Staged copy of config/endpoint.json for packaged extraResource. forge prePackage overwrites this from the build region manifest.",
   "authApiBaseUrl": "",
   "deviceLinkApiBaseUrl": "",
   "oauthBrokerApiBaseUrl": "",

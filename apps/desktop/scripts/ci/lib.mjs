@@ -82,7 +82,7 @@ export const PACKAGED_APP_NAME_BY_REGION = Object.freeze({
   dev: 'zagentDev',
 });
 
-export function packagedAppName(region = 'global') {
+export function packagedAppName(region = 'cn') {
   const name = PACKAGED_APP_NAME_BY_REGION[region];
   if (!name) throw new Error(`unknown region: ${region}`);
   return name;
@@ -100,7 +100,7 @@ export const RELEASE_ARTIFACT_BASENAME_BY_REGION = Object.freeze({
   dev: 'cindy-dev',
 });
 
-export function releaseArtifactBasename(region = 'global') {
+export function releaseArtifactBasename(region = 'cn') {
   const name = RELEASE_ARTIFACT_BASENAME_BY_REGION[region];
   if (!name) throw new Error(`unknown region: ${region}`);
   return name;
@@ -208,7 +208,7 @@ function restorePackageJson() {
 // no-cache 不一定被 CDN 尊重),客户端 manifestService 与 promote-canary-* 都带了,
 // 唯独发布脚本此前漏了——2026-07-03 事故的直接诱因就是发版时读到陈旧基线,误判
 // "版本变了" 而对已存在的版本化路径做了字节不同的覆盖上传。
-export async function fetchExistingManifestIfAvailable(platformKey, region = 'global') {
+export async function fetchExistingManifestIfAvailable(platformKey, region = 'cn') {
   const cdnBase = resolveReleaseCdnBaseUrl(region);
   const canaryUrl = `${cdnBase}/manifest-${platformKey}-canary.json?t=${Date.now()}`;
   const canaryRes = await fetch(canaryUrl);
@@ -1394,7 +1394,7 @@ export function createMacDMG(appPath, dmgPath, volumeName, identity) {
 
 // ── Smoke test (启动 packaged app) ──────────────────────────────────────────
 
-export function runSmokeTest(platform, arch, region = 'global') {
+export function runSmokeTest(platform, arch, region = 'cn') {
   console.log('==> Running packaged smoke test...');
   const result = spawnSync(
     'node',

@@ -145,17 +145,13 @@ describe('resolveMobileDownloadUrl', () => {
   });
 
   it('maps the shipped endpoint hosts onto the canonical download pages', () => {
-    // 打包配置的真实取值:CN 是 config/endpoint.json 的 zbot.local(官网 302 到
-    // zbot.local),Global 是 zbot.local。二维码直接给最终地址,手机上少一跳。
     const shipped = (configPath: string) =>
       JSON.parse(readFileSync(resolve(__dirname, configPath), 'utf8')).websiteUrl as string;
 
-    expect(resolveMobileDownloadUrl(shipped('../../../../../config/endpoint.json'))).toBe(
-      'https://zbot.local/download/',
-    );
-    expect(resolveMobileDownloadUrl(shipped('../../../../../config/endpoint.global.json'))).toBe(
-      'https://zbot.local/download/',
-    );
+    expect(resolveMobileDownloadUrl(shipped('../../../../../config/endpoint.json'))).toBeNull();
+    expect(
+      resolveMobileDownloadUrl(shipped('../../../../../config/endpoint.global.json')),
+    ).toBeNull();
   });
 
   it('accepts the loopback http endpoint used by the dev manifest', () => {

@@ -7460,9 +7460,8 @@ app.on('ready', async () => {
     isPackaged: app.isPackaged,
   });
 
-  // 客户端端点清单:启动第一步、先于一切更新检查,**阻断式**解析(packaged 走
-  // 烘焙 hotfix CDN 基址;dev 默认读仓内 config/endpoint.json,--endpoints-cdn
-  // 时同 packaged;失败 → 系统错误框重试/退出,无缓存与烘焙兜底)。
+  // 客户端端点清单:启动第一步、先于一切更新检查,**阻断式**解析(默认读本地文件;
+  // unpackaged + --endpoints-cdn 才走 CDN;失败 → 系统错误框重试/退出)。
   // 必须早于一切端点消费方初始化、且在 createWindow() 前注册 sendSync IPC
   // (preload 模块级同步读取依赖它)。用户在错误框选"退出"时 app.exit 已调用,
   // 这里直接 return 不再继续启动。

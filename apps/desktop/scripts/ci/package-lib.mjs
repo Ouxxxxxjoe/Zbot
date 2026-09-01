@@ -65,7 +65,7 @@ export function isExplicitVersion(value) {
 export function parsePackageArgs(argv, defaults = {}) {
   const out = {
     platform: defaults.platform ?? process.platform,
-    region: 'global',
+    region: 'cn',
     versionSpec: null,
     skipSmoke: false,
     allowUnsigned: false,

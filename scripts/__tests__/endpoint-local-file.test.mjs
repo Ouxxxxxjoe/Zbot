@@ -49,7 +49,7 @@ const GLOBAL_MANIFEST = JSON.stringify({
   cdnBaseUrl: 'https://cdn.global.example.invalid/app',
 });
 
-test('localhost 八件套覆写,默认其余字段照抄 Global 正本,返回绝对路径', () => {
+test('localhost 八件套覆写,默认其余字段照抄 cn 正本,返回绝对路径', () => {
   const repoRoot = makeRepoRoot(CN_MANIFEST, GLOBAL_MANIFEST);
   const target = generateEndpointLocalFile({ repoRoot });
   assert.equal(target, path.join(repoRoot, 'config', 'endpoint.local.json'));
@@ -63,8 +63,8 @@ test('localhost 八件套覆写,默认其余字段照抄 Global 正本,返回绝
   assert.equal(local.skillhubApiBaseUrl, 'http://localhost:3341');
   assert.equal(local.pluginApiBaseUrl, 'http://localhost:3343');
   // 其余字段与正本一致(oauth broker 等本地不起的服务沿用远程值)
-  assert.equal(local.oauthBrokerApiBaseUrl, 'https://oauth.global.example.invalid');
-  assert.equal(local.cdnBaseUrl, 'https://cdn.global.example.invalid/app');
+  assert.equal(local.oauthBrokerApiBaseUrl, 'https://oauth.example.invalid');
+  assert.equal(local.cdnBaseUrl, 'https://cdn.example.invalid/app');
   assert.equal(local.schemaVersion, 1);
 });
 
@@ -91,6 +91,7 @@ test('所选正本缺失 / 非法时给出明确错误(fail closed,不造半截�
     () =>
       generateEndpointLocalFile({
         repoRoot: makeRepoRoot(CN_MANIFEST, 'not-json{{'),
+        region: 'global',
       }),
     /Invalid JSON in endpoint manifest config\/endpoint\.global\.json/,
   );
