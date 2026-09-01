@@ -102,7 +102,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: zbot-installers-macos-${{ inputs.version }}
-          path: release/artifacts/${{ inputs.region }}/${{ inputs.version }}/darwin-arm64/**
+          path: apps/desktop/release/artifacts/${{ inputs.region }}/${{ inputs.version }}/darwin-arm64/**
           if-no-files-found: error
 
   build-windows:
@@ -171,5 +171,5 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: zbot-installers-windows-${{ inputs.version }}
-          path: release/artifacts/${{ inputs.region }}/${{ inputs.version }}/win32-x64/**
+          path: apps/desktop/release/artifacts/${{ inputs.region }}/${{ inputs.version }}/win32-x64/**
           if-no-files-found: error
