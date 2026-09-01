@@ -22,7 +22,7 @@ import {
   UPDATED_VERB_I18N_KEY,
 } from '../../shared/agentActionVerbKeys';
 
-const locales = ['zh-CN', 'zh-TW', 'en', 'ja', 'ko'] as const;
+const locales = ['zh-CN'] as const;
 
 const VERBS = [
   'edited',
@@ -191,20 +191,14 @@ describe('agent actions i18n', () => {
   it('keeps aggregate summary phrases translated in every supported locale', () => {
     for (const locale of locales) {
       const actions = readLocale(locale).chat?.agentActions;
-      // 复数家族:en 需要 _one + _other,CJK(Intl.PluralRules 只有 other)只需
-      // _other — 与 check-i18n 的家族校验口径一致。
+      // 复数家族:zh-CN(Intl.PluralRules 只有 other)只需 _other — 与 check-i18n 的
+      // 家族校验口径一致。
       for (const verb of VERBS) {
         expect(actions?.part?.[`${verb}_other`], `${locale} part.${verb}_other`).toEqual(
           expect.any(String),
         );
-        if (locale === 'en') {
-          expect(actions?.part?.[`${verb}_one`], `en part.${verb}_one`).toEqual(expect.any(String));
-        }
       }
       expect(actions?.more_other, `${locale} more_other`).toEqual(expect.any(String));
-      if (locale === 'en') {
-        expect(actions?.more_one, 'en more_one').toEqual(expect.any(String));
-      }
       expect(actions?.separator, `${locale} separator`).toEqual(expect.any(String));
       expect(actions?.lastSeparator, `${locale} lastSeparator`).toEqual(expect.any(String));
     }

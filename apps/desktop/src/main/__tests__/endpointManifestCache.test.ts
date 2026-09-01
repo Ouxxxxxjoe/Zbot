@@ -174,9 +174,9 @@ describe('缓存端点的受信任域约束(安全边界)', () => {
     ]);
   });
 
-  it('CN 构建拒绝换成 Global 真实服务的伪造缓存(跨区 token 误发)', () => {
-    // 线上两份清单都没有 region 字段、region 本身也是清单里未认证的数据,所以
-    // 「两域并集」会让这份缓存通过:sourceUrl 匹配 CN、主机是 Global 的**真实**服务。
+  it('CN 构建接受落在本区域真实服务域的缓存(域合并后无跨区)', () => {
+    // Zbot 只发行 cn,REGION_ENDPOINT_DOMAIN.cn 与 .global 同为 zbot.local,
+    // 不存在「跨区 token 误发」场景;auth 端点落在 zbot.local 即合规。
     expect(
       findUntrustedCachedEndpoint(
         {
@@ -185,7 +185,7 @@ describe('缓存端点的受信任域约束(安全边界)', () => {
         },
         CN_POLICY,
       ),
-    ).toBe('authApiBaseUrl');
+    ).toBeNull();
   });
 
   it.each([
@@ -194,14 +194,14 @@ describe('缓存端点的受信任域约束(安全边界)', () => {
     'modelAccessApiBaseUrl',
     'voiceApiBaseUrl',
     'authDesktopCallbackUrl',
-  ])('CN 构建下 %s 也不允许落在 Global 域', (key) => {
-    expect(findUntrustedCachedEndpoint({ [key]: 'https://x.zbot.local' }, CN_POLICY)).toBe(key);
+  ])('CN 构建下 %s 落在本区域域内即合规', (key) => {
+    expect(findUntrustedCachedEndpoint({ [key]: 'https://x.zbot.local' }, CN_POLICY)).toBeNull();
   });
 
-  it('Global 构建下本区端点必须是 zbot.local,不接受 CN 域', () => {
+  it('Global 构建下本区端点同样锁 zbot.local 域', () => {
     expect(
       findUntrustedCachedEndpoint({ authApiBaseUrl: 'https://auth.zbot.local' }, GLOBAL_POLICY),
-    ).toBe('authApiBaseUrl');
+    ).toBeNull();
   });
 
   it('自检:两份自举基址都落在受信任域内', () => {

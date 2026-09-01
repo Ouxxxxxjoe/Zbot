@@ -25,8 +25,10 @@ describe('voice input language defaults', () => {
     expect(getDefaultVoiceInputSettings('darwin', 'dev').language).toBe('auto');
   });
 
-  it('keeps an explicit language instead of replacing it with the region default', () => {
-    expect(normalizeVoiceInputSettings({ language: 'en' }, 'darwin', 'cn').language).toBe('en');
+  it('keeps an explicit supported language instead of replacing it with the region default', () => {
+    // Zbot 只支持简体中文:显式 en 不是受支持语言,收敛到 zh-CN 默认。
+    expect(normalizeVoiceInputSettings({ language: 'en' }, 'darwin', 'cn').language).toBe('zh-CN');
+    expect(normalizeVoiceInputSettings({ language: 'zh-CN' }, 'darwin', 'cn').language).toBe('zh-CN');
     expect(normalizeVoiceInputSettings({ language: 'auto' }, 'darwin', 'cn').language).toBe('auto');
     expect(normalizeVoiceInputSettings({}, 'darwin', 'cn').language).toBe('zh-CN');
   });

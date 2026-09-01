@@ -634,8 +634,13 @@ describe('AgentInputCoordinator trusted session reference snapshots', () => {
     );
     await flush();
 
-    expect(h.resolveSessionReferences).toHaveBeenCalledTimes(1);
+    // rewrite 换掉了引用正文,旧 trusted snapshot 不再适用,引用随之一并清空:
+    // 不会用旧快照解析,消息按改写后的正文照常派发。
+    expect(h.resolveSessionReferences).not.toHaveBeenCalled();
     expect(h.sendToAgent).toHaveBeenCalledTimes(1);
+    expect(JSON.stringify(h.sendToAgent.mock.calls[0]?.[1])).not.toContain(
+      'authoritative remote history',
+    );
     expect(latestProjection(h.projections).error).toBeNull();
   });
 

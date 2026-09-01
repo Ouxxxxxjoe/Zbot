@@ -1510,7 +1510,7 @@ describe('PluginMarketService migration and defaultInstall', () => {
         publisherSigned: true,
         publisherVerified: true,
         reviewed: true,
-        publisherName: 'Cindy Plugin Market',
+        publisherName: 'Zbot Plugin Market',
       }),
     );
     runtime.ghosts = [{ manifest: rawManifest, dir: installDir, enabled: true }];

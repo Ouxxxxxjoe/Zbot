@@ -300,7 +300,7 @@ describe('SplashScreen wave4 统一面板', () => {
     }
   });
 
-  it('splash.* / splash.tips.* 现网 key 5 语齐全(含 envFailed 新 key)', () => {
+  it('splash.* / splash.tips.* 现网 key 齐全(含 envFailed 新 key)', () => {
     const localesDir = path.resolve(
       path.dirname(fileURLToPath(import.meta.url)),
       '../../../i18n/locales',
@@ -324,7 +324,7 @@ describe('SplashScreen wave4 统一面板', () => {
       'spawnFailed.description',
       'spawnFailed.confirm',
     ];
-    for (const locale of ['zh-CN', 'zh-TW', 'en', 'ja', 'ko']) {
+    for (const locale of ['zh-CN']) {
       const json = JSON.parse(
         readFileSync(path.join(localesDir, locale, 'common.json'), 'utf8'),
       ) as { splash: Record<string, unknown> };

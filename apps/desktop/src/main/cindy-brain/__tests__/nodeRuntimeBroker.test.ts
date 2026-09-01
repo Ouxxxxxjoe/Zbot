@@ -1037,7 +1037,7 @@ describe('nodeRuntimeBroker · 权限与协议', () => {
     const init = child.received[0];
     expect(init).toMatchObject({
       method: 'initialize',
-      params: { clientInfo: { name: 'Cindy' } },
+      params: { clientInfo: { name: 'Zbot' } },
     });
     broker.destroyAll();
   });

@@ -966,7 +966,7 @@ describe('cindy-bridge extension source', () => {
     expect(source).toContain("const PERMISSION_USER_DENY = 'user-deny'");
     expect(source).toContain("const PERMISSION_AUTO_REVIEW_DENY = 'auto-review-deny'");
     expect(source).toContain('User denied this tool call via Cindy.');
-    expect(source).toContain('Cindy Auto-review denied this tool call.');
+    expect(source).toContain('Zbot Auto-review denied this tool call.');
     expect(source).toContain('Zbot could not approve this tool call.');
   });
 

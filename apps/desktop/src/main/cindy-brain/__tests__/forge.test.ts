@@ -1065,7 +1065,8 @@ describe('packGhostDir', () => {
       manifest: {
         name: 'デモ',
         description: '日本語の説明',
-        resolvedLocale: 'ja',
+        // Zbot 只支持 zh-CN:resolvedLocale 归一为默认语言,文案仍按协议旧语查找。
+        resolvedLocale: 'zh-CN',
         tools: [{ name: 'do_thing', description: '日本語のツール' }],
       },
     });
