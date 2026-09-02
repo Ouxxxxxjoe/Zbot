@@ -171,6 +171,41 @@ function createCommandRunner(
 }
 
 describe('packaged iOS Simulator sidecar artifact verification', () => {
+  it('keeps mobile automation out of the default Zbot desktop build', async () => {
+    const testDirectory = path.dirname(fileURLToPath(import.meta.url));
+    const forgeSource = await readFile(
+      path.resolve(testDirectory, '../../../../forge.config.ts'),
+      'utf8',
+    );
+    const packageSource = await readFile(
+      path.resolve(testDirectory, '../../../../scripts/package-desktop.mjs'),
+      'utf8',
+    );
+    const desktopPackage = JSON.parse(
+      await readFile(path.resolve(testDirectory, '../../../../package.json'), 'utf8'),
+    ) as { scripts: Record<string, string> };
+
+    expect(forgeSource).toContain(
+      "const INCLUDE_MOBILE_AUTOMATION = process.env.ZBOT_ENABLE_MOBILE_AUTOMATION === '1';",
+    );
+    expect(forgeSource).toContain("if (INCLUDE_MOBILE_AUTOMATION && (targetPlatform === 'darwin'");
+    expect(forgeSource).toContain(
+      'if (INCLUDE_MOBILE_AUTOMATION) {\n        ensureMacIOSSimulatorWdaArchive(platform);',
+    );
+    expect(forgeSource).toContain(
+      'if (INCLUDE_MOBILE_AUTOMATION) {\n        stageAndroidPlatformTools(targetPlatform, targetArch);',
+    );
+    expect(forgeSource).toContain(
+      'if (INCLUDE_MOBILE_AUTOMATION) {\n        buildMacIOSSimulatorHelper(platform, arch);',
+    );
+    expect(packageSource).toContain(
+      "const INCLUDE_MOBILE_AUTOMATION = process.env.ZBOT_ENABLE_MOBILE_AUTOMATION === '1';",
+    );
+    for (const script of ['predev', 'predev:remote', 'predev:inspect', 'prepackage', 'prebuild']) {
+      expect(desktopPackage.scripts[script]).not.toContain('ensure-wda-source');
+    }
+  });
+
   it('builds and stages the Host-owned Helper in a clean Forge package', async () => {
     const testDirectory = path.dirname(fileURLToPath(import.meta.url));
     const sourcePath = path.resolve(testDirectory, '../../../../forge.config.ts');
@@ -310,18 +345,17 @@ describe('packaged iOS Simulator sidecar artifact verification', () => {
     await symlink(targetPath, fixture.executablePath);
     const commandRunner = createCommandRunner(fixture);
 
-      await expect(
-        verifyIOSSimulatorPackagedSidecarArtifact({
-          resourcesPath: fixture.resourcesPath,
-          version: VERSION,
-          architecture: 'arm64',
-          platform: 'darwin',
-          commandRunner,
-        }),
-      ).rejects.toThrow('verification failed');
-      expect(commandRunner).not.toHaveBeenCalled();
-    },
-  );
+    await expect(
+      verifyIOSSimulatorPackagedSidecarArtifact({
+        resourcesPath: fixture.resourcesPath,
+        version: VERSION,
+        architecture: 'arm64',
+        platform: 'darwin',
+        commandRunner,
+      }),
+    ).rejects.toThrow('verification failed');
+    expect(commandRunner).not.toHaveBeenCalled();
+  });
 
   it('fails a final pre-spawn check after the verified executable changes', async () => {
     const fixture = await createFixture();

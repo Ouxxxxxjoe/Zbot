@@ -52,6 +52,7 @@ import path from 'node:path';
 import { app, clipboard, dialog, ipcMain, net, netLog } from 'electron';
 
 import {
+  CLIENT_ENDPOINT_KEYS,
   resolveClientEndpointsStrict,
   type ClientEndpointKey,
   type ClientEndpointMap,
@@ -616,6 +617,24 @@ let activeSessionRealm: ClientEndpointRegion | null = null;
 const realmEndpointCache = new Map<ClientEndpointRegion, ClientEndpointMap>();
 /** 本次启动是否走了离线缓存(自动回退或用户确认,而非本次网络拉取)。 */
 let startedFromCachedManifest = false;
+/**
+ * Local 0.1 starts before any cloud service is available. Keep a complete but
+ * intentionally empty endpoint map for that account-free launch path; cloud
+ * endpoints are loaded only when an actual cloud session/login flow asks for
+ * them.
+ */
+let startedWithLocalLaunchConfig = false;
+
+function createLocalLaunchEndpoints(): ClientEndpointMap {
+  return Object.fromEntries(
+    CLIENT_ENDPOINT_KEYS.map((key) => [key, '']),
+  ) as ClientEndpointMap;
+}
+
+/** Cloud bootstrap is opt-in until Zbot has an operated enterprise endpoint. */
+function shouldStartWithLocalLaunchConfig(): boolean {
+  return process.env.ZBOT_CLOUD_BOOTSTRAP !== '1';
+}
 
 const BUILD_SCOPED_ENDPOINT_KEYS = new Set<ClientEndpointKey>([
   'websiteUrl',
@@ -1081,6 +1100,23 @@ function cacheResolvedManifest(manifestUrl: string, manifestText: string): void 
  * 错误框选择退出(app.exit 已调用,调用方必须立即 return,不再继续启动流程)。
  */
 export async function initClientEndpoints(): Promise<boolean> {
+  // Do not put a network/configuration gate in front of the first window. A
+  // Local session has no use for any cloud endpoint, and the login page must
+  // still expose "skip login" while completely offline. The real manifest is
+  // loaded lazily by loadClientEndpointsForRealm() once a cloud flow begins.
+  if (shouldStartWithLocalLaunchConfig()) {
+    resolvedEndpoints = createLocalLaunchEndpoints();
+    resolvedRegion = null;
+    activeSessionRealm = null;
+    realmEndpointCache.clear();
+    startedFromCachedManifest = false;
+    startedWithLocalLaunchConfig = true;
+    log.info('resolved built-in local launch config; cloud endpoint manifest deferred');
+    return true;
+  }
+
+  // Future operated cloud builds may opt into the existing blocking bootstrap
+  // with ZBOT_CLOUD_BOOTSTRAP=1. Local 0.1 never takes this path.
   const source = resolveEndpointSource({
     isPackaged: app.isPackaged,
     env: {
@@ -1147,6 +1183,7 @@ export async function initClientEndpoints(): Promise<boolean> {
   if (endpoints === null) return false; // 用户选择退出,app.exit 已调用
   const resolvedManifest = resolvedManifestBox.value;
   startedFromCachedManifest = resolvedManifestBox.fromCache;
+  startedWithLocalLaunchConfig = false;
   resolvedEndpoints = endpoints;
   resolvedRegion = resolvedManifest?.region ?? null;
   // 老清单没有 region 元数据，但它一定来自构建区域的自举地址。只把这份端点
@@ -1174,6 +1211,11 @@ export async function initClientEndpoints(): Promise<boolean> {
  */
 export function isUsingCachedClientEndpoints(): boolean {
   return startedFromCachedManifest;
+}
+
+/** True until a cloud login/session explicitly loads an endpoint manifest. */
+export function isUsingLocalLaunchConfig(): boolean {
+  return startedWithLocalLaunchConfig;
 }
 
 /**
@@ -1248,6 +1290,14 @@ export async function loadClientEndpointsForRealm(
     throw new Error(`region-mismatch:${region}:${parsed.region}`);
   }
   realmEndpointCache.set(region, parsed.endpoints);
+  // The first cloud manifest replaces the empty account-free projection, so
+  // existing synchronous endpoint consumers keep their cloud-session contract.
+  if (startedWithLocalLaunchConfig) {
+    resolvedEndpoints = parsed.endpoints;
+    resolvedRegion = region;
+    activeSessionRealm = region;
+    startedWithLocalLaunchConfig = false;
+  }
   return parsed.endpoints;
 }
 
@@ -1305,6 +1355,7 @@ export function resetClientEndpointsForTest(
   resolvedEndpoints = resolved ?? null;
   resolvedRegion = resolved ? (options?.buildRegion ?? null) : null;
   startedFromCachedManifest = false;
+  startedWithLocalLaunchConfig = false;
   crossRealmOrgLoginEnabled = options?.crossRealmOrgLoginEnabled ?? BUILD_VARIANT !== 'dev';
   realmManifestBaseUrls = options?.realmManifestBaseUrls ?? DEFAULT_REALM_MANIFEST_BASE_URLS;
   activeSessionRealm = resolvedRegion;

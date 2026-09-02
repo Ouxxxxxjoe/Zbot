@@ -496,7 +496,7 @@ describe('PluginMarketService migration and defaultInstall', () => {
     expect(read.mock.calls.length).toBeLessThan(10);
   });
 
-  it('shows only public market plugins in account-free local mode', async () => {
+  it('does not request the remote market catalog in account-free local mode', async () => {
     runtime.session = {
       mode: 'local',
       dataOwnerId: 'local-v1',
@@ -512,10 +512,10 @@ describe('PluginMarketService migration and defaultInstall', () => {
     const h = harness([publicPlugin, organizationPlugin]);
 
     await expect(h.service.snapshot()).resolves.toMatchObject({
-      items: [{ pluginId: publicPlugin.id, scope: 'public' }],
+      items: [],
       unavailableReason: null,
     });
-    expect(h.api.listAll).toHaveBeenCalledTimes(1);
+    expect(h.api.listAll).not.toHaveBeenCalled();
   });
 
   it('shows public market plugins when signed out without leaking local install state', async () => {
@@ -1875,7 +1875,7 @@ describe('PluginMarketService migration and defaultInstall', () => {
     });
   });
 
-  it('installs and enables a public defaultInstall package in local mode', async () => {
+  it('does not automatically download a defaultInstall package in local mode', async () => {
     runtime.session = {
       mode: 'local',
       dataOwnerId: 'local-v1',
@@ -1895,19 +1895,9 @@ describe('PluginMarketService migration and defaultInstall', () => {
 
     const snapshot = await h.service.snapshot();
 
-    expect(runtime.install).toHaveBeenCalledWith(
-      expect.stringMatching(/\.cindy$/),
-      expect.objectContaining({
-        ghostId: item.ghostId,
-        version: item.currentRelease.version,
-        manifestCap: manifest(),
-        beforeCommitInLock: expect.any(Function),
-      }),
-    );
-    expect(snapshot.items[0]).toMatchObject({
-      installState: 'installed',
-      enabled: true,
-    });
+    expect(h.api.listAll).not.toHaveBeenCalled();
+    expect(runtime.install).not.toHaveBeenCalled();
+    expect(snapshot.items).toEqual([]);
   });
 
   it.each(['legacy-unapproved', 'invalid'] as const)(
@@ -2575,7 +2565,7 @@ describe('PluginMarketService migration and defaultInstall', () => {
     expect(runtime.install).not.toHaveBeenCalled();
   });
 
-  it('shows account-managed public plugins in account-free local mode without auto-installing them', async () => {
+  it('does not query account-managed plugin catalog entries in local mode', async () => {
     runtime.session = {
       mode: 'local',
       dataOwnerId: 'local-v1',
@@ -2586,10 +2576,10 @@ describe('PluginMarketService migration and defaultInstall', () => {
     const h = harness([item]);
 
     await expect(h.service.snapshot()).resolves.toMatchObject({
-      items: [{ pluginId: item.id, ghostId: 'cindy-art', installState: 'not-installed' }],
+      items: [],
       unavailableReason: null,
     });
-    expect(h.api.listAll).toHaveBeenCalledOnce();
+    expect(h.api.listAll).not.toHaveBeenCalled();
     expect(runtime.install).not.toHaveBeenCalled();
   });
 

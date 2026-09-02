@@ -168,10 +168,15 @@ export function handleSchedulerEvent(raw: unknown): void {
 
 interface MinimalAuthState {
   isAuthenticated: boolean;
+  mode?: 'signed-out' | 'local' | 'cloud';
 }
 
-/** AuthStateChange handler — 登出时清 cache + 标 wasReset 让后续 'ready' 触发预热。 */
+/** AuthStateChange handler — only a real signed-out/cloud logout clears this owner cache. */
 export function handleAuthStateChange(authState: MinimalAuthState): void {
+  // Local is a stable, owner-scoped application session rather than an
+  // unauthenticated transient state. Clearing here loses its schedule list
+  // until an unrelated ready event happens to rebuild it.
+  if (authState.mode === 'local') return;
   if (!authState.isAuthenticated) {
     // epoch 自增**必须在最前**:让登出前已发起、登出后才返回的 in-flight 请求
     // 在回写时校验失败 → 丢弃,杜绝跨账号 cache 串库。
