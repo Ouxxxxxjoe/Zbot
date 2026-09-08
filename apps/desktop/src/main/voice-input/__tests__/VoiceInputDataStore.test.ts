@@ -32,6 +32,11 @@ vi.mock('../../logger.js', () => ({
   createLogger: () => ({ warn: vi.fn(), info: vi.fn(), debug: vi.fn(), error: vi.fn() }),
 }));
 
+vi.mock('../../appSessionState.js', () => ({
+  getActiveAppSession: () => ({ mode: 'signed-out', dataOwnerId: null, generation: 0 }),
+  ownerScopedUserDataPath: (...parts: string[]) => path.join(mocks.dataDir, ...parts),
+}));
+
 import {
   onVoiceInputDictionaryChanged,
   registerVoiceInputDataStoreIpc,

@@ -14,6 +14,11 @@ vi.mock('electron', () => ({
   },
 }));
 
+vi.mock('../../appSessionState.js', () => ({
+  getActiveAppSession: () => ({ mode: 'signed-out', dataOwnerId: null, generation: 0 }),
+  ownerScopedUserDataPath: (...parts: string[]) => path.join(userDataDir, ...parts),
+}));
+
 describe('memory-settings-store', () => {
   beforeEach(() => {
     userDataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'xdt-memory-settings-'));

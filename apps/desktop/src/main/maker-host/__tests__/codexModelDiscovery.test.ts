@@ -12,6 +12,12 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 // 「名导出恰好是 undefined 不炸」这种脆弱行为。
 vi.mock('electron', () => ({ app: { getPath: () => '/tmp/xdt-codex-model-discovery-test' } }));
 vi.mock('node:fs/promises', () => ({ default: { readFile: vi.fn() } }));
+vi.mock('../nativeProviderAuthBinding.js', () => ({
+  isNativeProviderAuthBound: () => true,
+}));
+vi.mock('../codex-auth-invalidation.js', () => ({
+  shouldSuppressLocalCodexAuth: () => false,
+}));
 
 import {
   mapCodexModelsToCatalog,

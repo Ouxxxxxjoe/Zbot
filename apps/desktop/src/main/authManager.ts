@@ -90,6 +90,7 @@ import {
   getClientEndpoint,
   getClientEndpointForRealm,
   getClientEndpointRealmConfig,
+  isUsingLocalLaunchConfig,
   loadClientEndpointsForRealm,
   resetClientEndpointRealm,
 } from './clientEndpointsService.js';
@@ -331,6 +332,18 @@ let pendingAccountToken: string | null = null;
 let pendingLoginTicket: string | null = null;
 let pendingBindTicket: string | null = null;
 let pendingSsoVerificationTicket: string | null = null;
+
+/**
+ * Offline-first login screen projection. Cloud providers are fetched only
+ * after an explicit login action.
+ */
+const LOCAL_LAUNCH_LOGIN_PROVIDERS: ProviderConfig = {
+  region: AUTH_REGION,
+  attribution: 'email',
+  email: false,
+  phone: false,
+  social: [],
+};
 let loginActionPromise: Promise<DesktopLoginActionResult> | null = null;
 // `accountDeletionRestored` may arrive before membership selection. Keep it
 // main-only until the final resource-token login commits.
@@ -2849,6 +2862,15 @@ async function discoverOrganizationRealm(org: string) {
 export async function getLoginState(): Promise<DesktopLoginActionResult> {
   try {
     if (loginFlowState) return { success: true, state: loginFlowState };
+    if (isUsingLocalLaunchConfig()) {
+      return {
+        success: true,
+        state: reduceAuthFlow(null, {
+          type: 'providers-loaded',
+          providers: LOCAL_LAUNCH_LOGIN_PROVIDERS,
+        }),
+      };
+    }
     return { success: true, state: await loadLoginProviders() };
   } catch (error) {
     const code = error instanceof AuthApiError ? error.code : 'AUTH_SERVICE_UNAVAILABLE';
@@ -2991,9 +3013,6 @@ async function runLoginAction(action: DesktopLoginAction): Promise<DesktopLoginA
     action.type === 'verify-code' ||
     (action.type === 'start-browser' && action.kind === 'social');
   if (startsBuildRealmFlow) pendingAuthRealm = null;
-  const client = createAuthClient(
-    startsBuildRealmFlow ? AUTH_REGION : pendingAuthRealm ?? activeAuthRealm,
-  );
   const stateBeforeAction = loginFlowState?.step === 'error' ? null : loginFlowState;
   try {
     // Cancellation is intercepted by dispatchLoginAction so it can settle the
@@ -3001,6 +3020,16 @@ async function runLoginAction(action: DesktopLoginAction): Promise<DesktopLoginA
     if (action.type === 'cancel-browser') {
       throw new AuthApiError('INVALID_AUTH_ACTION', 400, 'Unexpected browser cancellation');
     }
+    // Account-free startup intentionally has no cloud endpoints. Selecting a
+    // real login action is the explicit boundary that may load them.
+    if (isUsingLocalLaunchConfig()) {
+      await loadClientEndpointsForRealm(AUTH_REGION);
+      loginFlowState = null;
+      providerConfig = null;
+    }
+    const client = createAuthClient(
+      startsBuildRealmFlow ? AUTH_REGION : pendingAuthRealm ?? activeAuthRealm,
+    );
     if (action.type === 'reset') {
       return { success: true, state: await loadLoginProviders() };
     }

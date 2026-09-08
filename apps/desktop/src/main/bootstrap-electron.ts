@@ -8133,7 +8133,17 @@ app.on('ready', async () => {
   setTimeout(() => {
     prewarmMacComputerPermissionGuideHelper();
   }, 3_000);
-  initUpdateService();
+  // Local 0.1 must not start update polling just because the shell exists.
+  // Keep the existing update service intact, but initialize it only after a
+  // real cloud session has been committed.
+  let updateServiceStarted = false;
+  const startUpdateServiceForCloudSession = (state: authManager.AuthState) => {
+    if (updateServiceStarted || state.mode !== 'cloud' || !state.isAuthenticated) return;
+    updateServiceStarted = true;
+    initUpdateService();
+  };
+  authManager.onAuthStateChange(startUpdateServiceForCloudSession);
+  startUpdateServiceForCloudSession(authManager.getAuthState());
   // 在线人数心跳:App 启动即上报,内部走 deviceId / userId 兜底,登录前后都活
   initHeartbeatService();
   // 设备互联(跨设备远程控制):登录后连 relay,登出即断;开关与设备列表 IPC 一并注册

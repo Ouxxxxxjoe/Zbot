@@ -34,6 +34,7 @@ permissions:
 env:
   CINDY_AUTH_REGION: ${{ inputs.region }}
   ZBOT_DISABLE_AUTO_UPDATE: '1'
+  ZBOT_ENABLE_MOBILE_AUTOMATION: '0'
   # fork 后仓体变大,desktop 打包(tsc/electron-forge)峰值内存突破 Node 默认
   # 上限会 OOM(与 ci.yml 的 typecheck 同款);公开 runner 16GB 内存,8GB 安全。
   NODE_OPTIONS: '--max-old-space-size=8192'

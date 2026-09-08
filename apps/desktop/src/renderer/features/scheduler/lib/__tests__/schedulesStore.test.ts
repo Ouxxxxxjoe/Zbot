@@ -336,6 +336,15 @@ describe('handleSchedulerEvent', () => {
 });
 
 describe('handleAuthStateChange', () => {
+  it('keeps a local session cache because local is not signed out', async () => {
+    await schedulesStore.ensure();
+    expect(schedulesStore.getSnapshot()).not.toBeNull();
+
+    handleAuthStateChange({ isAuthenticated: false, mode: 'local' });
+
+    expect(schedulesStore.getSnapshot()).not.toBeNull();
+  });
+
   it('isAuthenticated=false: clears cache/error, marks wasReset, notifies', async () => {
     await schedulesStore.ensure();
     expect(schedulesStore.getSnapshot()).not.toBeNull();

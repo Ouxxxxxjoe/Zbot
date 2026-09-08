@@ -1727,7 +1727,7 @@ describe.skipIf(!piAvailable)('PiAgent integration (real pi binary + fake gatewa
         expect(keyTurn.resolverTools).toEqual([]);
         const keyFollowUp = seenRequests.slice(keyReqBefore).map((request) => request.body).join('\n');
         expect(keyFollowUp).not.toContain('KEY_SECRET=must-not-leak');
-        expect(keyFollowUp).toContain('Cindy blocks reading credential or key paths');
+        expect(keyFollowUp).toContain('Zbot blocks reading credential or key paths');
 
         scriptedResponses.push(
           anthropicToolUseBody('grep', { pattern: 'SAFE_SELECTOR', path: 'src', glob: 'source.ts' }),
@@ -2016,7 +2016,7 @@ describe.skipIf(!piAvailable)('PiAgent integration (real pi binary + fake gatewa
         expect(resolverTools).toEqual([]);
         expect(existsSync(marker)).toBe(false);
         const followUp = seenRequests.slice(reqBefore).map((request) => request.body);
-        expect(followUp.some((body) => body.includes('Cindy Auto-review denied this tool call.')))
+        expect(followUp.some((body) => body.includes('Zbot Auto-review denied this tool call.')))
           .toBe(true);
         expect(followUp.some((body) => body.includes('User denied this tool call via Cindy.')))
           .toBe(false);
@@ -2110,7 +2110,7 @@ describe.skipIf(!piAvailable)('PiAgent integration (real pi binary + fake gatewa
         // Full access 不弹窗,直接硬拦
         expect(resolverTools).toEqual([]);
         const followUp = seenRequests.slice(reqBefore).map((r) => r.body);
-        expect(followUp.some((b) => b.includes('Cindy blocks reading credential or key paths'))).toBe(true);
+        expect(followUp.some((b) => b.includes('Zbot blocks reading credential or key paths'))).toBe(true);
         expect(followUp.some((b) => b.includes('CINDY_PI_SESSION_TOKEN='))).toBe(false);
       } finally {
         rmSync(workingDir, { recursive: true, force: true });
@@ -2141,7 +2141,7 @@ describe.skipIf(!piAvailable)('PiAgent integration (real pi binary + fake gatewa
         });
         expect(resolverTools).toEqual([]);
         const followUp = seenRequests.slice(reqBefore).map((r) => r.body);
-        expect(followUp.some((b) => b.includes('Cindy blocks reading process environment'))).toBe(true);
+        expect(followUp.some((b) => b.includes('Zbot blocks reading process environment'))).toBe(true);
         expect(followUp.some((b) => b.includes('CINDY_PI_SESSION_TOKEN='))).toBe(false);
       } finally {
         rmSync(workingDir, { recursive: true, force: true });
@@ -2301,7 +2301,7 @@ describe.skipIf(!piAvailable)('PiAgent integration (real pi binary + fake gatewa
         expect(fullAccessTurn.resolverTools).toEqual([]);
         const fullAccessFollowUp = seenRequests.slice(fullAccessReqBefore).map((request) => request.body);
         expect(fullAccessFollowUp.some((body) => body.includes('FAKE_REDIRECT_DOTENV_SECRET'))).toBe(false);
-        expect(fullAccessFollowUp.some((body) => body.includes('Cindy blocks reading credential or key paths')))
+        expect(fullAccessFollowUp.some((body) => body.includes('Zbot blocks reading credential or key paths')))
           .toBe(true);
       } finally {
         rmSync(workingDir, { recursive: true, force: true });
@@ -2353,7 +2353,7 @@ describe.skipIf(!piAvailable)('PiAgent integration (real pi binary + fake gatewa
         expect(fullAccessTurn.resolverTools).toEqual([]);
         const fullAccessFollowUp = seenRequests.slice(fullAccessReqBefore).map((request) => request.body);
         expect(fullAccessFollowUp.some((body) => body.includes('FAKE_DOTGLOB_SECRET'))).toBe(false);
-        expect(fullAccessFollowUp.some((body) => body.includes('Cindy blocks reading credential or key paths')))
+        expect(fullAccessFollowUp.some((body) => body.includes('Zbot blocks reading credential or key paths')))
           .toBe(true);
 
         delete process.env.BASHOPTS;
@@ -2397,7 +2397,7 @@ describe.skipIf(!piAvailable)('PiAgent integration (real pi binary + fake gatewa
           .map((request) => request.body);
         expect(runtimeFullAccessFollowUp.some((body) => body.includes('FAKE_DOTGLOB_SECRET'))).toBe(false);
         expect(runtimeFullAccessFollowUp.some((body) =>
-          body.includes('Cindy blocks reading credential or key paths'))).toBe(true);
+          body.includes('Zbot blocks reading credential or key paths'))).toBe(true);
 
         scriptedResponses.length = 0;
         scriptedResponses.push(
@@ -2548,7 +2548,7 @@ describe.skipIf(!piAvailable)('PiAgent integration (real pi binary + fake gatewa
         expect(readWriteTurn.resolverTools).toEqual(['bash']);
         const readWriteFollowUp = seenRequests.slice(readWriteReqBefore).map((r) => r.body);
         expect(readWriteFollowUp.some((b) => b.includes('ordinary-bash-symlink-content'))).toBe(true);
-        expect(readWriteFollowUp.some((b) => b.includes('Cindy blocks reading credential or key paths')))
+        expect(readWriteFollowUp.some((b) => b.includes('Zbot blocks reading credential or key paths')))
           .toBe(false);
       } finally {
         rmSync(workingDir, { recursive: true, force: true });
@@ -2586,7 +2586,7 @@ describe.skipIf(!piAvailable)('PiAgent integration (real pi binary + fake gatewa
         });
         expect(resolverTools).toEqual([]);
         const followUp = seenRequests.slice(reqBefore).map((r) => r.body);
-        expect(followUp.some((b) => b.includes('Cindy blocks reading credential or key paths'))).toBe(true);
+        expect(followUp.some((b) => b.includes('Zbot blocks reading credential or key paths'))).toBe(true);
         expect(followUp.some((b) => b.includes('FAKE PRIVATE KEY'))).toBe(false);
       } finally {
         rmSync(workingDir, { recursive: true, force: true });

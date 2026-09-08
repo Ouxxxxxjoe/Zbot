@@ -241,6 +241,11 @@ test("nodeWebstorageEnabled detects the globals that force the webstorage flag",
 		nodeWebstorageEnabled({ localStorage: Object.create(null) }),
 		true,
 	);
+	const accessorStub = {};
+	Object.defineProperty(accessorStub, "localStorage", {
+		get: () => undefined,
+	});
+	assert.equal(nodeWebstorageEnabled(accessorStub), true);
 });
 
 test("normalizeRelPath makes path matching independent of host path separators", () => {

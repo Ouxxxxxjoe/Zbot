@@ -668,6 +668,11 @@ export class PluginMarketService {
       }
       return snapshot;
     };
+    // Local mode may use installed plugins and explicitly configured local
+    // sources, but must never probe the server catalog in the background.
+    if (owner.mode === 'local') {
+      return customOnlySnapshot(await customDiscoveryPromise, null);
+    }
     if (!getClientEndpoint('pluginApiBaseUrl')) {
       const customDiscovery = await customDiscoveryPromise;
       return customOnlySnapshot(

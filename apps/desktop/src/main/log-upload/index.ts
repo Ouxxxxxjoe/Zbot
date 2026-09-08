@@ -114,6 +114,9 @@ function ensureMarkerStore(): PendingMarkerStore {
  * region 必须与本构建区域一致），那是一次明确的动作，不是意外。
  */
 function currentTarget(): LogUploadTarget | null {
+  // A local session is explicitly account-free/private. Do not merely let a
+  // request fail against an unavailable host: make every upload path a no-op.
+  if (authManager.isLocalMode()) return null;
   return resolveLogUploadTarget({ region: CURRENT_CINDY_REGION });
 }
 
@@ -327,6 +330,9 @@ function backfillMarkersFromPostmortem(): void {
  * 所以多次未传崩溃能在同一次上报里都被覆盖（需求 §4.5）。
  */
 async function runStartupBackfill(): Promise<void> {
+  // Check before claiming markers. Entering Local must not upload old cloud
+  // crash data, nor consume it so a later cloud session cannot handle it.
+  if (authManager.isLocalMode()) return;
   const store = ensureMarkerStore();
   const claimed = store.claimAll();
   if (claimed.length === 0) return;

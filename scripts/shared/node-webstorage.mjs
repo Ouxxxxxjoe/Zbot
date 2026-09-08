@@ -1,5 +1,5 @@
 /**
- * Node 25 installs the WebStorage globals by default, and with no
+ * Node 25+ installs the WebStorage globals by default, and with no
  * `--localstorage-file` configured `globalThis.localStorage` is a stub whose
  * methods are all missing: under the node environment it fools a
  * `typeof localStorage !== 'undefined'` probe, and under jsdom the pre-existing
@@ -24,5 +24,9 @@
  * instead, which spawns no process per test file.
  */
 export function nodeWebstorageEnabled(globalObject = globalThis) {
-  return typeof globalObject.localStorage !== 'undefined';
+  // Node 26 exposes localStorage as an own accessor that returns undefined
+  // without --localstorage-file. `typeof` alone misses that accessor, yet its
+  // presence still prevents jsdom from installing a usable implementation.
+  const descriptor = Object.getOwnPropertyDescriptor(globalObject, 'localStorage');
+  return typeof descriptor?.get === 'function' || typeof globalObject.localStorage !== 'undefined';
 }

@@ -86,6 +86,7 @@ import {
 import { applyMacSigningConfigToEnv, applyReleaseCdnBaseUrlToEnv } from './ci/release-regions.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const INCLUDE_MOBILE_AUTOMATION = process.env.ZBOT_ENABLE_MOBILE_AUTOMATION === '1';
 
 // ── 构建元数据收集(commit / drizzle journal / electron 版本)────────────────
 
@@ -106,13 +107,17 @@ function collectBuildMeta() {
   let commitSha = '';
   try {
     commitSha = execSync('git rev-parse HEAD', { encoding: 'utf8', cwd: DESKTOP_ROOT }).trim();
-  } catch { /* not in a git work tree */ }
+  } catch {
+    /* not in a git work tree */
+  }
 
   let electronVersion = '';
   try {
     const pkg = JSON.parse(fs.readFileSync(path.join(DESKTOP_ROOT, 'package.json'), 'utf8'));
     electronVersion = pkg.devDependencies?.electron ?? '';
-  } catch { /* ignore */ }
+  } catch {
+    /* ignore */
+  }
 
   return { schemaVersionMax, migrationFiles, commitSha, electronVersion };
 }
@@ -126,7 +131,9 @@ async function fetchCdnBaselineVersion(platformKey, region) {
   // mac 双架构 manifest 同版本,任一即可;win/linux 用各自 key。
   const manifest = await fetchExistingManifestIfAvailable(platformKey, region);
   if (!manifest) {
-    throw new Error(`CDN 上没有 ${platformKey} 的 manifest,无法计算 bump 基线;请显式传 --version x.y.z`);
+    throw new Error(
+      `CDN 上没有 ${platformKey} 的 manifest,无法计算 bump 基线;请显式传 --version x.y.z`,
+    );
   }
   return manifest.app?.version ?? '';
 }
@@ -140,13 +147,23 @@ function cleanOutDir() {
   try {
     fs.rmSync(outDir, { recursive: true, force: true });
   } catch (err) {
-    console.error(`ERROR: Cannot remove ${outDir} — is ${PACKAGED_APP_NAME} still running or antivirus scanning it?`);
+    console.error(
+      `ERROR: Cannot remove ${outDir} — is ${PACKAGED_APP_NAME} still running or antivirus scanning it?`,
+    );
     console.error(err.message);
     process.exit(1);
   }
 }
 
-function runForgeMake({ platform, arch, region, version, versionless, noSign, webAuthnAppleTeamId }) {
+function runForgeMake({
+  platform,
+  arch,
+  region,
+  version,
+  versionless,
+  noSign,
+  webAuthnAppleTeamId,
+}) {
   console.log('==> Building remote bundles...');
   execSync('node scripts/build-remote-bundles.mjs', { cwd: DESKTOP_ROOT, stdio: 'inherit' });
 
@@ -218,7 +235,13 @@ function hostCanExecArch(arch) {
 /** 跳过 smoke 启动前,用 lipo 确认 packaged 主二进制确实是目标架构。 */
 function verifyMacBinaryArch(appName, arch) {
   const exePath = path.join(
-    DESKTOP_ROOT, 'out', `${appName}-darwin-${arch}`, `${appName}.app`, 'Contents', 'MacOS', appName,
+    DESKTOP_ROOT,
+    'out',
+    `${appName}-darwin-${arch}`,
+    `${appName}.app`,
+    'Contents',
+    'MacOS',
+    appName,
   );
   const archInfo = execFileSync('lipo', ['-archs', exePath], { encoding: 'utf8' }).trim();
   const want = arch === 'arm64' ? 'arm64' : 'x86_64';
@@ -256,7 +279,14 @@ function findSetupExe(makeBaseDir) {
   return walk(makeBaseDir);
 }
 
-async function finishWindows({ artifactDir, baseName, appName, versionless, allowUnsigned, noSign }) {
+async function finishWindows({
+  artifactDir,
+  baseName,
+  appName,
+  versionless,
+  allowUnsigned,
+  noSign,
+}) {
   const makeBaseDir = path.join(DESKTOP_ROOT, 'out', 'make');
   const packagedDir = path.join(DESKTOP_ROOT, 'out', `${appName}-win32-x64`);
   const setupExe = findSetupExe(makeBaseDir);
@@ -296,8 +326,12 @@ async function finishWindows({ artifactDir, baseName, appName, versionless, allo
       { encoding: 'utf8' },
     ).trim();
     if (badSigStatuses.includes(sigStatus)) {
-      console.error(`ERROR: CINDY_WIN_SIGN_CMD 已设置且 make 成功,但 Setup.exe 签名状态为 ${sigStatus}。`);
-      console.error('       外部签名命令疑似 no-op 或签名后文件被改动,请检查 CINDY_WIN_SIGN_CMD 配置与构建流程。');
+      console.error(
+        `ERROR: CINDY_WIN_SIGN_CMD 已设置且 make 成功,但 Setup.exe 签名状态为 ${sigStatus}。`,
+      );
+      console.error(
+        '       外部签名命令疑似 no-op 或签名后文件被改动,请检查 CINDY_WIN_SIGN_CMD 配置与构建流程。',
+      );
       process.exit(1);
     }
     // 再全量扫一遍 packaged 目录:internalExesSigned 不能只凭签名命令在手就记
@@ -313,18 +347,24 @@ async function finishWindows({ artifactDir, baseName, appName, versionless, allo
       { encoding: 'utf8' },
     ).trim();
     if (badExes) {
-      console.error('ERROR: packaged 目录内以下 exe 签名不可用(未签 / 签名后被改动;forge 签名清单可能有遗漏):');
+      console.error(
+        'ERROR: packaged 目录内以下 exe 签名不可用(未签 / 签名后被改动;forge 签名清单可能有遗漏):',
+      );
       console.error(badExes);
       process.exit(1);
     }
     installerSigned = true;
   } else if (!versionless && !allowUnsigned) {
-    console.error('ERROR: 有版本的 Windows 打包要求 CINDY_WIN_SIGN_CMD(安装包 / 卸载器 / 内部 exe 均在 forge make 阶段签名)。');
+    console.error(
+      'ERROR: 有版本的 Windows 打包要求 CINDY_WIN_SIGN_CMD(安装包 / 卸载器 / 内部 exe 均在 forge make 阶段签名)。',
+    );
     console.error('       缺签名的包在严格策略 Windows 机器上热更/启动/卸载会被拦。');
     console.error('       确要产出未签名包时加 --allow-unsigned。');
     process.exit(1);
   } else {
-    console.log('==> CINDY_WIN_SIGN_CMD not set — installer / uninstaller / internal exes are UNSIGNED');
+    console.log(
+      '==> CINDY_WIN_SIGN_CMD not set — installer / uninstaller / internal exes are UNSIGNED',
+    );
   }
 
   const installerPath = path.join(artifactDir, `${baseName}-Setup.exe`);
@@ -376,7 +416,8 @@ async function finishDarwin({
 
   const applePassword = noSign ? undefined : process.env.APPLE_APP_PASSWORD;
   const wantsRealSigning = !versionless && !noSign;
-  const requireNativeReleaseGate = process.env.CINDY_IOS_SIMULATOR_RELEASE_NATIVE_SMOKE === '1';
+  const requireNativeReleaseGate =
+    INCLUDE_MOBILE_AUTOMATION && process.env.CINDY_IOS_SIMULATOR_RELEASE_NATIVE_SMOKE === '1';
   let signingMode = 'adhoc';
 
   if (wantsRealSigning && !applePassword && !allowUnsigned) {
@@ -410,7 +451,7 @@ async function finishDarwin({
       helperEntitlementsPath,
       mainEntitlementsPath,
       identity,
-      { keychainAccessGroup, arch },
+      { keychainAccessGroup, arch, includeIOSSimulatorHelper: INCLUDE_MOBILE_AUTOMATION },
     );
     if (requireNativeReleaseGate && !iosSimulatorHelperSigned) {
       throw new Error(
@@ -420,14 +461,14 @@ async function finishDarwin({
     console.log('==> Notarizing...');
     notarizeMacApp(appPath, identity);
     signingMode = 'developer-id+notarized';
-    if (hostCanExecArch(arch)) {
+    if (INCLUDE_MOBILE_AUTOMATION && hostCanExecArch(arch)) {
       runIOSSimulatorReleaseGate(
         appPath,
         arch,
         iosSimulatorHelperSigned ? 'verified' : 'untrusted',
         requireNativeReleaseGate,
       );
-    } else if (requireNativeReleaseGate) {
+    } else if (INCLUDE_MOBILE_AUTOMATION && requireNativeReleaseGate) {
       // 显式要求的 native smoke 必须在能原生运行目标 arch 的受控发布机上跑
       // (要 boot 模拟器 + 起 native sidecar)。此处跳过会把它悄悄降级成"无门禁",
       // 违背 docs/ios-simulator-integration-plan.md 的发布约束——宁可失败,逼操作者
@@ -435,7 +476,7 @@ async function finishDarwin({
       throw new Error(
         `CINDY_IOS_SIMULATOR_RELEASE_NATIVE_SMOKE=1 requires a host that can natively run the ${arch} package`,
       );
-    } else {
+    } else if (INCLUDE_MOBILE_AUTOMATION) {
       // 跨 arch 连打:该产物在本机跑不起来(如 arm64 机上的 x64 app),launch-based
       // gate 无法 exec 它。沿用 ios-simulator-integration-plan.md 的 cross-architecture
       // 例外(原仅覆盖 Intel 机 + arm64 ad-hoc,现扩至 arm64 机 + x64 Developer-ID 的
@@ -466,15 +507,17 @@ async function finishDarwin({
     // 版本无关(或显式放行)→ ad-hoc 签名,产出 .app 的 zip 供本机/内部试用。
     writeMacEntitlements(helperEntitlementsPath);
     writeMacEntitlements(mainEntitlementsPath, { appleEvents: true });
-    adhocSignMacApp(appPath, helperEntitlementsPath, mainEntitlementsPath, arch);
-    if (requireNativeReleaseGate) {
+    adhocSignMacApp(appPath, helperEntitlementsPath, mainEntitlementsPath, arch, {
+      includeIOSSimulatorHelper: INCLUDE_MOBILE_AUTOMATION,
+    });
+    if (INCLUDE_MOBILE_AUTOMATION && requireNativeReleaseGate) {
       throw new Error(
         'CINDY_IOS_SIMULATOR_RELEASE_NATIVE_SMOKE=1 requires a Developer ID signed and notarized package',
       );
     }
-    if (hostCanExecArch(arch)) {
+    if (INCLUDE_MOBILE_AUTOMATION && hostCanExecArch(arch)) {
       runIOSSimulatorReleaseGate(appPath, arch, 'untrusted');
-    } else {
+    } else if (INCLUDE_MOBILE_AUTOMATION) {
       // cross-architecture 例外:跳过 launch-based gate,仍做 Mach-O arch 门禁。
       verifyMacBinaryArch(appName, arch);
       console.log(
@@ -530,13 +573,18 @@ async function main() {
   if (platform === 'darwin' && !noSign) applyMacSigningConfigToEnv(region);
 
   if (platform !== process.platform) {
-    console.error(`ERROR: 不支持交叉打包(当前 ${process.platform},目标 ${platform});请在目标平台机器上执行。`);
+    console.error(
+      `ERROR: 不支持交叉打包(当前 ${process.platform},目标 ${platform});请在目标平台机器上执行。`,
+    );
     process.exit(1);
   }
 
   // 版本号只解析一次,mac 双架构共用(canary 发布要求两 arch 同版本)。
   const { version, versionless } = await resolvePackageVersion(versionSpec, () =>
-    fetchCdnBaselineVersion(platform === 'darwin' ? 'darwin-arm64' : `${platform}-${archs[0]}`, region),
+    fetchCdnBaselineVersion(
+      platform === 'darwin' ? 'darwin-arm64' : `${platform}-${archs[0]}`,
+      region,
+    ),
   );
   const applePassword =
     platform === 'darwin' && !versionless && !noSign ? process.env.APPLE_APP_PASSWORD : undefined;
@@ -630,7 +678,15 @@ async function main() {
     // drizzle 资源校验(平台差异只在 packaged 内路径)。
     const drizzleOut =
       platform === 'darwin'
-        ? path.join(DESKTOP_ROOT, 'out', `${appName}-darwin-${arch}`, `${appName}.app`, 'Contents', 'Resources', 'drizzle')
+        ? path.join(
+            DESKTOP_ROOT,
+            'out',
+            `${appName}-darwin-${arch}`,
+            `${appName}.app`,
+            'Contents',
+            'Resources',
+            'drizzle',
+          )
         : path.join(DESKTOP_ROOT, 'out', `${appName}-${platformKey}`, 'resources', 'drizzle');
     verifyPackagedDrizzle(drizzleOut);
 
@@ -640,7 +696,9 @@ async function main() {
       // Intel mac 缺省双架构连打时,arm64 产物在 x64 硬件上起不来(smoke 脚本只
       // 处理了「arm64 宿主打 x64 包」的镜像场景)。lipo 验完二进制架构即跳过启动。
       verifyMacBinaryArch(appName, arch);
-      console.log('==> Skipping smoke: arm64 artifact not runnable on Intel host (binary arch verified)');
+      console.log(
+        '==> Skipping smoke: arm64 artifact not runnable on Intel host (binary arch verified)',
+      );
     } else {
       runSmokeTest(platform, arch, region);
     }
@@ -693,7 +751,9 @@ async function main() {
   for (const r of results) {
     console.log(`Artifacts:  ${r.artifactDir}`);
     for (const f of r.files) {
-      console.log(`  [${f.role}] ${f.name}  ${(f.size / 1024 / 1024).toFixed(1)} MB  sha256=${f.sha256.slice(0, 12)}…`);
+      console.log(
+        `  [${f.role}] ${f.name}  ${(f.size / 1024 / 1024).toFixed(1)} MB  sha256=${f.sha256.slice(0, 12)}…`,
+      );
     }
     console.log(`Build info: ${r.buildInfoPath}`);
   }

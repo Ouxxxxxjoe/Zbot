@@ -64,6 +64,7 @@ tools/pi/updates/
 
 # ── 日志 / 下载 / 本地运行态 ─────────────────────────────────
 logs/
+.ghcache/
 *.log
 npm-debug.log*
 pnpm-debug.log*

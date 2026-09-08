@@ -55,6 +55,8 @@ import {
   getClientEndpoint,
   getClientEndpointForRealm,
   getResolvedClientEndpoints,
+  initClientEndpoints,
+  isUsingLocalLaunchConfig,
   loadClientEndpointsForRealm,
   isUsingCachedClientEndpoints,
   registerClientEndpointsIpc,
@@ -254,6 +256,17 @@ describe('resolveEndpointSource(清单来源三选一)', () => {
     ],
   ] as const)('%s', (_label, input, expected) => {
     expect(resolveEndpointSource({ ...input, repoRoot: REPO_ROOT })).toEqual(expected);
+  });
+});
+
+describe('Local 0.1 launch config', () => {
+  it('starts without requesting a CDN endpoint manifest', async () => {
+    await expect(initClientEndpoints()).resolves.toBe(true);
+
+    expect(isUsingLocalLaunchConfig()).toBe(true);
+    expect(netRequest).not.toHaveBeenCalled();
+    expect(getClientEndpoint('authApiBaseUrl')).toBe('');
+    expect(getClientEndpoint('cdnBaseUrl')).toBe('');
   });
 });
 
